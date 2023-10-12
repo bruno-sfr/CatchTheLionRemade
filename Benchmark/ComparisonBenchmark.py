@@ -69,7 +69,7 @@ def ABvsABTT_fixedDepth():
     plt.title("Comparison AB vs ABTT Fixed Depth=7")
     plt.legend()
     #plt.savefig("./Benchmark/Benchmark_ABvsABTT_FixedDepth.png")
-    plt.savefig("Benchmark_ABvsABTT_FixedDepth.png")
+    plt.savefig("../Resources/Benchmark_ABvsABTT_FixedDepth.png")
     plt.show()
 
 
@@ -129,7 +129,7 @@ def ABvsABTT_iterativeDeepening():
     plt.ylabel("Wins")
     plt.title("Comparison ID AB vs ABTT Time 20s")
     plt.legend()
-    plt.savefig("Benchmark_ABvsABTT_Iterative_Deepening_20s.png")
+    plt.savefig("../Resources/Benchmark_ABvsABTT_Iterative_Deepening_20s.png")
     plt.show()
 
 

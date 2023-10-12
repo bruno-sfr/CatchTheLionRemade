@@ -32,7 +32,7 @@ def TestStartpostion():
     MTD_0_Eval_List = []
     MTD_MiniMax_Eval_List = []
 
-    Depth = 9
+    Depth = 11
     x = range(1, Depth)
 
     for i in range(1, Depth):
@@ -169,7 +169,7 @@ def TestStartpostion():
     plt.xlabel("Depth")
     #plt.ylabel("Time taken")
     #plt.title("Benchmark")
-    plt.savefig("../Benchmark/Benchmark_Start.png")
+    plt.savefig("../Resources/Benchmark_Start_Depth_10.png")
     plt.show()
 
 def MTD_Increment_Comparison():
@@ -222,7 +222,7 @@ def MTD_Increment_Comparison():
     plt.ylabel("Diffrence")
     plt.title("Benchmark Increment")
     plt.legend()
-    plt.savefig("./Benchmark/Benchmark_Increment_3.png")
+    plt.savefig("../Resources/Benchmark_Increment_3.png")
     plt.show()
 
 def MateIn1():
@@ -312,7 +312,7 @@ def MateIn1():
     plt.ylabel("Time taken")
     plt.title("Benchmark")
     plt.legend()
-    plt.savefig("Benchmark_Mate in few.png")
+    plt.savefig("../Resources/Benchmark_Mate in few.png")
     plt.show()
 
 def Random_Benchmark():
@@ -434,7 +434,7 @@ def Random_Benchmark():
     plt.ylabel("Time taken")
     plt.title("Benchmark Randomboard")
     plt.legend()
-    plt.savefig("./Benchmark/Benchmark_Random_Iter_15.png")
+    plt.savefig(".../Resources/Benchmark_Random_Iter_15.png")
     plt.show()
 
 if __name__ == '__main__':
