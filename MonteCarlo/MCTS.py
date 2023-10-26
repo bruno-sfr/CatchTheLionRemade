@@ -1,5 +1,6 @@
 import copy
 import random
+import sys
 
 from MonteCarlo import MCTS_Node
 from Game import LionBoard, Move
@@ -17,7 +18,8 @@ class TimeoutError(Exception):
 
 
 def timeout_handler(signum, frame):
-    raise TimeoutError("Function execution timed out.")
+    raise TimeoutError()
+    #raise TimeoutError("Function execution timed out.")
 
 
 # main function for the Monte Carlo Tree Search
@@ -32,8 +34,34 @@ def MCTS(state: LionBoard, whiteTurn: bool, time):
         signal.alarm(timeout_seconds)
 
         while True:
-            #selected_node = selection(root)
-            #expanded_node = expansion(selected_node)
+            selected_node = selection(root)
+            expanded_node = expansion(selected_node)
+            result = simulation(expanded_node, whiteTurn)
+            backpropagate(expanded_node, result)
+    except TimeoutError as e:
+        print(e)
+
+    #root.printTree(0)
+    """print("Root Visits:", root.visits)
+    print("Root children:")
+    i2 = 1
+    for i in root.children:
+        print("Root child", i2, " visits:", i.visits)
+        i2 = i2 + 1
+    print("---------------------------------")"""
+    return best_child(root)
+
+def MCTS_full_expansion(state: LionBoard, whiteTurn: bool, time):
+    none_move = Move.Move()
+    root = MCTS_Node.MCTS_Node(None, state, whiteTurn, none_move)
+
+    timeout_seconds = time
+    signal.signal(signal.SIGALRM, timeout_handler)
+
+    try:
+        signal.alarm(timeout_seconds)
+
+        while True:
             selected_node = terminal_selection(root)
             expanded_node = complete_expansion(selected_node)
             result = simulation(expanded_node, whiteTurn)
@@ -42,11 +70,13 @@ def MCTS(state: LionBoard, whiteTurn: bool, time):
         print(e)
 
     #root.printTree(0)
-    print("Root Visits:", root.visits)
+    """print("Root Visits:", root.visits)
     print("Root children:")
+    i2 = 1
     for i in root.children:
-        print("Root child visits:", i.visits)
-    print("---------------------------------")
+        print("Root child", i2, " visits:", i.visits)
+        i2 = i2 + 1
+    print("---------------------------------")"""
     return best_child(root)
 
 
@@ -57,11 +87,11 @@ def selection(node: MCTS_Node):
     best_node = node
     if node.children:
         for i in node.children:
-            best_child = selection(i)
-            child_UCT = best_child.UCT()
+            child = selection(i)
+            child_UCT = child.UCT()
             if child_UCT > best_UCT:
                 best_UCT = child_UCT
-                best_node = best_child
+                best_node = child
     return best_node
 
 # selects node to expand via UCT, that is also Terminal
@@ -125,6 +155,22 @@ def simulation(node: MCTS_Node, player: bool):
         return 1
     return 0
 
+def MiniMax_Rollout(node: MCTS_Node, player: bool, depth: int):
+    state = copy.deepcopy(node.state)
+    whiteTurn = copy.deepcopy(node.whiteTurn)
+    MAX_ITERATIONS = 100
+    i = 0
+    while i < MAX_ITERATIONS and not state.isGameOver:
+        while not state.isGameOver():
+            state.makeRandomMove(whiteTurn)
+            whiteTurn = not whiteTurn
+            i = i + 1
+
+    if player and state.hasWhiteWon():
+        return 1
+    elif not player and state.hasBlackWon():
+        return 1
+    return 0
 
 # function for backpropagation
 def backpropagate(node: MCTS_Node, result):
@@ -148,10 +194,15 @@ def best_child(node: MCTS_Node):
 
 
 if __name__ == '__main__':
+    sys.setrecursionlimit(5000)
     board = LionBoard.LionBoard()
     board.setBoard_start()
-    result_node = MCTS(board, True, 10)
-    print(result_node.move.printMove())
-    print("Result node Children Count:", len(result_node.children))
-    print("Visits:", result_node.visits)
-    print("Score:", result_node.score)
+    for i in range(0,10):
+        result_node = MCTS(board, True, 5)
+        result_node_FE = MCTS_full_expansion(board, True, 5)
+        result_node.move.printMove()
+        print("FE:")
+        result_node_FE.move.printMove()
+    #print("Result node Children Count:", len(result_node.children))
+    #print("Visits:", result_node.visits)
+    #print("Score:", result_node.score)

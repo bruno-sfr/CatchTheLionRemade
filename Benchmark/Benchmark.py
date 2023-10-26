@@ -32,7 +32,7 @@ def TestStartpostion():
     MTD_0_Eval_List = []
     MTD_MiniMax_Eval_List = []
 
-    Depth = 11
+    Depth = 5
     x = range(1, Depth)
 
     for i in range(1, Depth):
@@ -41,7 +41,7 @@ def TestStartpostion():
         MTD_0 = MTDF.MTDF()
 
         print("Depth:", i)
-        print("Alpha-Beta")
+        """print("Alpha-Beta")
         start = time.time()
         evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, True)
         end = time.time()
@@ -52,7 +52,7 @@ def TestStartpostion():
             move.printMove()
             break
         AB_List.append(timetaken)
-        AB_Eval_List.append(evalAB)
+        AB_Eval_List.append(evalAB)"""
 
         print("")
         print("Alpha-Beta_TT")
@@ -103,7 +103,7 @@ def TestStartpostion():
         MTD_Eval_List.append(evalMTD)
 
         print("")
-        print("MTD(f) with f=BestMiniMax")
+        """print("MTD(f) with f=BestMiniMax")
         start = time.time()
         eval, moves = MTD.MTDF(evalAB, i, board, True, 0.1)
         end = time.time()
@@ -116,7 +116,7 @@ def TestStartpostion():
             move.printMove()
             break
         MTD_MiniMax_List.append(timetaken)
-        MTD_MiniMax_Eval_List.append(eval)
+        MTD_MiniMax_Eval_List.append(eval)"""
 
         """print("")
         print("MTD(f) with f=0")
@@ -142,21 +142,21 @@ def TestStartpostion():
     fig, axs = plt.subplots(2, sharex=True)
     fig.suptitle("Comparison")
 
-    axs[0].plot(x, AB_List, label='Alpha-Beta')
+    #axs[0].plot(x, AB_List, label='Alpha-Beta')
     axs[0].plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
     axs[0].plot(x, AB_TT_store_List, label='Alpha-Beta TT Store All', linestyle='dashed')
     axs[0].plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashed')
-    axs[0].plot(x, MTD_MiniMax_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
+    #axs[0].plot(x, MTD_MiniMax_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
     #axs[0].plot(x, MTD_0_List, label='MTD(f) with f = 0')
     axs[0].set(ylabel='Time taken')
 
     axs[0].legend(loc='upper left')
 
-    axs[1].plot(x, AB_Eval_List, label='Alpha-Beta')
+    #axs[1].plot(x, AB_Eval_List, label='Alpha-Beta')
     axs[1].plot(x, AB_TT_Eval_List, label='Alpha-Beta TT', linestyle='dotted')
     axs[1].plot(x, AB_TT_store_Eval_List, label='Alpha-Beta TT Store All', linestyle='dashed')
     axs[1].plot(x, MTD_Eval_List, label='MTD(f) with f = best guess', linestyle='dashed')
-    axs[1].plot(x, MTD_MiniMax_Eval_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
+    #axs[1].plot(x, MTD_MiniMax_Eval_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
     #axs[1].plot(x, MTD_0_Eval_List, label='MTD(f) with f = 0')
     axs[1].set(ylabel='Eval')
 
@@ -169,7 +169,7 @@ def TestStartpostion():
     plt.xlabel("Depth")
     #plt.ylabel("Time taken")
     #plt.title("Benchmark")
-    plt.savefig("../Resources/Benchmark_Start_Depth_10.png")
+    plt.savefig("../Resources/Benchmark_Start_Depth_4.png")
     plt.show()
 
 def MTD_Increment_Comparison():

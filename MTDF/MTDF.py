@@ -3,6 +3,7 @@ import time
 from Game import LionBoard, Zobrist
 import random
 from . import MTDfTranspositionsTable
+from AlphaBeta import TranspostionTable, HashEntry
 
 """
 Algorithm from https://askeplaat.wordpress.com/534-2/mtdf-algorithm/
@@ -14,6 +15,7 @@ class MTDF:
         self.table = MTDfTranspositionsTable.TranspostionTable(25)
         self.count_transpo = 0
         self.count_MTDf_iter = 0
+        self.TT = TranspostionTable.TranspostionTable(25)
 
     """function MTDF(root : node_type; f : integer; d: integer) : integer;
 
@@ -60,7 +62,7 @@ class MTDF:
         :param moves: list of move that lead to this game state
         :return: eval, list of moves
         """
-        boardhash = self.zob.generateHash(board, whiteTurn)
+        """boardhash = self.zob.generateHash(board, whiteTurn)
         entry = self.table.probeEntry(boardhash)
         if entry != None and len(moves) > 0:
             if entry.Depth >= depth:
@@ -75,13 +77,40 @@ class MTDF:
                         self.count_transpo = self.count_transpo + 1
                         up = entry.Upperbound
                         return up, moves
-                    beta = min(beta, entry.Upperbound)
+                    beta = min(beta, entry.Upperbound)"""
+
+        # --------------------------------------------------
+        """TT from AB"""
+        boardhash = self.zob.generateHash(board, whiteTurn)
+        boardFen = board.getFen()
+        entry = self.TT.probeEntry(boardhash)
+        # TT_Eval = 0
+        # TT_used = False
+        if entry != None and len(moves) > 0:
+            if entry.whitetrun != whiteTurn:
+                print("WhiteTurn miss match")
+            if entry.Depth >= depth:
+                self.count_transpo = self.count_transpo + 1
+                TT_used = True
+                TT_Eval = entry.Eval
+                # print("TT used. Depth=", depth, " Entry Depth=", entry.Depth)
+                return entry.Eval, moves
+        # --------------------------------------------------
 
         g = 0.0
         best_moves = copy.deepcopy(moves)
 
+        """if depth == 0:
+        g = board.eval_func()"""
+
+        """TT from AB"""
         if depth == 0:
-            g = board.eval_func()
+            eval = board.eval_func()
+            # if TT_used and TT_Eval != eval:
+            #    print("Transpostion mismatch")
+            newEntry = HashEntry.HashEntry(boardhash, depth, eval, boardFen, whiteTurn)
+            self.table.storeEntry(newEntry)
+            return eval, moves
         elif whiteTurn:
             g = float('-inf')
             a = alpha
@@ -146,13 +175,19 @@ class MTDF:
                     continue
                 break
 
-        if g <= alpha:
+        # --------------------------------------------------
+        """TT from AB, store All"""
+        newEntry = HashEntry.HashEntry(boardhash, depth, g, boardFen, whiteTurn)
+        self.TT.storeEntry(newEntry)
+        # --------------------------------------------------
+
+        """if g <= alpha:
             self.table.storeUpperbound(boardhash, depth, g)
         if g > alpha and g < beta:
             self.table.storeLowerbound(boardhash, depth, g)
             self.table.storeUpperbound(boardhash, depth, g)
         if g >= beta:
-            self.table.storeLowerbound(boardhash, depth, g)
+            self.table.storeLowerbound(boardhash, depth, g)"""
         return g, best_moves
 
 if __name__ == '__main__':

@@ -29,6 +29,8 @@ class Alpha_Beta_TranspostionTable:
         # TT_Eval = 0
         # TT_used = False
         if entry != None and len(moves) > 0:
+            if entry.whitetrun != whiteTurn:
+                print("WhiteTurn miss match")
             if entry.Depth >= depth:
                 self.count_transpo = self.count_transpo + 1
                 TT_used = True
@@ -40,7 +42,7 @@ class Alpha_Beta_TranspostionTable:
             eval = board.eval_func()
             # if TT_used and TT_Eval != eval:
             #    print("Transpostion mismatch")
-            newEntry = HashEntry.HashEntry(boardhash, depth, eval, boardFen)
+            newEntry = HashEntry.HashEntry(boardhash, depth, eval, boardFen, whiteTurn)
             self.table.storeEntry(newEntry)
             return eval, moves
 
@@ -81,7 +83,7 @@ class Alpha_Beta_TranspostionTable:
             # moves.append(bestmove)
 
             if storeAll:
-                newEntry = HashEntry.HashEntry(boardhash, depth, maxEval, boardFen)
+                newEntry = HashEntry.HashEntry(boardhash, depth, maxEval, boardFen, whiteTurn)
                 self.table.storeEntry(newEntry)
 
             """if TT_used and TT_Eval != maxEval:
@@ -124,7 +126,7 @@ class Alpha_Beta_TranspostionTable:
             # moves.append(bestmove)
 
             if storeAll:
-                newEntry = HashEntry.HashEntry(boardhash, depth, minEval, boardFen)
+                newEntry = HashEntry.HashEntry(boardhash, depth, minEval, boardFen, whiteTurn)
                 self.table.storeEntry(newEntry)
 
             """if TT_used and TT_Eval != minEval:
