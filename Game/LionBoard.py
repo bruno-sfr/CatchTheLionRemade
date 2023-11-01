@@ -615,6 +615,14 @@ class LionBoard:
 
         return eval
 
+    def eval_win_loss(self):
+        if self.hasWhiteWon():
+            return 100
+        elif self.hasBlackWon():
+            return -100
+        else:
+            return 0
+
     def eval_captures(self, list):
         eval = 0.0
         for i in list:

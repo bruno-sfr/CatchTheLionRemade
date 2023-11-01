@@ -41,7 +41,7 @@ def TestStartpostion():
         MTD_0 = MTDF.MTDF()
 
         print("Depth:", i)
-        """print("Alpha-Beta")
+        print("Alpha-Beta")
         start = time.time()
         evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, True)
         end = time.time()
@@ -52,7 +52,7 @@ def TestStartpostion():
             move.printMove()
             break
         AB_List.append(timetaken)
-        AB_Eval_List.append(evalAB)"""
+        AB_Eval_List.append(evalAB)
 
         print("")
         print("Alpha-Beta_TT")
@@ -142,7 +142,7 @@ def TestStartpostion():
     fig, axs = plt.subplots(2, sharex=True)
     fig.suptitle("Comparison")
 
-    #axs[0].plot(x, AB_List, label='Alpha-Beta')
+    axs[0].plot(x, AB_List, label='Alpha-Beta')
     axs[0].plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
     axs[0].plot(x, AB_TT_store_List, label='Alpha-Beta TT Store All', linestyle='dashed')
     axs[0].plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashed')
@@ -152,7 +152,7 @@ def TestStartpostion():
 
     axs[0].legend(loc='upper left')
 
-    #axs[1].plot(x, AB_Eval_List, label='Alpha-Beta')
+    axs[1].plot(x, AB_Eval_List, label='Alpha-Beta')
     axs[1].plot(x, AB_TT_Eval_List, label='Alpha-Beta TT', linestyle='dotted')
     axs[1].plot(x, AB_TT_store_Eval_List, label='Alpha-Beta TT Store All', linestyle='dashed')
     axs[1].plot(x, MTD_Eval_List, label='MTD(f) with f = best guess', linestyle='dashed')

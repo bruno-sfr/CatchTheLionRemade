@@ -230,6 +230,95 @@ def alpha_beta_simple(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     eval, moves = alpha_beta(float('-inf'), float('inf'), depth, board, whiteTurn, [])
     return eval, moves
 
+def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, moves: list):
+    """
+    :param alpha: best of max player
+    :param beta:  best of min player
+    :param depth: depth left
+    :param board: game state
+    :param whiteTurn: white is max player, black min player
+    :param moves: list of move that lead to this game state
+    :return: eval, list of moves
+    """
+    if depth == 0:
+        eval = board.eval_win_loss()
+        return eval, moves
+
+    best_moves = copy.deepcopy(moves)
+
+    if whiteTurn:
+        maxEval = float('-inf')
+        # bestmove = Move.Move()
+        # best_moves = []
+        list = board.allpossibleMoves(whiteTurn)
+        for i in list:
+            # print(len(i))
+            for move in i:
+                # new_board = copy.deepcopy(board)
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_moves = copy.deepcopy(moves)
+                new_moves.append(move)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                eval, move_list = alpha_beta(alpha, beta, depth - 1, new_board, not whiteTurn, new_moves)
+                if eval > maxEval:
+                    maxEval = eval
+                    # bestmove = move
+                    best_moves = move_list
+                elif eval == maxEval:
+                    # add a random element to selection of equal value
+                    rand = random.randint(0, 1)
+                    if rand == 1:
+                        maxEval = eval
+                        # bestmove = move
+                        best_moves = move_list
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    break
+            else:
+                continue
+            break
+        # moves.append(bestmove)
+        return maxEval, best_moves
+    else:
+        minEval = float('inf')
+        # bestmove = Move.Move()
+        # best_moves = []
+        list = board.allpossibleMoves(whiteTurn)
+        for i in list:
+            for move in i:
+                # new_board = copy.deepcopy(board)
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_moves = copy.deepcopy(moves)
+                new_moves.append(move)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                eval, move_list = alpha_beta(alpha, beta, depth - 1, new_board, not whiteTurn, new_moves)
+                if eval < minEval:
+                    minEval = eval
+                    # bestmove = move
+                    best_moves = move_list
+                elif eval == minEval:
+                    # add a random element to selection of equal value
+                    rand = random.randint(0, 1)
+                    if rand == 1:
+                        minEval = eval
+                        # bestmove = move
+                        best_moves = move_list
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    break
+            else:
+                continue
+            break
+        # moves.append(bestmove)
+        return minEval, best_moves
+
+
+def alpha_beta_win_loss_simple(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+    eval, moves = alpha_beta_win_loss(float('-inf'), float('inf'), depth, board, whiteTurn, [])
+    return eval, moves
+
 
 if __name__ == '__main__':
     board = LionBoard.LionBoard()

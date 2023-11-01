@@ -198,7 +198,7 @@ def MCTSvsMCTS_FE():
     MCTS_wins = 0
     MCTS_FE_wins_List = [0]
     MCTS_wins_List = [0]
-    time = 15
+    time = 10
     Iterations = 5
     for i in range(0, Iterations):
         board = LionBoard.LionBoard()
@@ -210,13 +210,15 @@ def MCTSvsMCTS_FE():
         while not board.isGameOver():
             # board.printBoard()
             if whiteTurn:
-                print("MCTS Full Expansion")
-                ResultNode = MCTS.MCTS_full_expansion(board, whiteTurn, time)
+                #print("MCTS Full Expansion")
+                #ResultNode = MCTS.MCTS_full_expansion(board, whiteTurn, time)
+                print("MCTS MR")
+                ResultNode = MCTS.MCTS_MR(board, whiteTurn, time, 3)
                 ResultNode.move.printMove()
                 print("Making Move:", board.makeMove(whiteTurn, ResultNode.move.getFrom(), ResultNode.move.getTo()))
             else:
                 print("MCTS")
-                ResultNode = MCTS.MCTS(board, whiteTurn, time)
+                ResultNode = MCTS.MCTS_MR_win_loss(board, whiteTurn, time, 3)
                 ResultNode.move.printMove()
                 print("Making Move:", board.makeMove(whiteTurn, ResultNode.move.getFrom(), ResultNode.move.getTo()))
             whiteTurn = not whiteTurn
@@ -235,13 +237,13 @@ def MCTSvsMCTS_FE():
     x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
     plt.xticks(x_list)
 
-    plt.plot(x, MCTS_FE_wins_List, label='MCTS_FE')
-    plt.plot(x, MCTS_wins_List, label='MCTS')
+    plt.plot(x, MCTS_FE_wins_List, label='MCTS_MR')
+    plt.plot(x, MCTS_wins_List, label='MCTS Win/loss')
     plt.xlabel("Rounds")
     plt.ylabel("Wins")
-    plt.title("Comparison MCTS_FE vs MCTS Time 10s")
+    plt.title("Comparison MCTS_MR vs MCTS Time 10s")
     plt.legend()
-    plt.savefig("../Resources/Benchmark_MCTSFEvsMCTS_Iterative_Deepening_10s_dummy.png")
+    plt.savefig("../Resources/Benchmark_MCTS_MRvsMCTS_Iterative_Deepening_10s_depth_4.png")
     plt.show()
 
 if __name__ == '__main__':
