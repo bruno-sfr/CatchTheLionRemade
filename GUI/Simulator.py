@@ -1,7 +1,7 @@
 import sys
-import threading
 import tkinter as tk
 from tkinter import ttk, scrolledtext
+from tkinter import *
 
 from Game import LionBoard, Move
 from MonteCarlo import MCTS
@@ -9,8 +9,15 @@ from AlphaBeta import IterativeDeepening
 
 
 def show_frame(frame):
-    frame.grid(row=0, column=0, sticky="nsew")
+    global current_frame
+    try:
+        current_frame.pack_forget()
+    except NameError:
+        pass
+    frame.pack(expand=True, fill="both")
     frame.tkraise()
+    current_frame = frame
+    # frame.grid(row=0, column=0, sticky="nsew")
 
 
 def on_select_white(event):
@@ -181,7 +188,7 @@ def game():
 """"-----------------------------------------------------------------------------------------------------------"""
 # the Root
 root = tk.Tk()
-root.geometry("700x700")
+root.geometry("700x350")
 root.title("Simulator")
 #root.grid_rowconfigure(0, weight=1)
 #root.columnconfigure(0, weight=1)
@@ -230,11 +237,14 @@ MCTS_2 = ttk.Combobox(menu_frame, values=MCTS_options)
 MCTS_2.set("Select MCTS Variant")  # Set a default selection
 MCTS_2.bind("<<ComboboxSelected>>", on_select_player_select_2)
 
-
-#menu_label.grid(row=0, column=0, padx=10, pady=10)
-#white.grid(row=1, column=0, padx=10, pady=10)
 menu_label.pack()
 white.pack()
+#menu_label.grid(row=0, column=0, padx=10, pady=10)
+#white.grid(row=1, column=0, padx=10, pady=10)
+#menu_label.pack(side="top", fill="both", expand=True)
+#menu_label.place(relx=.5, rely=.5,anchor= CENTER)
+#white.pack(side="top", fill="both", expand=True)
+#white.place(relx=0.5, rely=0.5, anchor= CENTER)
 """"-----------------------------------------------------------------------------------------------------------"""
 
 """"-----------------------------------------------------------------------------------------------------------"""
@@ -249,7 +259,7 @@ start_button = tk.Button(game_frame, text="Begin Game", command=game)
 go_back_button = tk.Button(game_frame, text="Go Back", command=lambda: show_frame(menu_frame))
 
 # Create a Text widget with vertical and horizontal scrollbars
-text_widget = scrolledtext.ScrolledText(game_frame, wrap=tk.WORD, width=40, height=10)
+text_widget = scrolledtext.ScrolledText(game_frame, wrap=tk.WORD, width=80, height=20)
 
 #result_label.grid(row=0, column=0, padx=10, pady=10)
 start_button.pack()

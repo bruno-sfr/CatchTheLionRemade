@@ -708,13 +708,14 @@ class LionBoard:
 if __name__ == '__main__':
     board = LionBoard()
     board.setBoard_start()
-    list = board.allpossibleMoves(True)
+    print(board.getFen())
+    """list = board.allpossibleMoves(True)
     print("move lists len:",len(list))
     i2 = 1
     for i in list:
         print("List ", i2," Len:", len(i))
         i2 = i2 + 1
-
+"""
     """board = LionBoard()
     board.setBoard_Fen("3/1l1/2L/C2/GgcEe")
     #board.setBoard_start()

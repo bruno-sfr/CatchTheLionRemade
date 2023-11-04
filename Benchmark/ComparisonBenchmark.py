@@ -250,5 +250,5 @@ if __name__ == '__main__':
     sys.setrecursionlimit(15000)
     #ABvsABTT_fixedDepth()
     #ABvsABTT_iterativeDeepening()
-    #ABvsMCTS()
-    MCTSvsMCTS_FE()
+    ABvsMCTS()
+    #MCTSvsMCTS_FE()
