@@ -271,6 +271,14 @@ class LionBoard:
             else:
                 self.black_captures.append("chicken")
 
+    def allpossibleMoves_BigList(self, whiteTurn:bool):
+        list = self.allpossibleMoves(whiteTurn)
+        big_list = []
+        for sub_list in list:
+            for move in sub_list:
+                big_list.append(move)
+        return big_list
+
     def allpossibleMoves(self, whiteTurn: bool):
         # lion, giraffe, elephant, chicken, hen, capture
         list = []
@@ -405,11 +413,19 @@ class LionBoard:
                 for field in freefields:
                     move = Move.Move()
                     move.setMove("g", field)
+                    """"if whiteTurn:
+                        move.setMove("G", field)
+                    else:
+                        move.setMove("g", field)"""
                     capture_list.append(move)
             elif piece == "elephant":
                 for field in freefields:
                     move = Move.Move()
                     move.setMove("e", field)
+                    """if whiteTurn:
+                        move.setMove("E", field)
+                    else:
+                        move.setMove("G", field)"""
                     capture_list.append(move)
             elif piece == "chicken":
                 if whiteTurn:
@@ -425,6 +441,10 @@ class LionBoard:
                 for field in chicken_freefields:
                     move = Move.Move()
                     move.setMove("c", field)
+                    """if whiteTurn:
+                        move.setMove("C", field)
+                    else:
+                        move.setMove("c", field)"""
                     capture_list.append(move)
         list.append(capture_list)
 
