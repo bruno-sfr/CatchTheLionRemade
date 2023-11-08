@@ -55,6 +55,15 @@ class LionBoard:
         # self.captures.setBoard(0b000000000000)
 
     def setBoard_Fen(self, Fen: str):
+        self.white.setBoard(0b000000000000)
+        self.black.setBoard(0b000000000000)
+        self.lion.setBoard(0b000000000000)
+        self.elephant.setBoard(0b000000000000)
+        self.giraffe.setBoard(0b000000000000)
+        self.chicken.setBoard(0b000000000000)
+        self.hen.setBoard(0b000000000000)
+        self.black_captures = []
+        self.white_captures = []
         i = 11
         for char in Fen:
             if char.isdigit():
@@ -171,6 +180,16 @@ class LionBoard:
         return Fen
 
     def randomBoard(self):
+        self.white.setBoard(0b000000000000)
+        self.black.setBoard(0b000000000000)
+        self.lion.setBoard(0b000000000000)
+        self.elephant.setBoard(0b000000000000)
+        self.giraffe.setBoard(0b000000000000)
+        self.chicken.setBoard(0b000000000000)
+        self.hen.setBoard(0b000000000000)
+        self.black_captures = []
+        self.white_captures = []
+
         # lions
         # white
         rand = random.randint(0, 11)
