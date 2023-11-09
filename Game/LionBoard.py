@@ -471,6 +471,21 @@ class LionBoard:
         self.makeMove(whiteTurn, move.getFrom(), move.getTo())
         return move
 
+    def check_hen(self, whiteTurn: bool):
+        chick = BitBoard.BitBoard()
+        if whiteTurn:
+            chick.setBoard(self.chicken.getBoard() & self.white.getBoard())
+            for i in range(9, 12):
+                if chick.isSquareSet(i):
+                    self.chicken.clearSquare(i)
+                    self.hen.setSquare(i)
+        else:
+            chick.setBoard(self.chicken.getBoard() & self.black.getBoard())
+            for i in range(3):
+                if chick.isSquareSet(i):
+                    self.chicken.clearSquare(i)
+                    self.hen.setSquare(i)
+
     def makeMove(self, whiteTurn: bool, _from, _to):
         move = Move.Move()
         move.setMove(_from, _to)
@@ -506,6 +521,7 @@ class LionBoard:
         for imove in chicken_moves:
             if imove.equals(move):
                 self.pieceMove(Attacker, Defender, move, Captures, self.chicken)
+                self.check_hen(whiteTurn)
                 return True
         for imove in hen_moves:
             if imove.equals(move):
@@ -747,7 +763,11 @@ class LionBoard:
 if __name__ == '__main__':
     board = LionBoard()
     board.setBoard_start()
+
     print(board.getFen())
+
+    for i in range(3):
+        print(i)
     """list = board.allpossibleMoves(True)
     print("move lists len:",len(list))
     i2 = 1
