@@ -1,17 +1,25 @@
 import tkinter as tk
+from tkinter import ttk
+
 from PIL import Image, ImageTk
 from Game import LionBoard, Move
+from AlphaBeta import IterativeDeepening
+from MonteCarlo import MCTS
 
 
 class LionGUI:
-    def __init__(self, frame):
+    def __init__(self, root, frame):
+        self.root = root
         self.frame = frame
+        #self.canvas = tk.Canvas(self.frame, width=1000, height=700, bd=0, highlightthickness=0)
         self.canvas = tk.Canvas(self.frame, width=1000, height=700)
-        self.canvas.bind("<Button-1>", self.on_mouse_click)
+        self.mouse_func = None
+        #self.canvas.bind("<Button-1>", self.on_mouse_click_game)
         self.canvas.pack()
         self.firstclick = True
         self._from = 0
         self._to = 0
+        self.AI_time = 0
 
         self.base_x = 314
         self.base_y = 102
@@ -20,14 +28,9 @@ class LionGUI:
         self.markers_img = [None] * 12
         self.animals = [None] * 12
         self.captures = [None] * 6
-        """self.white_captures_1 = [None]
-        self.white_captures_2 = [None]
-        self.white_captures_3 = [None]
-        self.black_captures_1 = [None]
-        self.black_captures_2 = [None]
-        self.black_captures_3 = [None]"""
         self.board = LionBoard.LionBoard()
         self.whiteTurn = True
+        self.ID = IterativeDeepening.iterativeDeepeningAB()
 
         # Draw Background
         img = Image.open("../GUI_Resources/Catch_The_Lion_Board.png")
@@ -35,55 +38,104 @@ class LionGUI:
         self.images.append(ImageTk.PhotoImage(resized_image))
         self.canvas.create_image(500, 350, image=self.images[-1])
 
-        #Load Animal Images
-        """img = Image.open("../GUI_Resources/Hen.jpg")
-        resized_image = img.resize((121, 121))
-        self.Hen = resized_image
-        self.animals_img.append(resized_image)
-        x = 0 % 3
-        y = 3 - int(0 / 3)
-        self.canvas.create_image(self.base_x + x * 126 + 58, self.base_y + y * 126 + 58, image=self.animals_img[-1])"""
+        self.GameText = self.canvas.create_text(500, 50, text="Catch the Lion", fill="black", font=('Helvetica 20 bold'))
+        self.PvP_button = tk.Button(self.canvas, text="Player vs Player", command=self.PvP_View, anchor="center")
+        self.PvA_button = tk.Button(self.canvas, text="Player vs AI", command=self.PvA_View, anchor="center")
 
-        """img = Image.open("../GUI_Resources/Hen.jpg")
-        resized_image = img.resize((121, 121))
-        self.Hen = resized_image
-        self.animals_img.append(resized_image)"""
+        self.window_1 = self.canvas.create_window(850, 110, width=120, height=30, window=self.PvP_button)
+        self.window_2 = self.canvas.create_window(850, 150, width=120, height=30, window=self.PvA_button)
+        self.window_3 = self.canvas.create_window(850, 180, width=120, height=30)
+        self.window_4 = self.canvas.create_window(850, 220, width=120, height=30)
+        self.window_5 = self.canvas.create_window(850, 260, width=120, height=30)
+        self.canvas.itemconfig(self.window_3, state="hidden")
+        self.canvas.itemconfig(self.window_4, state="hidden")
+        self.canvas.itemconfig(self.window_5, state="hidden")
 
-        """img = Image.open("../GUI_Resources/Chicken.jpg")
-        resized_image = img.resize((121, 121))
-        self.Chicken = resized_image
-        img = Image.open("../GUI_Resources/Lion.jpg")
-        resized_image = img.resize((121, 121))
-        self.Lion = resized_image
-        img = Image.open("../GUI_Resources/Giraffe.jpg")
-        resized_image = img.resize((121, 121))
-        self.Giraffe = resized_image
-        img = Image.open("../GUI_Resources/Elephant.jpg")
-        resized_image = img.resize((121, 121))
-        self.Elephant = resized_image
+        #button1 = tk.Button(self, text="Quit", command=self.quit, anchor=W)
+        #self.button1 = tk.Button(self.canvas, text="Begin Game", command=self.begin_game, anchor="center")
+        #self.button1.configure(width=25, height=25, activebackground="blue", relief="flat")
+       # self.button1.configure(width=10, activebackground="#33B5E5", relief="flat")
+        #self.button1_window = self.canvas.create_window(50, 100, width=100, height=30, window=self.button1)
+        #self.text = tk.Label(self.frame, text="Centered Label 1")
+        #self.root.wm_attributes('-transparent')
+        #self.text_window = self.canvas.create_window(10, 10, anchor="nw", window=self.text)
 
-        img = Image.open("../GUI_Resources/Black_Hen.jpeg")
-        resized_image = img.resize((121, 121))
-        self.Black_Hen = resized_image
-        img = Image.open("../GUI_Resources/Black_Lion.jpeg")
-        resized_image = img.resize((121, 121))
-        self.Black_Lion = resized_image
-        img = Image.open("../GUI_Resources/Black_Chicken.jpeg")
-        resized_image = img.resize((121, 121))
-        self.Black_Chicken = resized_image
-        img = Image.open("../GUI_Resources/Black_Elephant.jpeg")
-        resized_image = img.resize((121, 121))
-        self.Black_Elephant = resized_image
-        img = Image.open("../GUI_Resources/Black_Giraffe.jpeg")
-        resized_image = img.resize((121, 121))
-        self.Black_Giraffe = resized_image
+        #quitImage = ImageTk.PhotoImage(Image.open("../GUI_Resources/Button.png").resize((200, 200)))
+        #quitButton = self.canvas.create_image(200, 200, image=quitImage)
+        #self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Button.png").resize((200, 200))))
+        #quitButton = self.canvas.create_image(200, 200, image=self.images[-1])
+        #self.canvas.tag_bind(quitButton, "<Button-1>", self.quitGame)
 
-        img = Image.open("../GUI_Resources/Hen.jpg")
-        resized_image = img.resize((121, 121))
-        self.images.append(ImageTk.PhotoImage(resized_image))
-        x = 0 % 3
-        y = 3 - int(0 / 3)
-        self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])"""
+    def quitGame(self, event):
+        self.root.destroy()
+
+    def begin_game(self):
+        self.clear_board()
+        self.draw_board_fen("elg/1c1/1C1/GLE/")
+        self.mouse_func = self.canvas.bind("<Button-1>", self.on_mouse_click_game)
+        self.whiteTurn = True
+        self.update_game_text(self.whiteTurn)
+
+    def begin_game_AI(self):
+        self.AI_time = int(self.time_entry.get())
+        self.clear_board()
+        self.draw_board_fen("elg/1c1/1C1/GLE/")
+        self.mouse_func = self.canvas.bind("<Button-1>", self.on_mouse_click_game_AI)
+        self.whiteTurn = True
+        self.update_game_text(self.whiteTurn)
+
+    def default_view(self):
+        self.PvP_button = tk.Button(self.canvas, text="Player vs Player", command=self.PvP_View, anchor="center")
+        self.PvA_button = tk.Button(self.canvas, text="Player vs AI", command=self.PvA_View, anchor="center")
+        self.canvas.itemconfig(self.window_1, window=self.PvP_button)
+        self.canvas.itemconfig(self.window_2, window=self.PvA_button)
+        self.canvas.itemconfig(self.window_3, state="hidden")
+        self.canvas.itemconfig(self.window_4, state="hidden")
+        self.canvas.itemconfig(self.window_5, state="hidden")
+
+    def PvP_View(self):
+        self.Begin_button = tk.Button(self.canvas, text="Begin Game", command=self.begin_game, anchor="center")
+        self.Go_back_button = tk.Button(self.canvas, text="Go Back", command=self.default_view, anchor="center")
+        self.canvas.itemconfig(self.window_1, window=self.Begin_button)
+        self.canvas.itemconfig(self.window_2, window=self.Go_back_button)
+        #self.canvas.itemconfig(self.button1, text="Begin Game", command=self.begin_game)
+        #self.canvas.itemconfig(self.button2, text="Go Back Game", command=self.begin_game)
+
+    def PvA_View(self):
+        self.Begin_button = tk.Button(self.canvas, text="Begin AI Game", command=self.begin_game_AI, anchor="center")
+        self.Go_back_button = tk.Button(self.canvas, text="Go Back", command=self.default_view, anchor="center")
+        self.time_label = tk.Label(self.canvas, text="Time per turn:")
+        self.time_entry = tk.Entry(self.frame)
+
+        options = ["Alpha-Beta", "MCTS"]
+
+        self.AI_select = ttk.Combobox(self.frame, values=options)
+        self.AI_select.set("Select AI Player")  # Set a default selection
+        self.AI_select.bind("<<ComboboxSelected>>", self.on_AI_select)
+
+        self.canvas.itemconfig(self.window_1, window=self.AI_select)
+        self.canvas.itemconfig(self.window_2, window=self.time_label)
+        self.canvas.itemconfig(self.window_3, window=self.time_entry)
+        self.canvas.itemconfig(self.window_4, window=self.Begin_button)
+        self.canvas.itemconfig(self.window_5, window=self.Go_back_button)
+        self.canvas.itemconfig(self.window_3, state="normal")
+        self.canvas.itemconfig(self.window_4, state="normal")
+        self.canvas.itemconfig(self.window_5, state="normal")
+        #self.window_3 = self.canvas.create_window(850, 190, width=120, height=30, window=self.Go_back_button)
+
+    def on_AI_select(self, event):
+        selected_item = self.AI_select.get()
+        self.AI_player = selected_item
+
+    def end_game(self):
+        if self.board.hasWhiteWon():
+            self.canvas.itemconfig(self.GameText, text="White has won!")
+        elif self.board.hasBlackWon():
+            self.canvas.itemconfig(self.GameText, text="Black has won!")
+        else:
+            raise Exception("In end Game even tho no one has won")
+        self.canvas.unbind("<Button 1>", self.mouse_func)
+
 
     def create_rectangle(self, x, y, a, b, **options):
         if 'alpha' in options:
@@ -91,35 +143,92 @@ class LionGUI:
             alpha = int(options.pop('alpha') * 255)
             # Use the fill variable to fill the shape with transparent color
             fill = options.pop('fill')
-            fill = root.winfo_rgb(fill) + (alpha,)
+            fill = self.root.winfo_rgb(fill) + (alpha,)
             image = Image.new('RGBA', (a - x, b - y), fill)
             self.images.append(ImageTk.PhotoImage(image))
             image = self.canvas.create_image(x, y, image=self.images[-1], anchor='nw')
             rectangle = self.canvas.create_rectangle(x, y, a, b, **options)
             return rectangle, image
 
-    def on_mouse_click(self, event):
+    def update_game_text(self, whiteTurn:bool):
+        if whiteTurn:
+            self.canvas.itemconfig(self.GameText, text="White´s Turn")
+        else:
+            self.canvas.itemconfig(self.GameText, text="Black´s Turn")
+
+    def on_mouse_click_game_AI(self, event):
         x, y = event.x, event.y
         try:
-            animal, index = self.get_index(x, y)
+            #animal, index = self.get_index(x, y)
+            index = self.get_index(x, y)
         except Exception:
             return
         if self.firstclick:
-            if animal:
-                self._from = index
-                list = self.board.allpossibleMoves_BigList(self.whiteTurn)
-                for move in list:
-                    if move.getFrom() == self._from:
-                        self.mark_field(move.getTo())
-                self.firstclick = not self.firstclick
-            else:
-                self._from = index
-                list = self.board.allpossibleMoves_BigList(self.whiteTurn)
-                for move in list:
-                    if move.getFrom() == self._from:
-                        self.mark_field(move.getTo())
-                self.firstclick = not self.firstclick
+            self._from = index
+            list = self.board.allpossibleMoves_BigList(self.whiteTurn)
+            for move in list:
+                if move.getFrom() == self._from:
+                    self.mark_field(move.getTo())
+            self.firstclick = not self.firstclick
         else:
+            self.clear_marks()
+            if self.whiteTurn:
+                if index == "c" or index == "g" or index == "e" or self.board.white.isSquareSet(index):
+                    self._from = index
+                    list = self.board.allpossibleMoves_BigList(self.whiteTurn)
+                    for move in list:
+                        if move.getFrom() == self._from:
+                            self.mark_field(move.getTo())
+                    return
+            else:
+                if index == "c" or index == "g" or index == "e" or self.board.black.isSquareSet(index):
+                    self._from = index
+                    list = self.board.allpossibleMoves_BigList(self.whiteTurn)
+                    for move in list:
+                        if move.getFrom() == self._from:
+                            self.mark_field(move.getTo())
+                    return
+
+            self._to = index
+            self.makeMove(self._from, self._to)
+            self.canvas.itemconfig(self.GameText, text="AI´s Turn")
+            self.canvas.update()
+            self.make_AI_Move()
+            self.firstclick = not self.firstclick
+
+    def on_mouse_click_game(self, event):
+        x, y = event.x, event.y
+        try:
+            #animal, index = self.get_index(x, y)
+            index = self.get_index(x, y)
+        except Exception:
+            return
+        if self.firstclick:
+            self._from = index
+            list = self.board.allpossibleMoves_BigList(self.whiteTurn)
+            for move in list:
+                if move.getFrom() == self._from:
+                    self.mark_field(move.getTo())
+            self.firstclick = not self.firstclick
+        else:
+            self.clear_marks()
+            if self.whiteTurn:
+                if index == "c" or index == "g" or index == "e" or self.board.white.isSquareSet(index):
+                    self._from = index
+                    list = self.board.allpossibleMoves_BigList(self.whiteTurn)
+                    for move in list:
+                        if move.getFrom() == self._from:
+                            self.mark_field(move.getTo())
+                    return
+            else:
+                if index == "c" or index == "g" or index == "e" or self.board.black.isSquareSet(index):
+                    self._from = index
+                    list = self.board.allpossibleMoves_BigList(self.whiteTurn)
+                    for move in list:
+                        if move.getFrom() == self._from:
+                            self.mark_field(move.getTo())
+                    return
+
             self._to = index
             self.makeMove(self._from, self._to)
             self.firstclick = not self.firstclick
@@ -140,17 +249,17 @@ class LionGUI:
             self.canvas.delete(i)
 
     def get_index(self, x:int, y:int):
-        animal = True
+        #animal = True
         index = 0
         if self.base_x + 59 - 60 < x < self.base_x + 59 + 2 * 126 + 60 and self.base_y + 59 - 60 < y < self.base_y + 59 + 3 * 126 + 60:
-            animal = True
+            #animal = True
             index_x = (x-(self.base_x+59))/126
             index_x = round(index_x)
             index_y = (y - (self.base_y + 59)) / 126
             index_y = round(index_y)
             index = abs(3 - index_y) * 3 + index_x
         elif self.base_x - 126 + 55 - 32 < x < self.base_x - 126 + 55 + 32 and self.base_y + 0 * 80 + 36 - 32 < y < self.base_y + 5 * 80 + 59 + 32:
-            animal = False
+            #animal = False
             if y < self.base_y + 2 * 80 + 36 + 32:
                 index = (y-(self.base_y+36))/80
             elif y > self.base_y + 3 * 80 + 59 - 32:
@@ -174,7 +283,8 @@ class LionGUI:
         else:
             raise Exception("Input out of Grid Bounds")
         #returns if its animal or reserve index
-        return animal, index
+        #return animal, index
+        return index
 
     def draw_animal(self, index: int, animal:str):
         if self.animals[index]:
@@ -218,7 +328,7 @@ class LionGUI:
             self.canvas.delete(self.animals[index])
 
     def draw_reserve(self, animal: str):
-        print(f"draw reserve:{animal}")
+        # print(f"draw reserve:{animal}")
         match animal:
             case 'e':
                 if not self.captures[0]:
@@ -245,40 +355,12 @@ class LionGUI:
                     self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Chicken.jpg").resize((75, 75))))
                     self.captures[5] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 3 * 80 + 59, image=self.images[-1])
 
-    """case 'E':
-                if not self.black_captures_1[0]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Elephant.jpeg").resize((75, 75))))
-                    self.black_captures_1[0] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 0 * 126 + 36, image=self.images[-1])
-            case 'G':
-                if not self.black_captures_2[0]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Giraffe.jpeg").resize((75, 75))))
-                    self.black_captures_2[0] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 1 * 80 + 36, image=self.images[-1])
-            case 'C':
-                if not self.black_captures_3[0]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Chicken.jpeg").resize((75, 75))))
-                    self.black_captures_3[0] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 2 * 80 + 36, image=self.images[-1])
-            case 'e':
-                if not self.white_captures_1[0]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Elephant.jpg").resize((75, 75))))
-                    self.white_captures_1[0] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 5 * 80 + 59, image=self.images[-1])
-            case 'g':
-                if not self.white_captures_2[0]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Giraffe.jpg").resize((75, 75))))
-                    self.white_captures_2[0] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 4 * 80 + 59, image=self.images[-1])
-            case 'c':
-                if not self.white_captures_3[0]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Chicken.jpg").resize((75, 75))))
-                    self.white_captures_3[0] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 3 * 80 + 59, image=self.images[-1])"""
-
     def delete_reserve(self, index:int):
         if self.captures[index]:
             self.canvas.delete(self.captures[index])
 
     def draw_board_fen(self, Fen:str):
         self.board.setBoard_Fen(Fen)
-        #self.whiteTurn = True
-        #self.white_captures = []
-        #self.black_captures = []
         i = 11
         for char in Fen:
             if char.isdigit():
@@ -308,17 +390,29 @@ class LionGUI:
         self.clear_board()
         self.draw_board_fen(self.board.getFen())
 
+    def make_AI_Move(self):
+        match self.AI_player:
+            case "Alpha-Beta":
+                eval, moves = self.ID.iterativeDeepening_AB(self.AI_time, self.board, self.whiteTurn)
+                self.makeMove(moves[0].getFrom(), moves[0].getTo())
+            case "MCTS":
+                result_node = MCTS.MCTS(self.board, self.whiteTurn, self.AI_time)
+                self.makeMove(result_node.move.getFrom(), result_node.move.getTo())
+
     def makeMove(self, x:int, y:int):
         #print(f"from:{x} to:{y}, whiteTurn:{self.whiteTurn}")
         #print(self.board.getFen())
-        bool = self.board.makeMove(self.whiteTurn, x, y)
-        self.clear_marks()
+        #bool = self.board.makeMove(self.whiteTurn, x, y)
         #print(bool)
         #self.board.printBoard()
-        if bool:
+        if self.board.makeMove(self.whiteTurn, x, y):
             #print("we in if boyzzz")
-            self.whiteTurn = not self.whiteTurn
             self.draw_board()
+            if self.board.isGameOver():
+                self.end_game()
+                return
+            self.whiteTurn = not self.whiteTurn
+            self.update_game_text(self.whiteTurn)
 
 
 if __name__ == "__main__":
@@ -326,13 +420,13 @@ if __name__ == "__main__":
     root.geometry("1000x700")
 
     Lion_frame = tk.Frame(root)
-    GUI = LionGUI(Lion_frame)
+    GUI = LionGUI(root, Lion_frame)
     Lion_frame.pack(expand=True, fill="both")
     Lion_frame.tkraise()
 
     #GUI.create_rectangle(310 + 5, 100 + 3, 435 - 3, 225 - 5, fill="blue", alpha=.3)
     #GUI.draw_animal(0, "L")
-    GUI.draw_board_fen("elg/1c1/1C1/GLE/")
+    #GUI.draw_board_fen("elg/1c1/1C1/GLE/")
     #GUI.mark_field(4)
     #GUI.board.randomBoard()
     #GUI.makeMove(4,7)

@@ -36,13 +36,6 @@ class LionBoard:
         self.hen_black_moves = [0b000000001010, 0b000000010101, 0b000000100010, 0b000001010011,
                                 0b000010101111, 0b000100010110, 0b001010011000, 0b010101111000,
                                 0b100010110000, 0b010011000000, 0b101111000000, 0b010110000000]
-        """
-        for i in self.hen_white_moves:
-            temp = BitBoard.BitBoard()
-            temp.setBoard(i)
-            temp.printBitBoard()
-            print()
-        """
 
     def setBoard_start(self):
         self.white.setBoard(0b000000010111)
