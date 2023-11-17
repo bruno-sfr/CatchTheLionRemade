@@ -6,6 +6,7 @@ from tkinter import *
 from Game import LionBoard, Move
 from MonteCarlo import MCTS
 from AlphaBeta import IterativeDeepening
+from GUI import LionBoard_GUI
 
 
 def show_frame(frame):
@@ -188,7 +189,7 @@ def game():
 """"-----------------------------------------------------------------------------------------------------------"""
 # the Root
 root = tk.Tk()
-root.geometry("700x350")
+root.geometry("1000x700")
 root.title("Simulator")
 #root.grid_rowconfigure(0, weight=1)
 #root.columnconfigure(0, weight=1)
@@ -197,6 +198,11 @@ root.title("Simulator")
 """"-----------------------------------------------------------------------------------------------------------"""
 # menu frame
 menu_frame = tk.Frame(root)
+"""Lion_frame = tk.Frame(root)
+LionGUI = LionBoard_GUI.LionGUI(root,Lion_frame)
+LionGUI.draw_board_fen("elg/1c1/1C1/GLE/")
+menu_button_2 = tk.Button(menu_frame, text="Go to Game", command=lambda: show_frame(Lion_frame))
+menu_button_2.pack()"""
 #menu_frame.grid_rowconfigure(0, weight=1)
 #menu_frame.grid_columnconfigure(0, weight=1)
 

@@ -85,6 +85,7 @@ class LionGUI:
         self.update_game_text(self.whiteTurn)
 
     def default_view(self):
+        self.clear_board()
         self.PvP_button = tk.Button(self.canvas, text="Player vs Player", command=self.PvP_View, anchor="center")
         self.PvA_button = tk.Button(self.canvas, text="Player vs AI", command=self.PvA_View, anchor="center")
         self.canvas.itemconfig(self.window_1, window=self.PvP_button)
@@ -293,34 +294,34 @@ class LionGUI:
         y = 3 - int(index / 3)
         match animal:
             case "L":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Lion.jpg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Lion.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "H":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Hen.jpg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Hen.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "C":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Chicken.jpg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Chicken.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "G":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Giraffe.jpg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Giraffe.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "E":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Elephant.jpg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Elephant.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "l":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Lion.jpeg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Lion.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "g":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Giraffe.jpeg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Giraffe.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "e":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Elephant.jpeg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Elephant.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "c":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Chicken.jpeg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Chicken.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
             case "h":
-                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Hen.jpeg").resize((121, 121))))
+                self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Hen.png").resize((121, 121))))
                 self.animals[index] = self.canvas.create_image(self.base_x + x * 126 + 59, self.base_y + y * 126 + 59, image=self.images[-1])
 
     def delete_animal(self, index: int):
@@ -332,27 +333,27 @@ class LionGUI:
         match animal:
             case 'e':
                 if not self.captures[0]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Elephant.jpeg").resize((75, 75))))
+                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Elephant.png").resize((75, 75))))
                     self.captures[0] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 0 * 80 + 36, image=self.images[-1])
             case 'g':
                 if not self.captures[1]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Giraffe.jpeg").resize((75, 75))))
+                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Giraffe.png").resize((75, 75))))
                     self.captures[1] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 1 * 80 + 36,image=self.images[-1])
             case 'c':
                 if not self.captures[2]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Chicken.jpeg").resize((75, 75))))
+                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Black_Chicken.png").resize((75, 75))))
                     self.captures[2] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 2 * 80 + 36,image=self.images[-1])
             case 'E':
                 if not self.captures[3]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Elephant.jpg").resize((75, 75))))
+                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Elephant.png").resize((75, 75))))
                     self.captures[3] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 5 * 80 + 59, image=self.images[-1])
             case 'G':
                 if not self.captures[4]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Giraffe.jpg").resize((75, 75))))
+                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Giraffe.png").resize((75, 75))))
                     self.captures[4] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 4 * 80 + 59, image=self.images[-1])
             case 'C':
                 if not self.captures[5]:
-                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Chicken.jpg").resize((75, 75))))
+                    self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Chicken.png").resize((75, 75))))
                     self.captures[5] = self.canvas.create_image(self.base_x - 126 + 55, self.base_y + 3 * 80 + 59, image=self.images[-1])
 
     def delete_reserve(self, index:int):

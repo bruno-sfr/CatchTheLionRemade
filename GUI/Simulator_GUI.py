@@ -1,6 +1,8 @@
+import math
 import sys
 import tkinter as tk
 from tkinter import ttk, scrolledtext
+import matplotlib.pyplot as plt
 
 from PIL import Image, ImageTk
 from Game import LionBoard, Move
@@ -20,6 +22,10 @@ class SimGUI:
         self.black_player = ""
         self.time = 0
         self.iterations = 0
+        self.white_wins = 0
+        self.white_wins_list = [0]
+        self.black_wins = 0
+        self.black_wins_list = [0]
 
         img = Image.open("../GUI_Resources/Catch_The_Lion_Simple.png")
         resized_image = img.resize((1000, 700))
@@ -38,6 +44,7 @@ class SimGUI:
         self.iterations_label = tk.Label(self.canvas, text="Enter Rounds to be played:")
         self.iterations_entry = tk.Entry(self.canvas)
         self.begin_button = tk.Button(self.canvas, text="Begin Simulation", command=self.Begin, anchor="center")
+        self.plot_button = tk.Button(self.canvas, text="Plot Simulation", command=self.plot_result, anchor="center")
 
         self.window_1 = self.canvas.create_window(350, 350, width=600, height=600, window=self.text_widget)
         self.window_2 = self.canvas.create_window(825, 100, width=200, height=30, window=self.white)
@@ -47,6 +54,7 @@ class SimGUI:
         self.window_6 = self.canvas.create_window(825, 275, width=200, height=30, window=self.iterations_label)
         self.window_7 = self.canvas.create_window(825, 300, width=200, height=30, window=self.iterations_entry)
         self.window_8 = self.canvas.create_window(825, 350, width=200, height=30, window=self.begin_button)
+        self.window_9 = self.canvas.create_window(825, 400, width=200, height=30, window=self.plot_button)
 
     def add_text(self, new_text):
         self.text_widget.insert(tk.END, new_text + "\n")
@@ -58,6 +66,10 @@ class SimGUI:
         self.black_player = self.black.get()
         self.time = int(self.time_entry.get())
         self.iterations = int(self.iterations_entry.get())
+        self.white_wins = 0
+        self.white_wins_list = [0]
+        self.black_wins = 0
+        self.black_wins_list = [0]
         self.game()
 
     def game(self):
@@ -114,8 +126,35 @@ class SimGUI:
                 whiteTurn = not whiteTurn
             if board.hasWhiteWon():
                 self.add_text("White has won")
+                self.white_wins = self.white_wins + 1
             elif board.hasBlackWon():
                 self.add_text("Black has won")
+                self.black_wins = self.black_wins + 1
+            self.white_wins_list.append(self.white_wins)
+            self.black_wins_list.append(self.black_wins)
+
+    def plot_result(self):
+        x = range(0, self.iterations + 1)
+        #x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
+        #plt.xticks(x_list)
+
+        plt.plot(x, self.white_wins_list, label=self.white_player)
+        plt.plot(x, self.black_wins_list, label=self.black_player)
+        plt.xlabel("Rounds")
+        plt.ylabel("Wins")
+        plt.title(f"Comparison {self.white_player} vs {self.black_player} Time {self.time}")
+        plt.legend()
+        plt.savefig(f"../Resources/Benchmark_GUI_{self.white_player}_vs_{self.black_player}_{self.time}.png")
+        #plt.show()
+
+        self.plot_canvas = tk.Canvas(self.frame, width=1000, height=700)
+        img = Image.open(f"../Resources/Benchmark_GUI_{self.white_player}_vs_{self.black_player}_{self.time}s.png")
+        resized_image = img.resize((933, 700))
+        self.images.append(ImageTk.PhotoImage(resized_image))
+        self.plot_canvas.create_image(466, 350, image=self.images[-1])
+        self.canvas.pack_forget()
+        self.plot_canvas.pack()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
