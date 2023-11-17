@@ -192,10 +192,11 @@ class LionGUI:
 
             self._to = index
             self.makeMove(self._from, self._to)
-            self.canvas.itemconfig(self.GameText, text="AI´s Turn")
-            self.canvas.update()
-            self.make_AI_Move()
-            self.firstclick = not self.firstclick
+            if not (self.board.isGameOver()):
+                self.canvas.itemconfig(self.GameText, text="AI´s Turn")
+                self.canvas.update()
+                self.make_AI_Move()
+                self.firstclick = not self.firstclick
 
     def on_mouse_click_game(self, event):
         x, y = event.x, event.y

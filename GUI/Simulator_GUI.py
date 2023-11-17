@@ -45,6 +45,7 @@ class SimGUI:
         self.iterations_entry = tk.Entry(self.canvas)
         self.begin_button = tk.Button(self.canvas, text="Begin Simulation", command=self.Begin, anchor="center")
         self.plot_button = tk.Button(self.canvas, text="Plot Simulation", command=self.plot_result, anchor="center")
+        self.round_Label = tk.Label(self.canvas, text="Rounds to be played")
 
         self.window_1 = self.canvas.create_window(350, 350, width=600, height=600, window=self.text_widget)
         self.window_2 = self.canvas.create_window(825, 100, width=200, height=30, window=self.white)
@@ -55,6 +56,8 @@ class SimGUI:
         self.window_7 = self.canvas.create_window(825, 300, width=200, height=30, window=self.iterations_entry)
         self.window_8 = self.canvas.create_window(825, 350, width=200, height=30, window=self.begin_button)
         self.window_9 = self.canvas.create_window(825, 400, width=200, height=30, window=self.plot_button)
+        self.window_10 = self.canvas.create_window(350, 27, width=200, height=30, window=self.round_Label)
+        self.canvas.itemconfig(self.window_10, state="hidden")
 
     def add_text(self, new_text):
         self.text_widget.insert(tk.END, new_text + "\n")
@@ -74,7 +77,10 @@ class SimGUI:
 
     def game(self):
         sys.setrecursionlimit(15000)
+        self.canvas.itemconfig(self.window_10, state="normal")
         for i in range(0, self.iterations):
+            self.round_Label.config(text=f"Round {i + 1} of {self.iterations}")
+            self.canvas.update()
             board = LionBoard.LionBoard()
             board.setBoard_start()
             ID = IterativeDeepening.iterativeDeepeningAB()
@@ -144,7 +150,7 @@ class SimGUI:
         plt.ylabel("Wins")
         plt.title(f"Comparison {self.white_player} vs {self.black_player} Time {self.time}")
         plt.legend()
-        plt.savefig(f"../Resources/Benchmark_GUI_{self.white_player}_vs_{self.black_player}_{self.time}.png")
+        plt.savefig(f"../Resources/Benchmark_GUI_{self.white_player}_vs_{self.black_player}_{self.time}s.png")
         #plt.show()
 
         self.plot_canvas = tk.Canvas(self.frame, width=1000, height=700)
