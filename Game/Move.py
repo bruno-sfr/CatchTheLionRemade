@@ -20,7 +20,7 @@ class Move:
         self._to = __to
 
     def equals(self, move):
-        if self._to == move._to and self._from == move._from:
+        if self._to == move.getTo() and self._from == move.getFrom():
             return True
         else:
             return False

@@ -35,14 +35,15 @@ def MCTS(state: LionBoard, whiteTurn: bool, time):
         signal.alarm(timeout_seconds)
 
         while True:
-            selected_node = selection(root)
-            expanded_node = expansion(selected_node)
+            """selected_node = selection(root)
+            expanded_node = expansion(selected_node)"""
+            expanded_node = selection_including_Expansion(root)
             result = simulation(expanded_node, whiteTurn)
             backpropagate(expanded_node, result)
     except TimeoutError as e:
         print(e)
 
-    #root.printTree(0)
+    root.printTree(0)
     """print("Root Visits:", root.visits)
     print("Root children:")
     i2 = 1
@@ -135,6 +136,37 @@ def MCTS_full_expansion(state: LionBoard, whiteTurn: bool, time):
         i2 = i2 + 1
     print("---------------------------------")"""
     return best_child(root)
+
+def selection_including_Expansion(node: MCTS_Node):
+    move_list = node.state.allpossibleMoves_BigList(node.whiteTurn)
+    # is there a not expanded move for this node?
+    if len(node.children) == 0:
+        state = copy.deepcopy(node.state)
+        move = state.makeRandomMove(node.whiteTurn)
+        child = MCTS_Node.MCTS_Node(node, state, not (node.whiteTurn), move)
+        node.add_child(child)
+        return child
+    elif len(node.children) < len(move_list):
+        # find move that is not expaned by iterationg over children
+        for move in move_list:
+            for child in node.children:
+                test = move.equals(child.move)
+                if test:
+                    continue
+            else:
+                # add node with move
+                state = copy.deepcopy(node.state)
+                state.makeMove(node.whiteTurn, move.getFrom(), move.getTo())
+                new_child = MCTS_Node.MCTS_Node(node, state, not (node.whiteTurn), move)
+                node.add_child(new_child)
+                return new_child
+                break
+    else:
+        best_child = node.children[0]
+        for child in node.children:
+            if best_child.UCT() < child.UCT():
+                best_child = child
+        return selection_including_Expansion(best_child)
 
 
 # selects next node to expand by comparing all existing nodes, also not termial ones
@@ -275,13 +307,13 @@ if __name__ == '__main__':
     sys.setrecursionlimit(5000)
     board = LionBoard.LionBoard()
     board.setBoard_start()
-    print("")
+    """print("")
     print("MCTS_MR")
     result_node = MCTS_MR(board, True, 5, 3)
     result_node.move.printMove()
     print("Result node Children Count:", len(result_node.children))
     print("Visits:", result_node.visits)
-    print("Score:", result_node.score)
+    print("Score:", result_node.score)"""
 
     print("")
     print("MCTS")
@@ -291,10 +323,21 @@ if __name__ == '__main__':
     print("Visits:", result_node.visits)
     print("Score:", result_node.score)
 
-    print("")
+    """print("")
     print("MCTS_full_expansion")
     result_node = MCTS_full_expansion(board, True, 5)
     result_node.move.printMove()
     print("Result node Children Count:", len(result_node.children))
     print("Visits:", result_node.visits)
-    print("Score:", result_node.score)
+    print("Score:", result_node.score)"""
+
+    """   list1 = [2,3,4,2]
+        list2 = [2,3]
+    
+        for i1 in list1:
+            for i2 in list2:
+                if i1 == i2:
+                    break
+            else:
+                print(i1)
+                break"""

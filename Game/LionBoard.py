@@ -444,7 +444,7 @@ class LionBoard:
         return list
 
     def makeRandomMove(self,  whiteTurn: bool):
-        MAX_ITERATIONS = 10
+        """MAX_ITERATIONS = 10
         i = 0
         list = self.allpossibleMoves(whiteTurn)
         rand = random.randint(0, 5)
@@ -453,6 +453,7 @@ class LionBoard:
                 rand = random.randint(0, 5)
                 i = i + 1
             if i == MAX_ITERATIONS:
+                #break
                 return
 
         if len(list[rand]) > 1:
@@ -460,7 +461,14 @@ class LionBoard:
         else:
             rand2 = 0
         move = Move.Move()
-        move.setMove(list[rand][rand2].getFrom(), list[rand][rand2].getTo())
+        move.setMove(list[rand][rand2].getFrom(), list[rand][rand2].getTo())"""
+        list = self.allpossibleMoves_BigList(whiteTurn)
+        if len(list) == 0:
+            raise Exception("No Possible moves")
+        else:
+            rand = random.randint(0, len(list)-1)
+            move = Move.Move()
+            move.setMove(list[rand].getFrom(), list[rand].getTo())
         self.makeMove(whiteTurn, move.getFrom(), move.getTo())
         return move
 
