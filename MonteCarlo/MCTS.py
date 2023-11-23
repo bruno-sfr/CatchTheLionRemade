@@ -6,7 +6,6 @@ from MonteCarlo import MCTS_Node
 from Game import LionBoard, Move
 from AlphaBeta import AlphaBeta
 import signal
-import math
 
 """
 MonteCarlo from https://www.geeksforgeeks.org/ml-monte-carlo-tree-search-mcts/ and https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
@@ -19,7 +18,7 @@ class TimeoutError(Exception):
 
 
 def timeout_handler(signum, frame):
-    #raise TimeoutError()
+    # raise TimeoutError()
     raise TimeoutError("Function execution timed out.")
 
 
@@ -30,7 +29,7 @@ def MCTS(state: LionBoard, whiteTurn: bool, time):
 
     timeout_seconds = time
     signal.signal(signal.SIGALRM, timeout_handler)
-
+    timeout = False
     try:
         signal.alarm(timeout_seconds)
 
@@ -38,22 +37,35 @@ def MCTS(state: LionBoard, whiteTurn: bool, time):
             """selected_node = selection(root)
             expanded_node = expansion(selected_node)"""
             expanded_node = selection_including_Expansion(root)
-            result = simulation(expanded_node, whiteTurn)
-            backpropagate(expanded_node, result)
+            if expanded_node:
+                result = simulation(expanded_node, whiteTurn)
+                backpropagate(expanded_node, result)
+            if timeout:
+                return best_child(root)
     except TimeoutError as e:
         print(e)
+        timeout = True
+        best_node = best_child(root)
+        print("Visits:", best_node.visits)
+        print("Score:", best_node.score)
+        return best_node
 
-    root.printTree(0)
-    """print("Root Visits:", root.visits)
-    print("Root children:")
-    i2 = 1
-    for i in root.children:
-        print("Root child", i2, " visits:", i.visits)
-        i2 = i2 + 1
-    print("---------------------------------")"""
-    return best_child(root)
+    # root.printTree(0)
+    #print("Root Visits:", root.visits)
+    #print("Root children:")
+    #i2 = 1
+    #for i in root.children:
+    #    print("Root child", i2, " visits:", i.visits)
+    #    i.move.printMove()
+    #    i2 = i2 + 1
+    #print("---------------------------------")
+    #best_node = best_child(root)
+    #print("Visits:", best_node.visits)
+    #print("Score:", best_node.score)
+    #return best_child(root)
 
-def MCTS_MR(state: LionBoard, whiteTurn: bool, time, depth:int):
+
+def MCTS_MR(state: LionBoard, whiteTurn: bool, time, depth: int):
     none_move = Move.Move()
     root = MCTS_Node.MCTS_Node(None, state, whiteTurn, none_move)
 
@@ -64,14 +76,15 @@ def MCTS_MR(state: LionBoard, whiteTurn: bool, time, depth:int):
         signal.alarm(timeout_seconds)
 
         while True:
-            selected_node = selection(root)
-            expanded_node = expansion(selected_node)
+            # selected_node = selection(root)
+            # expanded_node = expansion(selected_node)
+            expanded_node = selection_including_Expansion(root)
             result = MiniMax_Rollout(expanded_node, whiteTurn, depth)
             backpropagate(expanded_node, result)
     except TimeoutError as e:
         print(e)
 
-    #root.printTree(0)
+    # root.printTree(0)
     """print("Root Visits:", root.visits)
     print("Root children:")
     i2 = 1
@@ -81,7 +94,8 @@ def MCTS_MR(state: LionBoard, whiteTurn: bool, time, depth:int):
     print("---------------------------------")"""
     return best_child(root)
 
-def MCTS_MR_win_loss(state: LionBoard, whiteTurn: bool, time, depth:int):
+
+def MCTS_MR_win_loss(state: LionBoard, whiteTurn: bool, time, depth: int):
     none_move = Move.Move()
     root = MCTS_Node.MCTS_Node(None, state, whiteTurn, none_move)
 
@@ -99,7 +113,7 @@ def MCTS_MR_win_loss(state: LionBoard, whiteTurn: bool, time, depth:int):
     except TimeoutError as e:
         print(e)
 
-    #root.printTree(0)
+    # root.printTree(0)
     """print("Root Visits:", root.visits)
     print("Root children:")
     i2 = 1
@@ -108,6 +122,7 @@ def MCTS_MR_win_loss(state: LionBoard, whiteTurn: bool, time, depth:int):
         i2 = i2 + 1
     print("---------------------------------")"""
     return best_child(root)
+
 
 def MCTS_full_expansion(state: LionBoard, whiteTurn: bool, time):
     none_move = Move.Move()
@@ -127,7 +142,7 @@ def MCTS_full_expansion(state: LionBoard, whiteTurn: bool, time):
     except TimeoutError as e:
         print(e)
 
-    #root.printTree(0)
+    # root.printTree(0)
     """print("Root Visits:", root.visits)
     print("Root children:")
     i2 = 1
@@ -137,18 +152,37 @@ def MCTS_full_expansion(state: LionBoard, whiteTurn: bool, time):
     print("---------------------------------")"""
     return best_child(root)
 
+
 def selection_including_Expansion(node: MCTS_Node):
     move_list = node.state.allpossibleMoves_BigList(node.whiteTurn)
     # is there a not expanded move for this node?
     if len(node.children) == 0:
         state = copy.deepcopy(node.state)
-        move = state.makeRandomMove(node.whiteTurn)
+        try:
+            move = state.makeRandomMove(node.whiteTurn)
+        except Exception as e:
+            print(e)
+            return node
         child = MCTS_Node.MCTS_Node(node, state, not (node.whiteTurn), move)
         node.add_child(child)
         return child
     elif len(node.children) < len(move_list):
         # find move that is not expaned by iterationg over children
         for move in move_list:
+            move_in_children = False
+            for child in node.children:
+                if child.move.equals(move):
+                    move_in_children = True
+            if move_in_children:
+                continue
+            else:
+                # add node with move
+                state = copy.deepcopy(node.state)
+                state.makeMove(node.whiteTurn, move.getFrom(), move.getTo())
+                new_child = MCTS_Node.MCTS_Node(node, state, not (node.whiteTurn), move)
+                node.add_child(new_child)
+                return new_child
+        """for move in move_list:
             for child in node.children:
                 test = move.equals(child.move)
                 if test:
@@ -160,7 +194,7 @@ def selection_including_Expansion(node: MCTS_Node):
                 new_child = MCTS_Node.MCTS_Node(node, state, not (node.whiteTurn), move)
                 node.add_child(new_child)
                 return new_child
-                break
+                break"""
     else:
         best_child = node.children[0]
         for child in node.children:
@@ -183,6 +217,7 @@ def selection(node: MCTS_Node):
                 best_node = child
     return best_node
 
+
 # selects node to expand via UCT, that is also Terminal
 def terminal_selection(node: MCTS_Node):
     traverse_node = node
@@ -204,11 +239,13 @@ def expansion(node: MCTS_Node):
     node.add_child(child)
     return child
 
+
 # expands by adding all possible children and returns one of the children randomly
 def complete_expansion(node: MCTS_Node):
     list = node.state.allpossibleMoves(node.whiteTurn)
 
-    if  len(list[0]) == 0 and len(list[1]) == 0 and len(list[2]) == 0 and len(list[3]) == 0 and len(list[4]) == 0 and len(list[5]) == 0:
+    if len(list[0]) == 0 and len(list[1]) == 0 and len(list[2]) == 0 and len(list[3]) == 0 and len(
+            list[4]) == 0 and len(list[5]) == 0:
         # no possible moves
         return node
 
@@ -226,23 +263,32 @@ def complete_expansion(node: MCTS_Node):
     else:
         return node.children[0]
 
+
 # plays random move until endstate or limit is reached
 def simulation(node: MCTS_Node, player: bool):
     state = copy.deepcopy(node.state)
     whiteTurn = copy.deepcopy(node.whiteTurn)
     MAX_ITERATIONS = 100
     i = 0
-    while i < MAX_ITERATIONS and not state.isGameOver:
-        while not state.isGameOver():
+    while i < MAX_ITERATIONS and not state.isGameOver():
+        # while not state.isGameOver():
+        try:
             state.makeRandomMove(whiteTurn)
-            whiteTurn = not whiteTurn
-            i = i + 1
+        except Exception as e:
+            print(e)
+            if player == whiteTurn:
+                return 0
+            else:
+                return 1
+        whiteTurn = not whiteTurn
+        i = i + 1
 
     if player and state.hasWhiteWon():
         return 1
     elif not player and state.hasBlackWon():
         return 1
     return 0
+
 
 def MiniMax_Rollout(node: MCTS_Node, player: bool, depth: int):
     state = copy.deepcopy(node.state)
@@ -251,7 +297,7 @@ def MiniMax_Rollout(node: MCTS_Node, player: bool, depth: int):
     i = 0
     while i < MAX_ITERATIONS and not state.isGameOver:
         while not state.isGameOver():
-            #state.makeRandomMove(whiteTurn)
+            # state.makeRandomMove(whiteTurn)
             eval, moves = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
             state.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
             whiteTurn = not whiteTurn
@@ -263,6 +309,7 @@ def MiniMax_Rollout(node: MCTS_Node, player: bool, depth: int):
         return 1
     return 0
 
+
 def MiniMax_Rollout_win_loss(node: MCTS_Node, player: bool, depth: int):
     state = copy.deepcopy(node.state)
     whiteTurn = copy.deepcopy(node.whiteTurn)
@@ -270,7 +317,7 @@ def MiniMax_Rollout_win_loss(node: MCTS_Node, player: bool, depth: int):
     i = 0
     while i < MAX_ITERATIONS and not state.isGameOver:
         while not state.isGameOver():
-            #state.makeRandomMove(whiteTurn)
+            # state.makeRandomMove(whiteTurn)
             eval, moves = AlphaBeta.alpha_beta_win_loss_simple(depth, state, whiteTurn)
             state.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
             whiteTurn = not whiteTurn
@@ -281,6 +328,7 @@ def MiniMax_Rollout_win_loss(node: MCTS_Node, player: bool, depth: int):
     elif not player and state.hasBlackWon():
         return 1
     return 0
+
 
 # function for backpropagation
 def backpropagate(node: MCTS_Node, result):
@@ -306,7 +354,9 @@ def best_child(node: MCTS_Node):
 if __name__ == '__main__':
     sys.setrecursionlimit(5000)
     board = LionBoard.LionBoard()
-    board.setBoard_start()
+    # board.setBoard_start()
+    board.setBoard_Fen("e1g/1Cl/G11/1LE/")
+    board.printBoard()
     """print("")
     print("MCTS_MR")
     result_node = MCTS_MR(board, True, 5, 3)
@@ -317,7 +367,7 @@ if __name__ == '__main__':
 
     print("")
     print("MCTS")
-    result_node = MCTS(board, True, 5)
+    result_node = MCTS(board, False, 3)
     result_node.move.printMove()
     print("Result node Children Count:", len(result_node.children))
     print("Visits:", result_node.visits)

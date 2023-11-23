@@ -1,4 +1,4 @@
-from MTDF import HashMTDfEntry
+from. import (HashMTDfEntry)
 
 
 class TranspostionTable:

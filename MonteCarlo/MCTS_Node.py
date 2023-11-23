@@ -33,8 +33,8 @@ class MCTS_Node:
         if self.parent:
             parent = self.parent
 
-        C = math.sqrt(2)
-        #C = 5.0
+        #C = math.sqrt(2)
+        C = 0.7
         UCT = self.score / self.visits + C * math.sqrt(math.log(parent.visits)/self.visits)
         # print("UCT", UCT, " Children:", len(self.children))
         return UCT

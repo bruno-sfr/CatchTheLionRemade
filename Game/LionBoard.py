@@ -615,7 +615,7 @@ class LionBoard:
         white_lion.setBoard(self.lion.getBoard() & self.white.getBoard())
         temp = white_lion.allSetSquares()
         #eval = eval + len(temp) * 1000
-        eval = eval + len(temp) * 100
+        eval = eval + len(temp) * 1000
         white_giraffe = BitBoard.BitBoard()
         white_giraffe.setBoard(self.giraffe.getBoard() & self.white.getBoard())
         temp = white_giraffe.allSetSquares()
@@ -637,7 +637,7 @@ class LionBoard:
         black_lion.setBoard(self.lion.getBoard() & self.black.getBoard())
         temp = black_lion.allSetSquares()
         #eval = eval - len(temp) * 1000
-        eval = eval - len(temp) * 100
+        eval = eval - len(temp) * 1000
         black_giraffe = BitBoard.BitBoard()
         black_giraffe.setBoard(self.giraffe.getBoard() & self.black.getBoard())
         temp = black_giraffe.allSetSquares()
@@ -763,12 +763,9 @@ class LionBoard:
 
 if __name__ == '__main__':
     board = LionBoard()
-    board.setBoard_start()
-
-    print(board.getFen())
-
-    for i in range(3):
-        print(i)
+    board.setBoard_Fen("gle/111/3/GcE/C")
+    board.printBoard()
+    print(board.eval_func())
     """list = board.allpossibleMoves(True)
     print("move lists len:",len(list))
     i2 = 1

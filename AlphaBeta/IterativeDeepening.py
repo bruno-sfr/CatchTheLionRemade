@@ -34,7 +34,7 @@ class iterativeDeepeningAB:
             # Call your function
             while True:
                 result = self.AB.alpha_beta_TT_simple(depth, board, WhiteTurn)
-                print("Depth:", depth)
+                # print("Depth:", depth)
                 depth = depth + 1
 
             # Disable the alarm since the function executed successfully
@@ -60,7 +60,7 @@ class iterativeDeepeningAB:
             # Call your function
             while True:
                 result = AlphaBeta.alpha_beta_simple(depth, board, WhiteTurn)
-                print("Depth:", depth)
+                # print("Depth:", depth)
                 depth = depth + 1
 
             # Disable the alarm since the function executed successfully

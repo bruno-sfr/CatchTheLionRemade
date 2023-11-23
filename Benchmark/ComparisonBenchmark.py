@@ -210,15 +210,16 @@ def MCTSvsMCTS_FE():
         while not board.isGameOver():
             # board.printBoard()
             if whiteTurn:
-                #print("MCTS Full Expansion")
-                #ResultNode = MCTS.MCTS_full_expansion(board, whiteTurn, time)
-                print("MCTS MR")
-                ResultNode = MCTS.MCTS_MR(board, whiteTurn, time, 3)
+                print("MCTS Full Expansion")
+                ResultNode = MCTS.MCTS_full_expansion(board, whiteTurn, time)
+                #print("MCTS MR")
+                #ResultNode = MCTS.MCTS_MR(board, whiteTurn, time, 3)
                 ResultNode.move.printMove()
                 print("Making Move:", board.makeMove(whiteTurn, ResultNode.move.getFrom(), ResultNode.move.getTo()))
             else:
                 print("MCTS")
-                ResultNode = MCTS.MCTS_MR_win_loss(board, whiteTurn, time, 3)
+                ResultNode = MCTS.MCTS(board, whiteTurn, time)
+                #ResultNode = MCTS.MCTS_MR_win_loss(board, whiteTurn, time, 3)
                 ResultNode.move.printMove()
                 print("Making Move:", board.makeMove(whiteTurn, ResultNode.move.getFrom(), ResultNode.move.getTo()))
             whiteTurn = not whiteTurn
@@ -247,8 +248,8 @@ def MCTSvsMCTS_FE():
     plt.show()
 
 if __name__ == '__main__':
-    sys.setrecursionlimit(15000)
+    #sys.setrecursionlimit(15000)
     #ABvsABTT_fixedDepth()
     #ABvsABTT_iterativeDeepening()
-    ABvsMCTS()
-    #MCTSvsMCTS_FE()
+    #ABvsMCTS()
+    MCTSvsMCTS_FE()

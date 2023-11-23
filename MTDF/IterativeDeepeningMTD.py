@@ -1,5 +1,5 @@
 import signal
-import MTDF
+from . import MTDF
 import time
 from Game import LionBoard
 
@@ -34,8 +34,8 @@ class iterativeDeepeningMTD:
 
             # Call your function
             while True:
-                eval, moves = self.MTD.MTDF(eval, depth, board, WhiteTurn)
-                print("Depth:", depth)
+                eval, moves = self.MTD.MTDF(eval, depth, board, WhiteTurn, 0.1)
+                # print("Depth:", depth)
                 depth = depth + 1
 
             # Disable the alarm since the function executed successfully

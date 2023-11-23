@@ -3,6 +3,7 @@ import time
 from Game import LionBoard, Zobrist
 import random
 from . import MTDfTranspositionsTable
+from . import HashMTDfEntry
 from AlphaBeta import TranspostionTable, HashEntry
 
 """
