@@ -126,8 +126,26 @@ def MCTS(state: LionBoard, whiteTurn: bool, timeout_seconds: int):
     #return best_child(root)
 """
 
+def MCTS_MR(state: LionBoard, whiteTurn: bool, timeout_seconds: int, depth: int):
+    none_move = Move.Move()
+    root = MCTS_Node.MCTS_Node(None, state, whiteTurn, none_move)
+    start_time = time.time()
 
-def MCTS_MR(state: LionBoard, whiteTurn: bool, time, depth: int):
+    while time.time() - start_time < timeout_seconds:
+        expanded_node = selection_including_Expansion(root)
+        if expanded_node:
+            result = MiniMax_Rollout(expanded_node, whiteTurn, depth)
+            backpropagate(expanded_node, result)
+        # --------------------------------
+        else:
+            # expanded node was terminal so run from root?
+            result = MiniMax_Rollout(expanded_node, whiteTurn, depth)
+            backpropagate(root, result)
+        # --------------------------------
+    return best_child(root)
+
+
+"""def MCTS_MR(state: LionBoard, whiteTurn: bool, time, depth: int):
     none_move = Move.Move()
     root = MCTS_Node.MCTS_Node(None, state, whiteTurn, none_move)
 
@@ -152,17 +170,7 @@ def MCTS_MR(state: LionBoard, whiteTurn: bool, time, depth: int):
         best_node = best_child(root)
         print("Visits:", best_node.visits)
         print("Score:", best_node.score)
-        return best_node
-
-    # root.printTree(0)
-    """print("Root Visits:", root.visits)
-    print("Root children:")
-    i2 = 1
-    for i in root.children:
-        print("Root child", i2, " visits:", i.visits)
-        i2 = i2 + 1
-    print("---------------------------------")"""
-    # return best_child(root)
+        return best_node"""
 
 
 def MCTS_MR_win_loss(state: LionBoard, whiteTurn: bool, time, depth: int):

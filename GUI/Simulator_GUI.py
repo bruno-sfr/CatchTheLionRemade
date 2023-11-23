@@ -61,6 +61,7 @@ class SimGUI:
 
     def add_text(self, new_text):
         self.text_widget.insert(tk.END, new_text + "\n")
+        self.text_widget.yview(tk.END)
         self.text_widget.update()
 
     def Begin(self):
@@ -76,7 +77,7 @@ class SimGUI:
         self.game()
 
     def game(self):
-        sys.setrecursionlimit(15000)
+        #sys.setrecursionlimit(15000)
         self.canvas.itemconfig(self.window_10, state="normal")
         for i in range(0, self.iterations):
             self.round_Label.config(text=f"Round {i + 1} of {self.iterations}")
@@ -106,6 +107,7 @@ class SimGUI:
                                 ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 3)
                                 move = ResultNode.move
                     except TimeoutError:
+                        print("Am i the problem?")
                         pass
                     board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     self.add_text(f"From: {move.getFrom()} To: {move.getTo()}")
@@ -126,18 +128,20 @@ class SimGUI:
                                 ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 3)
                                 move = ResultNode.move
                     except TimeoutError:
+                        #print("Am i the problem?")
                         pass
                     board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     self.add_text(f"From: {move.getFrom()} To: {move.getTo()}")
                 whiteTurn = not whiteTurn
             if board.hasWhiteWon():
-                self.add_text("White has won")
+                self.add_text(f"{self.white_player} has won")
                 self.white_wins = self.white_wins + 1
             elif board.hasBlackWon():
-                self.add_text("Black has won")
+                self.add_text(f"{self.black_player} has won")
                 self.black_wins = self.black_wins + 1
             self.white_wins_list.append(self.white_wins)
             self.black_wins_list.append(self.black_wins)
+        self.round_Label.config(text="Finished")
 
     def plot_result(self):
         x = range(0, self.iterations + 1)
