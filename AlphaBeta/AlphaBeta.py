@@ -3,7 +3,10 @@ import time
 
 from Game import LionBoard, Zobrist
 import random
-from . import TranspostionTable, HashEntry
+from . import TranspostionTable
+#import TranspostionTable
+from . import HashEntry
+#import HashEntry
 
 
 class Alpha_Beta_TranspostionTable:
@@ -29,14 +32,14 @@ class Alpha_Beta_TranspostionTable:
         # TT_Eval = 0
         # TT_used = False
         if entry != None and len(moves) > 0:
-            if entry.whitetrun != whiteTurn:
-                print("WhiteTurn miss match")
-            if entry.Depth >= depth:
-                self.count_transpo = self.count_transpo + 1
-                TT_used = True
-                TT_Eval = entry.Eval
-                # print("TT used. Depth=", depth, " Entry Depth=", entry.Depth)
-                return entry.Eval, moves
+            # check if hash matches
+            if entry.Hash != boardhash:
+                if entry.Depth >= depth:
+                    self.count_transpo = self.count_transpo + 1
+                    TT_used = True
+                    TT_Eval = entry.Eval
+                    # print("TT used. Depth=", depth, " Entry Depth=", entry.Depth)
+                    return entry.Eval, moves
 
         if depth == 0:
             eval = board.eval_func()
@@ -230,7 +233,9 @@ def alpha_beta_simple(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     eval, moves = alpha_beta(float('-inf'), float('inf'), depth, board, whiteTurn, [])
     return eval, moves
 
-def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, moves: list):
+
+def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool,
+                        moves: list):
     """
     :param alpha: best of max player
     :param beta:  best of min player
@@ -326,14 +331,14 @@ if __name__ == '__main__':
     board.printBoard()
     ab = Alpha_Beta_TranspostionTable()
 
-    print("First Board")
+    """print("First Board")
     start = time.time()
     eval, moves = alpha_beta_simple(7, board, True)
     end = time.time()
-    print(eval, " time:", (end - start))
+    print(eval, " time:", (end - start))"""
 
     start = time.time()
-    eval, moves = ab.alpha_beta_TT_simple(7, board, True)
+    eval, moves = ab.alpha_beta_TT_simple(10, board, True)
     end = time.time()
     print(eval, " time:", (end - start))
     print("transpos:", ab.count_transpo)
