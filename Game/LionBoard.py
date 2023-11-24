@@ -673,9 +673,9 @@ class LionBoard:
 
     def eval_win_loss(self):
         if self.hasWhiteWon():
-            return 100
+            return 1
         elif self.hasBlackWon():
-            return -100
+            return -1
         else:
             return 0
 

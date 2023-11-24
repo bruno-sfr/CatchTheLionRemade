@@ -252,7 +252,8 @@ def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.
     best_moves = copy.deepcopy(moves)
 
     if whiteTurn:
-        maxEval = float('-inf')
+        #maxEval = float('-inf')
+        maxEval = -1
         # bestmove = Move.Move()
         # best_moves = []
         list = board.allpossibleMoves(whiteTurn)
@@ -265,7 +266,7 @@ def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.
                 new_moves = copy.deepcopy(moves)
                 new_moves.append(move)
                 new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
-                eval, move_list = alpha_beta(alpha, beta, depth - 1, new_board, not whiteTurn, new_moves)
+                eval, move_list = alpha_beta_win_loss(alpha, beta, depth - 1, new_board, not whiteTurn, new_moves)
                 if eval > maxEval:
                     maxEval = eval
                     # bestmove = move
@@ -286,7 +287,8 @@ def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.
         # moves.append(bestmove)
         return maxEval, best_moves
     else:
-        minEval = float('inf')
+        #minEval = float('inf')
+        minEval = 1
         # bestmove = Move.Move()
         # best_moves = []
         list = board.allpossibleMoves(whiteTurn)
@@ -298,7 +300,7 @@ def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.
                 new_moves = copy.deepcopy(moves)
                 new_moves.append(move)
                 new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
-                eval, move_list = alpha_beta(alpha, beta, depth - 1, new_board, not whiteTurn, new_moves)
+                eval, move_list = alpha_beta_win_loss(alpha, beta, depth - 1, new_board, not whiteTurn, new_moves)
                 if eval < minEval:
                     minEval = eval
                     # bestmove = move
@@ -327,9 +329,15 @@ def alpha_beta_win_loss_simple(depth: int, board: LionBoard.LionBoard, whiteTurn
 
 if __name__ == '__main__':
     board = LionBoard.LionBoard()
-    board.setBoard_start()
+    #board.setBoard_start()
+    board.setBoard_Fen("Lg1/gg1/111/l/")
     board.printBoard()
     ab = Alpha_Beta_TranspostionTable()
+
+    start = time.time()
+    eval, moves = alpha_beta_win_loss_simple(3, board, True)
+    end = time.time()
+    print(eval, " time:", (end - start))
 
     """print("First Board")
     start = time.time()
@@ -337,11 +345,11 @@ if __name__ == '__main__':
     end = time.time()
     print(eval, " time:", (end - start))"""
 
-    start = time.time()
+    """start = time.time()
     eval, moves = ab.alpha_beta_TT_simple(10, board, True)
     end = time.time()
     print(eval, " time:", (end - start))
-    print("transpos:", ab.count_transpo)
+    print("transpos:", ab.count_transpo)"""
 
     """board.makeRandomMove(True)
     print("Next Board")
