@@ -33,7 +33,7 @@ class SimGUI:
         self.canvas.create_image(500, 350, image=self.images[-1])
 
         self.text_widget = scrolledtext.ScrolledText(self.canvas, wrap=tk.WORD)
-        options = ["Mini-Max", "AB", "MCTS", "MCTS-MR"]
+        options = ["Alpha-Beta", "Alpha-Beta with TT", "MCTS", "MCTS-MR", "MCTS-MS"]
         self.white = ttk.Combobox(self.canvas, values=options)
         self.white.set("Select white Player")  # Set a default selection
         self.black = ttk.Combobox(self.canvas, values=options)
@@ -94,10 +94,10 @@ class SimGUI:
                     move = Move.Move()
                     try:
                         match self.white_player:
-                            case "Mini-Max":
+                            case "Alpha-Beta":
                                 eval, moves = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
                                 move = moves[0]
-                            case "AB":
+                            case "Alpha-Beta with TT":
                                 eval, moves = ID.iterativeDeepening_AB_TT(self.time, board, whiteTurn)
                                 move = moves[0]
                             case "MCTS":
@@ -105,6 +105,9 @@ class SimGUI:
                                 move = ResultNode.move
                             case "MCTS-MR":
                                 ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 3)
+                                move = ResultNode.move
+                            case "MCTS-MS":
+                                ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 3, 5)
                                 move = ResultNode.move
                     except TimeoutError:
                         print("Am i the problem?")
@@ -115,10 +118,10 @@ class SimGUI:
                     move = Move.Move()
                     try:
                         match self.black_player:
-                            case "Mini-Max":
+                            case "Alpha-Beta":
                                 eval, moves = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
                                 move = moves[0]
-                            case "AB":
+                            case "Alpha-Beta with TT":
                                 eval, moves = ID.iterativeDeepening_AB_TT(self.time, board, whiteTurn)
                                 move = moves[0]
                             case "MCTS":
@@ -126,6 +129,9 @@ class SimGUI:
                                 move = ResultNode.move
                             case "MCTS-MR":
                                 ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 3)
+                                move = ResultNode.move
+                            case "MCTS-MS":
+                                ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 3, 5)
                                 move = ResultNode.move
                     except TimeoutError:
                         #print("Am i the problem?")
