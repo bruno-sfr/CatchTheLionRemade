@@ -104,10 +104,11 @@ class SimGUI:
                                 ResultNode = MCTS.MCTS(board, whiteTurn, self.time)
                                 move = ResultNode.move
                             case "MCTS-MR":
-                                ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 3)
+                                ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                             case "MCTS-MS":
-                                ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 3, 5)
+                                #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
+                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 2)
                                 move = ResultNode.move
                     except TimeoutError:
                         print("Am i the problem?")
@@ -128,10 +129,11 @@ class SimGUI:
                                 ResultNode = MCTS.MCTS(board, whiteTurn, self.time)
                                 move = ResultNode.move
                             case "MCTS-MR":
-                                ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 3)
+                                ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                             case "MCTS-MS":
-                                ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 3, 5)
+                                #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
+                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 2)
                                 move = ResultNode.move
                     except TimeoutError:
                         #print("Am i the problem?")
