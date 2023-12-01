@@ -14,8 +14,8 @@ def TestStartpostion():
     """MTD = MTDF.MTDF()
     MTD_MiniMax = MTDF.MTDF()
     MTD_0 = MTDF.MTDF()"""
-    AB = AlphaBeta.Alpha_Beta_TranspostionTable()
-    AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
+    #AB = AlphaBeta.Alpha_Beta_TranspostionTable()
+    #AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
     evalMTD = 0.0
 
     AB_List = []
@@ -24,6 +24,7 @@ def TestStartpostion():
     MTD_List = []
     MTD_0_List = []
     MTD_MiniMax_List = []
+    MTD_no_TT_List = []
 
     AB_Eval_List = []
     AB_TT_Eval_List = []
@@ -31,14 +32,18 @@ def TestStartpostion():
     MTD_Eval_List = []
     MTD_0_Eval_List = []
     MTD_MiniMax_Eval_List = []
+    MTD_no_TT_Eval_List = []
 
-    Depth = 5
+    Depth = 10
     x = range(1, Depth)
 
     for i in range(1, Depth):
+        AB = AlphaBeta.Alpha_Beta_TranspostionTable()
+        AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
         MTD = MTDF.MTDF()
         MTD_MiniMax = MTDF.MTDF()
         MTD_0 = MTDF.MTDF()
+        MTD_no_TT = MTDF.MTDF()
 
         print("Depth:", i)
         print("Alpha-Beta")
@@ -86,7 +91,7 @@ def TestStartpostion():
 
         #print("----------------------------------")
 
-        print("")
+        """print("")
         print("MTD(f) with f=bestGuess")
         start = time.time()
         evalMTD, movesMTD = MTD.MTDF(evalMTD, i, board, True, 0.1)
@@ -103,9 +108,9 @@ def TestStartpostion():
         MTD_Eval_List.append(evalMTD)
 
         print("")
-        """print("MTD(f) with f=BestMiniMax")
+        print("MTD(f) with f=BestMiniMax")
         start = time.time()
-        eval, moves = MTD.MTDF(evalAB, i, board, True, 0.1)
+        eval, moves = MTD_MiniMax.MTDF(evalAB, i, board, True, 0.1)
         end = time.time()
         timetaken = (end - start)
         print("eval:", eval)
@@ -118,7 +123,7 @@ def TestStartpostion():
         MTD_MiniMax_List.append(timetaken)
         MTD_MiniMax_Eval_List.append(eval)"""
 
-        """print("")
+        print("")
         print("MTD(f) with f=0")
         start = time.time()
         evalMTD_0, movesMTD_0 = MTD_0.MTDF(0, i, board, True, 0.1)
@@ -126,13 +131,31 @@ def TestStartpostion():
         timetaken = (end - start)
         print("eval:", evalMTD_0)
         print("time:", timetaken)
+        print("tt use", MTD_0.count_transpo)
         if len(movesMTD_0) == 0:
             print("No Move found")
         for move in movesMTD_0:
             move.printMove()
             break
         MTD_0_List.append(timetaken)
-        MTD_0_Eval_List.append(evalMTD_0)"""
+        MTD_0_Eval_List.append(evalMTD_0)
+
+        print("")
+        print("MTD(f) with no TT")
+        start = time.time()
+        evalMTD_no_tt, movesMTD_no_tt = MTD_no_TT.MTDF_no_TT(0, i, board, True, 0.1)
+        end = time.time()
+        timetaken = (end - start)
+        print("eval:", evalMTD_no_tt)
+        print("time:", timetaken)
+        print("tt use", MTD_no_TT.count_transpo)
+        if len(movesMTD_no_tt) == 0:
+            print("No Move found")
+        for move in movesMTD_no_tt:
+            move.printMove()
+            break
+        MTD_no_TT_List.append(timetaken)
+        MTD_no_TT_Eval_List.append(evalMTD_no_tt)
         print("----------------------------------")
     print("Benchmark complete")
 
@@ -143,21 +166,23 @@ def TestStartpostion():
     fig.suptitle("Comparison")
 
     axs[0].plot(x, AB_List, label='Alpha-Beta')
-    axs[0].plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
+    #axs[0].plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
     axs[0].plot(x, AB_TT_store_List, label='Alpha-Beta TT Store All', linestyle='dashed')
-    axs[0].plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashed')
+    #axs[0].plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashed')
     #axs[0].plot(x, MTD_MiniMax_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
-    #axs[0].plot(x, MTD_0_List, label='MTD(f) with f = 0')
+    axs[0].plot(x, MTD_0_List, label='MTD(f) with f = 0')
+    axs[0].plot(x, MTD_no_TT_List, label='MTD(f) with no TT')
     axs[0].set(ylabel='Time taken')
 
     axs[0].legend(loc='upper left')
 
     axs[1].plot(x, AB_Eval_List, label='Alpha-Beta')
-    axs[1].plot(x, AB_TT_Eval_List, label='Alpha-Beta TT', linestyle='dotted')
+    #axs[1].plot(x, AB_TT_Eval_List, label='Alpha-Beta TT', linestyle='dotted')
     axs[1].plot(x, AB_TT_store_Eval_List, label='Alpha-Beta TT Store All', linestyle='dashed')
-    axs[1].plot(x, MTD_Eval_List, label='MTD(f) with f = best guess', linestyle='dashed')
+    #axs[1].plot(x, MTD_Eval_List, label='MTD(f) with f = best guess', linestyle='dashed')
     #axs[1].plot(x, MTD_MiniMax_Eval_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
-    #axs[1].plot(x, MTD_0_Eval_List, label='MTD(f) with f = 0')
+    axs[1].plot(x, MTD_0_Eval_List, label='MTD(f) with f = 0')
+    axs[1].plot(x, MTD_no_TT_Eval_List, label='MTD(f) with no TT')
     axs[1].set(ylabel='Eval')
 
     """plt.plot(x, AB_List, label='Alpha-Beta')

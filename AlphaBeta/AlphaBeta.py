@@ -41,12 +41,17 @@ class Alpha_Beta_TranspostionTable:
                     # print("TT used. Depth=", depth, " Entry Depth=", entry.Depth)
                     return entry.Eval, moves
 
+        eval = board.eval_func()
         if depth == 0:
-            eval = board.eval_func()
+            #eval = board.eval_func()
             # if TT_used and TT_Eval != eval:
             #    print("Transpostion mismatch")
             newEntry = HashEntry.HashEntry(boardhash, depth, eval, boardFen, whiteTurn)
             self.table.storeEntry(newEntry)
+            return eval, moves
+
+        #if eval > 900 or eval < -900:
+        if board.isGameOver():
             return eval, moves
 
         best_moves = copy.deepcopy(moves)
@@ -154,8 +159,14 @@ def alpha_beta(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard
     :param moves: list of move that lead to this game state
     :return: eval, list of moves
     """
+    eval = board.eval_func()
+
     if depth == 0:
-        eval = board.eval_func()
+        #eval = board.eval_func()
+        return eval, moves
+
+    #if eval > 900 or eval < -900:
+    if board.isGameOver():
         return eval, moves
 
     best_moves = copy.deepcopy(moves)
@@ -249,6 +260,9 @@ def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.
         eval = board.eval_win_loss()
         return eval, moves
 
+    if board.isGameOver():
+        return eval, moves
+
     best_moves = copy.deepcopy(moves)
 
     if whiteTurn:
@@ -330,14 +344,26 @@ def alpha_beta_win_loss_simple(depth: int, board: LionBoard.LionBoard, whiteTurn
 if __name__ == '__main__':
     board = LionBoard.LionBoard()
     #board.setBoard_start()
-    board.setBoard_Fen("Lg1/gg1/111/l/")
+    board.setBoard_Fen("elc/1C1/G11/1LE/G")
     board.printBoard()
     ab = Alpha_Beta_TranspostionTable()
 
-    start = time.time()
-    eval, moves = alpha_beta_win_loss_simple(3, board, True)
-    end = time.time()
-    print(eval, " time:", (end - start))
+    """list = board.allpossibleMoves_BigList(True)
+
+    board.makeMove(True,7,10)
+
+    print(board.eval_func())"""
+
+    #start = time.time()
+    eval, moves = ab.alpha_beta_TT_simple(7, board, False)
+    moves[0].printMove()
+    print("Eval:", eval)
+
+    eval, moves = alpha_beta_simple(7, board, False)
+    #end = time.time()
+    moves[0].printMove()
+    print("Eval:", eval)
+    #print(eval, " time:", (end - start))
 
     """print("First Board")
     start = time.time()
