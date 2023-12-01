@@ -1,4 +1,5 @@
 from. import (HashMTDfEntry)
+#import HashMTDfEntry
 
 
 class TranspostionTable:
