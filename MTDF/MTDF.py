@@ -50,7 +50,29 @@ class MTDF:
                 beta = g
 
             g, moves = self.alpha_beta_MTD(beta - increment, beta, depth, board, whiteTurn, [])
-            #g, moves = self.alpha_beta_MTD_with_2_TT(beta - increment, beta, depth, board, whiteTurn, [])
+
+            if g < beta:
+                upperbound = g
+            else:
+                lowerbound = g
+
+        return g, moves
+
+    def MTDF_with_2_TT(self, f: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, increment):
+        #increment = 0.1
+        g = f
+        moves = []
+        upperbound = float('inf')
+        lowerbound = float('-inf')
+        while not (lowerbound >= upperbound):
+            self.count_MTDf_iter = self.count_MTDf_iter + 1
+            beta = 0.0
+            if g == lowerbound:
+                beta = g + increment
+            else:
+                beta = g
+
+            g, moves = self.alpha_beta_MTD_with_2_TT(beta - increment, beta, depth, board, whiteTurn, [])
 
             if g < beta:
                 upperbound = g
@@ -96,19 +118,35 @@ class MTDF:
         boardhash = self.zob.generateHash(board, whiteTurn)
         entry = self.table.probeEntry(boardhash)
         if entry != None and len(moves) > 0:
-            if entry.Depth >= depth:
-                if entry.Lowerbound is not None:
-                    if entry.Lowerbound >= beta:
-                        self.count_transpo = self.count_transpo + 1
-                        low = entry.Lowerbound
-                        return low, moves
-                    alpha = max(alpha, entry.Lowerbound)
-                if entry.Upperbound is not None:
-                    if entry.Upperbound <= alpha:
-                        self.count_transpo = self.count_transpo + 1
-                        up = entry.Upperbound
-                        return up, moves
-                    beta = min(beta, entry.Upperbound)
+            if entry.Hash == boardhash:
+                if entry.Depth == depth:
+                #if entry.Depth >= depth:
+                    if entry.Lowerbound is not None:
+                        if entry.Lowerbound >= beta:
+                            self.count_transpo = self.count_transpo + 1
+                            low = entry.Lowerbound
+                            return low, moves
+                        alpha = max(alpha, entry.Lowerbound)
+                    if entry.Upperbound is not None:
+                        if entry.Upperbound <= alpha:
+                            self.count_transpo = self.count_transpo + 1
+                            up = entry.Upperbound
+                            return up, moves
+                        beta = min(beta, entry.Upperbound)
+
+            #if entry.Depth >= depth:
+            #    if entry.Lowerbound is not None:
+            #        if entry.Lowerbound >= beta:
+            #            self.count_transpo = self.count_transpo + 1
+            #            low = entry.Lowerbound
+            #            return low, moves
+            #        alpha = max(alpha, entry.Lowerbound)
+            #    if entry.Upperbound is not None:
+            #        if entry.Upperbound <= alpha:
+            #            self.count_transpo = self.count_transpo + 1
+            #            up = entry.Upperbound
+            #            return up, moves
+            #        beta = min(beta, entry.Upperbound)
 
         # --------------------------------------------------
         """TT from AB"""
@@ -141,6 +179,8 @@ class MTDF:
             self.table.storeEntry(newEntry)
             return eval, moves"""
         if depth == 0:
+            g = board.eval_func()
+        elif board.isGameOver():
             g = board.eval_func()
         elif whiteTurn:
             g = float('-inf')
@@ -236,6 +276,8 @@ class MTDF:
         best_moves = copy.deepcopy(moves)
 
         if depth == 0:
+            g = board.eval_func()
+        elif board.isGameOver():
             g = board.eval_func()
         elif whiteTurn:
             g = float('-inf')
@@ -434,18 +476,26 @@ class MTDF:
         lower_entry = self.lower_TT.probeEntry(boardhash)
 
         if upper_entry != None and len(moves) > 0:
-            if upper_entry.Eval >= alpha:
-                self.count_transpo = self.count_transpo + 1
-                return upper_entry.Eval, moves
+            if upper_entry.Hash == boardhash:
+                if upper_entry.Depth == depth:
+                    if upper_entry.Eval >= alpha:
+                        self.count_transpo = self.count_transpo + 1
+                        return upper_entry.Eval, moves
         if lower_entry != None and len(moves) > 0:
-            if lower_entry.Eval >= beta:
-                self.count_transpo = self.count_transpo + 1
-                return lower_entry.Eval, moves
+            if lower_entry.Hash == boardhash:
+                if lower_entry.Depth == depth:
+                    if lower_entry.Eval >= beta:
+                        self.count_transpo = self.count_transpo + 1
+                        return lower_entry.Eval, moves
 
         if lower_entry != None and len(moves) > 0:
-            alpha = max(alpha, lower_entry.Eval)
+            if lower_entry.Hash == boardhash:
+                if lower_entry.Depth == depth:
+                    alpha = max(alpha, lower_entry.Eval)
         if upper_entry != None and len(moves) > 0:
-            beta = min(beta, upper_entry.Eval)
+            if upper_entry.Hash == boardhash:
+                if upper_entry.Depth == depth:
+                    beta = min(beta, upper_entry.Eval)
 
         """if entry != None and len(moves) > 0:
             if entry.Depth >= depth:

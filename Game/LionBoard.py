@@ -1,3 +1,4 @@
+import copy
 import random
 from Game import BitBoard
 from Game import Move
@@ -124,6 +125,8 @@ class LionBoard:
         self.giraffe.setBoard(board.giraffe.getBoard())
         self.chicken.setBoard(board.chicken.getBoard())
         self.hen.setBoard(board.hen.getBoard())
+        self.black_captures = copy.deepcopy(board.black_captures)
+        self.white_captures = copy.deepcopy(board.white_captures)
 
     def getFen(self):
         Fen = ""

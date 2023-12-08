@@ -16,7 +16,7 @@ class TranspostionTable:
 
     def storeLowerbound(self, hash, depth, Lowerbound: float):
         entry = self.probeEntry(hash)
-        if entry != None:
+        if entry:
              entry.Lowerbound = Lowerbound
         else:
             entry = HashMTDfEntry.HashEntry(hash, depth, Lowerbound, None)
@@ -24,7 +24,8 @@ class TranspostionTable:
 
     def storeUpperbound(self, hash, depth, Upperbound: float):
         entry = self.probeEntry(hash)
-        if entry != None:
+        #if entry != None:
+        if entry:
              entry.Upperbound = Upperbound
         else:
             entry = HashMTDfEntry.HashEntry(hash, depth, None, Upperbound)

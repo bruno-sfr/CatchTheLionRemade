@@ -1,5 +1,6 @@
 import signal
-from . import AlphaBeta
+#from . import AlphaBeta
+import AlphaBeta
 import time
 from Game import LionBoard
 
@@ -17,6 +18,7 @@ def timeout_handler(signum, frame):
 class iterativeDeepeningAB:
     def __init__(self):
         self.AB = AlphaBeta.Alpha_Beta_TranspostionTable()
+        self.depth = 1
 
     def iterativeDeepening_AB_TT(self, time: int, board: LionBoard.LionBoard, WhiteTurn: bool):
         # Set the timeout in seconds
@@ -47,7 +49,7 @@ class iterativeDeepeningAB:
     def iterativeDeepening_AB(self, time: int, board: LionBoard.LionBoard, WhiteTurn: bool):
         # Set the timeout in seconds
         timeout_seconds = time
-        depth = 1
+        self.depth = 1
         result = 0.0
 
         # Set the timeout handler for the SIGALRM signal
@@ -59,9 +61,9 @@ class iterativeDeepeningAB:
 
             # Call your function
             while True:
-                result = AlphaBeta.alpha_beta_simple(depth, board, WhiteTurn)
+                result = AlphaBeta.alpha_beta_simple(self.depth, board, WhiteTurn)
                 # print("Depth:", depth)
-                depth = depth + 1
+                self.depth = self.depth + 1
 
             # Disable the alarm since the function executed successfully
             # signal.alarm(0)
@@ -74,14 +76,27 @@ class iterativeDeepeningAB:
 if __name__ == "__main__":
     board = LionBoard.LionBoard()
     board.setBoard_start()
+    board.setBoard_Fen("elc/1C1/G11/1LE/G")
+    board.printBoard()
     ID = iterativeDeepeningAB()
 
-    eval, moves = ID.iterativeDeepening_AB_TT(5, board, True)
+    """board.makeMove(True,7,10)
+    board.printBoard()
+    print("Eval:", board.eval_func())"""
+
+    """eval, moves = ID.iterativeDeepening_AB_TT(5, board, True)
+    print("eval:", eval)
+    for i in moves:
+        i.printMove()"""
+
+    eval, moves = AlphaBeta.alpha_beta_simple(3,board,False)
+
     print("eval:", eval)
     for i in moves:
         i.printMove()
 
-    eval, moves = ID.iterativeDeepening_AB(5, board, True)
+    """eval, moves = ID.iterativeDeepening_AB(1, board, False)
     print("eval:", eval)
     for i in moves:
         i.printMove()
+    print("Depth:", ID.depth)"""

@@ -17,34 +17,43 @@ def TestStartpostion():
     #AB = AlphaBeta.Alpha_Beta_TranspostionTable()
     #AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
     evalMTD = 0.0
+    evalMTD_even = 0.0
+    evalMTD_uneven = 0.0
+    evalMTD_2 = 0.0
 
     AB_List = []
     AB_TT_List = []
     AB_TT_store_List = []
     MTD_List = []
+    MTD_second_guess_List = []
     MTD_0_List = []
     MTD_MiniMax_List = []
     MTD_no_TT_List = []
+    MTD_2_TT_List = []
 
     AB_Eval_List = []
     AB_TT_Eval_List = []
     AB_TT_store_Eval_List = []
     MTD_Eval_List = []
+    MTD_second_guess_Eval_List = []
     MTD_0_Eval_List = []
     MTD_MiniMax_Eval_List = []
     MTD_no_TT_Eval_List = []
+    MTD_2_TT_Eval_List = []
+
+    AB = AlphaBeta.Alpha_Beta_TranspostionTable()
+    AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
+    MTD = MTDF.MTDF()
+    MTD_second_guess = MTDF.MTDF()
+    MTD_MiniMax = MTDF.MTDF()
+    MTD_0 = MTDF.MTDF()
+    MTD_no_TT = MTDF.MTDF()
+    MTD_2_TT = MTDF.MTDF()
 
     Depth = 10
     x = range(1, Depth)
 
     for i in range(1, Depth):
-        AB = AlphaBeta.Alpha_Beta_TranspostionTable()
-        AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
-        MTD = MTDF.MTDF()
-        MTD_MiniMax = MTDF.MTDF()
-        MTD_0 = MTDF.MTDF()
-        MTD_no_TT = MTDF.MTDF()
-
         print("Depth:", i)
         print("Alpha-Beta")
         start = time.time()
@@ -59,7 +68,7 @@ def TestStartpostion():
         AB_List.append(timetaken)
         AB_Eval_List.append(evalAB)
 
-        print("")
+        """print("")
         print("Alpha-Beta_TT")
         start = time.time()
         #eval, moves = AB.alpha_beta_TT_simple(i, board, True)
@@ -72,7 +81,7 @@ def TestStartpostion():
             move.printMove()
             break
         AB_TT_List.append(timetaken)
-        AB_TT_Eval_List.append(eval)
+        AB_TT_Eval_List.append(eval)"""
 
         print("")
         print("Alpha-Beta_TT_store_All")
@@ -91,7 +100,7 @@ def TestStartpostion():
 
         #print("----------------------------------")
 
-        """print("")
+        print("")
         print("MTD(f) with f=bestGuess")
         start = time.time()
         evalMTD, movesMTD = MTD.MTDF(evalMTD, i, board, True, 0.1)
@@ -108,7 +117,49 @@ def TestStartpostion():
         MTD_Eval_List.append(evalMTD)
 
         print("")
-        print("MTD(f) with f=BestMiniMax")
+        print("MTD(f) with f=bestSecondGuess")
+        start = time.time()
+        if i % 2 == 0:
+            print("Run Even")
+            evalMTD_even, movesMTD = MTD_second_guess.MTDF(evalMTD_even, i, board, True, 0.1)
+        else:
+            print("Run Uneven")
+            evalMTD_uneven, movesMTD = MTD_second_guess.MTDF(evalMTD_uneven, i, board, True, 0.1)
+        end = time.time()
+        timetaken = (end - start)
+        if i % 2 == 0:
+            print("eval:", evalMTD_even)
+            MTD_second_guess_Eval_List.append(evalMTD_even)
+        else:
+            print("eval:", evalMTD_uneven)
+            MTD_second_guess_Eval_List.append(evalMTD_uneven)
+        print("time:", timetaken)
+        if len(movesMTD) == 0:
+            print("No Move found")
+        for move in movesMTD:
+            move.printMove()
+            break
+        MTD_second_guess_List.append(timetaken)
+
+
+        """print("")
+        print("MTD(f) with 2 TT and f=bestGuess")
+        start = time.time()
+        evalMTD_2, movesMTD_2 = MTD_2_TT.MTDF_with_2_TT(evalMTD_2, i, board, True, 0.1)
+        end = time.time()
+        timetaken = (end - start)
+        print("eval:", evalMTD_2)
+        print("time:", timetaken)
+        if len(movesMTD_2) == 0:
+            print("No Move found")
+        for move in movesMTD_2:
+            move.printMove()
+            break
+        MTD_2_TT_List.append(timetaken)
+        MTD_2_TT_Eval_List.append(evalMTD_2)"""
+
+        """print("")
+        print("MTD(f) with Minimax")
         start = time.time()
         eval, moves = MTD_MiniMax.MTDF(evalAB, i, board, True, 0.1)
         end = time.time()
@@ -122,6 +173,22 @@ def TestStartpostion():
             break
         MTD_MiniMax_List.append(timetaken)
         MTD_MiniMax_Eval_List.append(eval)"""
+        """
+        print("")
+        print("MTD(f) with f=BestMiniMax")
+        start = time.time()
+        eval, moves = MTD_MiniMax.MTDF(evalAB, i, board, True, 0.1)
+        end = time.time()
+        timetaken = (end - start)
+        print("eval:", eval)
+        print("time:", timetaken)
+        if len(moves) == 0:
+            print("No Move found")
+        for move in moves:
+            move.printMove()
+            break
+        MTD_MiniMax_List.append(timetaken)
+        MTD_MiniMax_Eval_List.append(eval)
 
         print("")
         print("MTD(f) with f=0")
@@ -139,7 +206,7 @@ def TestStartpostion():
             break
         MTD_0_List.append(timetaken)
         MTD_0_Eval_List.append(evalMTD_0)
-
+        """
         print("")
         print("MTD(f) with no TT")
         start = time.time()
@@ -168,10 +235,12 @@ def TestStartpostion():
     axs[0].plot(x, AB_List, label='Alpha-Beta')
     #axs[0].plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
     axs[0].plot(x, AB_TT_store_List, label='Alpha-Beta TT Store All', linestyle='dashed')
-    #axs[0].plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashed')
+    axs[0].plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashed')
+    #axs[0].plot(x, MTD_second_guess_List, label='MTD(f) with f = best second guess', linestyle='dashed')
     #axs[0].plot(x, MTD_MiniMax_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
-    axs[0].plot(x, MTD_0_List, label='MTD(f) with f = 0')
-    axs[0].plot(x, MTD_no_TT_List, label='MTD(f) with no TT')
+    #axs[0].plot(x, MTD_0_List, label='MTD(f) with f = 0', linestyle='dashed')
+    axs[0].plot(x, MTD_no_TT_List, label='MTD(f) with no TT', linestyle='dashdot')
+    #axs[0].plot(x, MTD_2_TT_List, label='MTD(f) with 2 TT', linestyle='dashdot')
     axs[0].set(ylabel='Time taken')
 
     axs[0].legend(loc='upper left')
@@ -179,22 +248,19 @@ def TestStartpostion():
     axs[1].plot(x, AB_Eval_List, label='Alpha-Beta')
     #axs[1].plot(x, AB_TT_Eval_List, label='Alpha-Beta TT', linestyle='dotted')
     axs[1].plot(x, AB_TT_store_Eval_List, label='Alpha-Beta TT Store All', linestyle='dashed')
-    #axs[1].plot(x, MTD_Eval_List, label='MTD(f) with f = best guess', linestyle='dashed')
+    axs[1].plot(x, MTD_Eval_List, label='MTD(f) with f = best guess', linestyle='dashed')
+    #axs[1].plot(x, MTD_second_guess_Eval_List, label='MTD(f) with f = second best guess', linestyle='dashed')
     #axs[1].plot(x, MTD_MiniMax_Eval_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
-    axs[1].plot(x, MTD_0_Eval_List, label='MTD(f) with f = 0')
-    axs[1].plot(x, MTD_no_TT_Eval_List, label='MTD(f) with no TT')
+    #axs[1].plot(x, MTD_0_Eval_List, label='MTD(f) with f = 0', linestyle='dashed')
+    axs[1].plot(x, MTD_no_TT_Eval_List, label='MTD(f) with no TT', linestyle='dashdot')
+    #axs[1].plot(x, MTD_2_TT_Eval_List, label='MTD(f) with 2 TT', linestyle='dashdot')
     axs[1].set(ylabel='Eval')
 
-    """plt.plot(x, AB_List, label='Alpha-Beta')
-    plt.plot(x, AB_TT_List, label='Alpha-Beta TT')
-    plt.plot(x, MTD_List, label='MTD(f) with f = best guess')
-    plt.plot(x, MTD_MiniMax_List, label='MTD(f) with f = BestMiniMax')
-    plt.plot(x, MTD_0_List, label='MTD(f) with f = 0')"""
     #axs[0].legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left', ncols=2, mode="expand", borderaxespad=0.)
     plt.xlabel("Depth")
     #plt.ylabel("Time taken")
     #plt.title("Benchmark")
-    plt.savefig("../Resources/Benchmark_Start_Depth_4.png")
+    plt.savefig(f"../Resources/Benchmark_Start_Depth_{Depth}.png")
     plt.show()
 
 def MTD_Increment_Comparison():
@@ -344,24 +410,28 @@ def Random_Benchmark():
     board = LionBoard.LionBoard()
     #board.randomBoard()
     #board.printBoard()
-    MTD = MTDF.MTDF()
-    MTD_0 = MTDF.MTDF()
-    AB = AlphaBeta.Alpha_Beta_TranspostionTable()
-    AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
-    evalMTD = 0.0
 
-    Depth = 10
-    Iterations = 15
+    Depth = 8
+    Iterations = 5
 
     AB_List = [0] * (Depth - 1)
     AB_TT_List = [0] * (Depth - 1)
     MTD_List = [0] * (Depth - 1)
     AB_TT_store_List = [0] * (Depth - 1)
+    MTD_no_TT_List = [0] * (Depth - 1)
     #MTD_0_List = []
     x = range(1, Depth)
 
     for i2 in range(0, Iterations):
         board.randomBoard()
+        MTD = MTDF.MTDF()
+        MTD_0 = MTDF.MTDF()
+        MTD_no_TT = MTDF.MTDF()
+        AB = AlphaBeta.Alpha_Beta_TranspostionTable()
+        AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
+
+        evalMTD = 0.0
+        evalMTD_no_tt = 0.0
         for i in range(1, Depth):
             print("Depth:", i)
             print("Alpha-Beta")
@@ -376,7 +446,7 @@ def Random_Benchmark():
                 break
             AB_List[i-1] = AB_List[i-1] + timetaken
 
-            print("")
+            """print("")
             print("Alpha-Beta_TT")
             start = time.time()
             eval, moves = AB.alpha_beta_TT(float('-inf'), float('inf'), i, board, True, [], False)
@@ -388,7 +458,7 @@ def Random_Benchmark():
                 move.printMove()
                 break
             #AB_TT_List.append(timetaken)
-            AB_TT_List[i - 1] = AB_TT_List[i - 1] + timetaken
+            AB_TT_List[i - 1] = AB_TT_List[i - 1] + timetaken"""
 
             print("")
             print("Alpha-Beta_TT_store_All")
@@ -436,6 +506,22 @@ def Random_Benchmark():
                 move.printMove()
                 break
             MTD_0_List.append(timetaken)"""
+
+            print("")
+            print("MTD(f) with no TT")
+            start = time.time()
+            evalMTD_no_tt, movesMTD_no_tt = MTD_no_TT.MTDF_no_TT(0, i, board, True, 0.1)
+            end = time.time()
+            timetaken = (end - start)
+            print("eval:", evalMTD_no_tt)
+            print("time:", timetaken)
+            print("tt use", MTD_no_TT.count_transpo)
+            if len(movesMTD_no_tt) == 0:
+                print("No Move found")
+            for move in movesMTD_no_tt:
+                move.printMove()
+                break
+            MTD_no_TT_List[i - 1] = MTD_no_TT_List[i - 1] + timetaken
             print("----------------------------------")
         print("Iteration",i2,"completed")
         print("----------------------------------")
@@ -446,14 +532,16 @@ def Random_Benchmark():
         AB_TT_List[i] = AB_TT_List[i] / Iterations
         AB_TT_store_List[i] = AB_TT_store_List[i] / Iterations
         MTD_List[i] = MTD_List[i] / Iterations
+        MTD_no_TT_List[i] = MTD_no_TT_List[i] / Iterations
 
     x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
     plt.xticks(x_list)
 
     plt.plot(x, AB_List, label='Alpha-Beta')
-    plt.plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
+    #plt.plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
     plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT Store All', linestyle='dashed')
     plt.plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashdot')
+    plt.plot(x, MTD_no_TT_List, label='MTD(f) with no TT', linestyle='dotted')
     #plt.plot(x, MTD_0_List, label='MTD(f) with f = 0')
     plt.xlabel("Depth")
     plt.ylabel("Time taken")

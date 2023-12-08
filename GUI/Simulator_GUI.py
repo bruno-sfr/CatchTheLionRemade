@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 from Game import LionBoard, Move
 from AlphaBeta import IterativeDeepening
 from MonteCarlo import MCTS
+from MTDF import IterativeDeepeningMTD
 
 
 class SimGUI:
@@ -33,7 +34,7 @@ class SimGUI:
         self.canvas.create_image(500, 350, image=self.images[-1])
 
         self.text_widget = scrolledtext.ScrolledText(self.canvas, wrap=tk.WORD)
-        options = ["Alpha-Beta", "Alpha-Beta with TT", "MCTS", "MCTS-MR", "MCTS-MS"]
+        options = ["Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS", "MCTS-MR", "MCTS-MS"]
         self.white = ttk.Combobox(self.canvas, values=options)
         self.white.set("Select white Player")  # Set a default selection
         self.black = ttk.Combobox(self.canvas, values=options)
@@ -85,6 +86,7 @@ class SimGUI:
             board = LionBoard.LionBoard()
             board.setBoard_start()
             ID = IterativeDeepening.iterativeDeepeningAB()
+            MTD = IterativeDeepeningMTD.iterativeDeepeningMTD()
             if i % 2 == 0:
                 whiteTurn = True
             else:
@@ -100,6 +102,9 @@ class SimGUI:
                             case "Alpha-Beta with TT":
                                 eval, moves = ID.iterativeDeepening_AB_TT(self.time, board, whiteTurn)
                                 move = moves[0]
+                            case "MTD(f)":
+                                eval, moves = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
+                                move = moves[0]
                             case "MCTS":
                                 ResultNode = MCTS.MCTS(board, whiteTurn, self.time)
                                 move = ResultNode.move
@@ -108,7 +113,7 @@ class SimGUI:
                                 move = ResultNode.move
                             case "MCTS-MS":
                                 #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 2)
+                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 10)
                                 move = ResultNode.move
                     except TimeoutError:
                         print("Am i the problem?")
@@ -125,6 +130,9 @@ class SimGUI:
                             case "Alpha-Beta with TT":
                                 eval, moves = ID.iterativeDeepening_AB_TT(self.time, board, whiteTurn)
                                 move = moves[0]
+                            case "MTD(f)":
+                                eval, moves = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
+                                move = moves[0]
                             case "MCTS":
                                 ResultNode = MCTS.MCTS(board, whiteTurn, self.time)
                                 move = ResultNode.move
@@ -133,7 +141,7 @@ class SimGUI:
                                 move = ResultNode.move
                             case "MCTS-MS":
                                 #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 2)
+                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 10)
                                 move = ResultNode.move
                     except TimeoutError:
                         #print("Am i the problem?")
@@ -149,6 +157,7 @@ class SimGUI:
                 self.black_wins = self.black_wins + 1
             self.white_wins_list.append(self.white_wins)
             self.black_wins_list.append(self.black_wins)
+            self.add_text(f"{self.white_player} {self.white_wins} : {self.black_wins} {self.black_player}")
         self.round_Label.config(text="Finished")
 
     def plot_result(self):

@@ -1,5 +1,5 @@
-from AlphaBeta import HashEntry
-
+#from AlphaBeta import HashEntry
+import HashEntry
 
 class TranspostionTable:
     def __init__(self, size):
