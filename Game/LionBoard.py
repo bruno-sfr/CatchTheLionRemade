@@ -2,6 +2,7 @@ import copy
 import random
 from Game import BitBoard
 from Game import Move
+from Game import Store_Move
 
 class LionBoard:
     def __init__(self):
@@ -15,7 +16,9 @@ class LionBoard:
         # in written String lower case
         self.black_captures = []
         self.white_captures = []
-        # self.captures = BitBoard.BitBoard()
+
+        self.Move_History = []
+
         self.lion_moves = [0b000000011010, 0b000000111101, 0b000000110010, 0b000011010011,
                            0b000111101111, 0b000110010110, 0b011010011000, 0b111101111000,
                            0b110010110000, 0b010011000000, 0b101111000000, 0b010110000000]
@@ -126,7 +129,11 @@ class LionBoard:
         self.chicken.setBoard(board.chicken.getBoard())
         self.hen.setBoard(board.hen.getBoard())
         self.black_captures = copy.deepcopy(board.black_captures)
+        #for i in board.black_captures:
+        #    self.black_captures.append(i)
         self.white_captures = copy.deepcopy(board.white_captures)
+        #for i in board.white_captures:
+        #    self.white_captures.append(i)
 
     def getFen(self):
         Fen = ""
@@ -546,6 +553,11 @@ class LionBoard:
                     Captures.remove("chicken")
                     Attacker.setSquare(move.getTo())
                     self.chicken.setSquare(move.getTo())
+
+                # add move from capture to history
+                store_move = Store_Move.Store_Move()
+                store_move.setMove(move.getFrom(), move.getTo(), 0)
+                self.Move_History.append(store_move)
                 return True
 
         return False
@@ -562,27 +574,188 @@ class LionBoard:
         defender_hen = BitBoard.BitBoard()
         defender_hen.setBoard(self.hen.getBoard() & defender.getBoard())
 
+        store_move = Store_Move.Store_Move()
+        store_move.setMove(move.getFrom(), move.getTo(), 0)
+
         if defender.isSquareSet(move.getTo()):
             defender.clearSquare(move.getTo())
             if defender_lion.isSquareSet(move.getTo()):
                 self.lion.clearSquare(move.getTo())
+
+                # add capture to store move for history depending on which player
+                if defender == self.white:
+                    store_move.setCapture('L')
+                else:
+                    store_move.setCapture('l')
             elif defender_giraffe.isSquareSet(move.getTo()):
                 self.giraffe.clearSquare(move.getTo())
                 captures.append("giraffe")
+
+                if defender == self.white:
+                    store_move.setCapture('G')
+                else:
+                    store_move.setCapture('g')
             elif defender_elephant.isSquareSet(move.getTo()):
                 self.elephant.clearSquare(move.getTo())
                 captures.append("elephant")
+
+                if defender == self.white:
+                    store_move.setCapture('E')
+                else:
+                    store_move.setCapture('e')
             elif defender_chicken.isSquareSet(move.getTo()):
                 self.chicken.clearSquare(move.getTo())
                 captures.append("chicken")
+
+                if defender == self.white:
+                    store_move.setCapture('C')
+                else:
+                    store_move.setCapture('c')
             elif defender_hen.isSquareSet(move.getTo()):
                 self.hen.clearSquare(move.getTo())
                 captures.append("chicken")
 
+                if defender == self.white:
+                    store_move.setCapture('H')
+                else:
+                    store_move.setCapture('h')
+
+        self.Move_History.append(store_move)
         attacker.setSquare(move.getTo())
         attacker.clearSquare(move.getFrom())
         piece_type.setSquare(move.getTo())
         piece_type.clearSquare(move.getFrom())
+
+    def reverse_last_move(self):
+        if len(self.Move_History) == 0:
+            raise Exception("Cant Reverse Move since no Move has been played")
+        reverse_move = self.Move_History.pop(len(self.Move_History) - 1)
+        match reverse_move.getFrom():
+            # its a move from capture
+            #case 'C':
+            #    self.white_captures.append("chicken")
+            #    self.white.clearSquare(reverse_move.getTo())
+            #    self.chicken.clearSquare(reverse_move.getTo())
+            #case 'G':
+            #    self.white_captures.append("giraffe")
+            #    self.white.clearSquare(reverse_move.getTo())
+            #    self.giraffe.clearSquare(reverse_move.getTo())
+            #case 'E':
+            #    self.white_captures.append("elephant")
+            #    self.white.clearSquare(reverse_move.getTo())
+            #    self.elephant.clearSquare(reverse_move.getTo())
+            case 'c':
+                if self.white.isSquareSet(reverse_move.getTo()):
+                    self.white_captures.append("chicken")
+                    self.white.clearSquare(reverse_move.getTo())
+                    self.chicken.clearSquare(reverse_move.getTo())
+                else:
+                    self.black_captures.append("chicken")
+                    self.black.clearSquare(reverse_move.getTo())
+                    self.chicken.clearSquare(reverse_move.getTo())
+            case 'g':
+                if self.white.isSquareSet(reverse_move.getTo()):
+                    self.white_captures.append("giraffe")
+                    self.white.clearSquare(reverse_move.getTo())
+                    self.giraffe.clearSquare(reverse_move.getTo())
+                else:
+                    self.black_captures.append("giraffe")
+                    self.black.clearSquare(reverse_move.getTo())
+                    self.giraffe.clearSquare(reverse_move.getTo())
+            case 'e':
+                if self.white.isSquareSet(reverse_move.getTo()):
+                    self.white_captures.append("elephant")
+                    self.white.clearSquare(reverse_move.getTo())
+                    self.elephant.clearSquare(reverse_move.getTo())
+                else:
+                    self.black_captures.append("elephant")
+                    self.black.clearSquare(reverse_move.getTo())
+                    self.elephant.clearSquare(reverse_move.getTo())
+            # normal move
+            case _:
+                #reset animal
+                if self.chicken.isSquareSet(reverse_move.getTo()):
+                    self.chicken.clearSquare(reverse_move.getTo())
+                    self.chicken.setSquare(reverse_move.getFrom())
+                elif self.elephant.isSquareSet(reverse_move.getTo()):
+                    self.elephant.clearSquare(reverse_move.getTo())
+                    self.elephant.setSquare(reverse_move.getFrom())
+                elif self.giraffe.isSquareSet(reverse_move.getTo()):
+                    self.giraffe.clearSquare(reverse_move.getTo())
+                    self.giraffe.setSquare(reverse_move.getFrom())
+                elif self.lion.isSquareSet(reverse_move.getTo()):
+                    self.lion.clearSquare(reverse_move.getTo())
+                    self.lion.setSquare(reverse_move.getFrom())
+                # white got a hen
+                elif (self.hen.isSquareSet(reverse_move.getTo()) and
+                      self.white.isSquareSet(reverse_move.getTo()) and
+                      ((reverse_move.getTo() == 9 and reverse_move.getFrom() == 6)
+                       or (reverse_move.getTo() == 10 and reverse_move.getFrom() == 7)
+                       or (reverse_move.getTo() == 11 and reverse_move.getFrom() == 8))):
+                    self.hen.clearSquare(reverse_move.getTo())
+                    self.chicken.setSquare(reverse_move.getFrom())
+                # black got a hen
+                elif (self.hen.isSquareSet(reverse_move.getTo()) and
+                      self.black.isSquareSet(reverse_move.getTo()) and
+                      ((reverse_move.getTo() == 0 and reverse_move.getFrom() == 3)
+                       or (reverse_move.getTo() == 1 and reverse_move.getFrom() == 4)
+                       or (reverse_move.getTo() == 2 and reverse_move.getFrom() == 5))):
+                    self.hen.clearSquare(reverse_move.getTo())
+                    self.chicken.setSquare(reverse_move.getFrom())
+                elif self.hen.isSquareSet(reverse_move.getTo()):
+                    self.hen.clearSquare(reverse_move.getTo())
+                    self.hen.setSquare(reverse_move.getFrom())
+
+                # it was a white move
+                if self.white.isSquareSet(reverse_move.getTo()):
+                    self.white.clearSquare(reverse_move.getTo())
+                    self.white.setSquare(reverse_move.getFrom())
+                # it was a black move
+                else:
+                    self.black.clearSquare(reverse_move.getTo())
+                    self.black.setSquare(reverse_move.getFrom())
+
+                match reverse_move.getCapture():
+                    case 'C':
+                        self.white.setSquare(reverse_move.getTo())
+                        self.chicken.setSquare(reverse_move.getTo())
+                        self.black_captures.pop(len(self.black_captures) - 1)
+                    case 'E':
+                        self.white.setSquare(reverse_move.getTo())
+                        self.elephant.setSquare(reverse_move.getTo())
+                        self.black_captures.pop(len(self.black_captures) - 1)
+                    case 'G':
+                        self.white.setSquare(reverse_move.getTo())
+                        self.giraffe.setSquare(reverse_move.getTo())
+                        self.black_captures.pop(len(self.black_captures) - 1)
+                    case 'L':
+                        self.white.setSquare(reverse_move.getTo())
+                        self.lion.setSquare(reverse_move.getTo())
+                        #self.black_captures.pop(len(self.black_captures) - 1)
+                    case 'H':
+                        self.white.setSquare(reverse_move.getTo())
+                        self.hen.setSquare(reverse_move.getTo())
+                        self.black_captures.pop(len(self.black_captures) - 1)
+                    case 'c':
+                        self.black.setSquare(reverse_move.getTo())
+                        self.chicken.setSquare(reverse_move.getTo())
+                        self.white_captures.pop(len(self.white_captures) - 1)
+                    case 'e':
+                        self.black.setSquare(reverse_move.getTo())
+                        self.elephant.setSquare(reverse_move.getTo())
+                        self.white_captures.pop(len(self.white_captures) - 1)
+                    case 'g':
+                        self.black.setSquare(reverse_move.getTo())
+                        self.giraffe.setSquare(reverse_move.getTo())
+                        self.white_captures.pop(len(self.white_captures) - 1)
+                    case 'l':
+                        self.black.setSquare(reverse_move.getTo())
+                        self.lion.setSquare(reverse_move.getTo())
+                        #self.white_captures.pop(len(self.white_captures) - 1)
+                    case 'h':
+                        self.black.setSquare(reverse_move.getTo())
+                        self.hen.setSquare(reverse_move.getTo())
+                        self.white_captures.pop(len(self.white_captures) - 1)
 
     def isGameOver(self):
         white_lion = BitBoard.BitBoard()
@@ -766,16 +939,50 @@ class LionBoard:
 
 if __name__ == '__main__':
     board = LionBoard()
-    board.setBoard_Fen("gle/111/3/GcE/C")
+    """board.setBoard_Fen("gle/111/3/GcE/C")
     board.printBoard()
-    print(board.eval_func())
+    print(board.eval_func())"""
+
+    """board.setBoard_start()
+    board.printBoard()
+    board.makeMove(True, 4, 7)
+    board.printBoard()
+    board.makeMove(False, 11, 7)
+    board.printBoard()
+    board.makeMove(True, 'c', 4)
+    board.printBoard()
+    board.makeMove(False, 9, 6)
+    board.printBoard()
+    print("-----------------------------------------")
+    board.reverse_last_move()
+    board.printBoard()
+    board.reverse_last_move()
+    board.printBoard()
+    board.reverse_last_move()
+    board.printBoard()
+    board.reverse_last_move()
+    board.printBoard()"""
+
+    board.setBoard_start()
+    board.printBoard()
+    board.makeMove(True, 2, 5)
+    board.makeMove(True, 5, 8)
+    board.makeMove(True, 8, 7)
+    board.makeMove(True, 7, 8)
+    board.makeMove(True, 8, 11)
+    board.printBoard()
+    board.reverse_last_move()
+    board.reverse_last_move()
+    board.reverse_last_move()
+    board.printBoard()
+
     """list = board.allpossibleMoves(True)
     print("move lists len:",len(list))
     i2 = 1
     for i in list:
         print("List ", i2," Len:", len(i))
         i2 = i2 + 1
-"""
+    """
     """board = LionBoard()
     board.setBoard_Fen("3/1l1/2L/C2/GgcEe")
     #board.setBoard_start()

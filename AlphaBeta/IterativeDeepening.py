@@ -1,6 +1,6 @@
 import signal
-#from . import AlphaBeta
-import AlphaBeta
+from . import AlphaBeta
+#import AlphaBeta
 import time
 from Game import LionBoard
 

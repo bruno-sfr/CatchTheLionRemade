@@ -23,7 +23,9 @@ class iterativeDeepeningMTD:
         # Set the timeout in seconds
         timeout_seconds = time
         depth = 1
-        eval = 0.0
+        #eval = 0.0
+        evalMTD_even = 0.0
+        evalMTD_uneven = 0.0
         moves = []
 
         # Set the timeout handler for the SIGALRM signal
@@ -35,16 +37,25 @@ class iterativeDeepeningMTD:
 
             # Call your function
             while True:
-                eval, moves = self.MTD.MTDF(eval, depth, board, WhiteTurn, 0.1)
+                #eval, moves = self.MTD.MTDF(eval, depth, board, WhiteTurn, 0.1)
                 # print("Depth:", depth)
+                if depth % 2 == 0:
+                    #print("Run Even")
+                    evalMTD_even, moves = self.MTD.MTDF(evalMTD_even, depth, board, WhiteTurn, 0.1)
+                else:
+                    #print("Run Uneven")
+                    evalMTD_uneven, moves = self.MTD.MTDF(evalMTD_uneven, depth, board, WhiteTurn, 0.1)
                 depth = depth + 1
-
             # Disable the alarm since the function executed successfully
             # signal.alarm(0)
         except TimeoutError as e:
             print(e)
             # Handle the timeout event here (e.g., show an error message, take some action, etc.)
-        return eval, moves
+        if depth % 2 == 0:
+            return evalMTD_even, moves
+        else:
+            return evalMTD_uneven, moves
+        #return eval, moves
 
 
 

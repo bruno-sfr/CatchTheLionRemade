@@ -11,7 +11,7 @@ class Move:
         return self._from
 
     def getTo(self):
-        return  self._to
+        return self._to
 
     def setFrom(self, __from):
         self._from = __from

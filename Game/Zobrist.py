@@ -117,7 +117,57 @@ class Zobrist:
         for i in blackgiraffes:
             hash = hash ^ self.blackgiraffeRandoms[i]
 
-        if board.white_captures.__contains__("chicken"):
+
+        first_chicken_white = True
+        first_elephant_white = True
+        first_giraffe_white = True
+        first_chicken_black = True
+        first_elephant_black = True
+        first_giraffe_black = True
+
+        for animal in board.white_captures:
+            match animal:
+                case "chicken":
+                    if first_chicken_white:
+                        hash = hash ^ self.whiteReserveRandoms[0]
+                        first_chicken_white = not first_chicken_white
+                    else:
+                        hash = hash ^ self.whiteReserveRandoms[1]
+                case "elephant":
+                    if first_elephant_white:
+                        hash = hash ^ self.whiteReserveRandoms[2]
+                        first_elephant_white = not first_elephant_white
+                    else:
+                        hash = hash ^ self.whiteReserveRandoms[3]
+                case "giraffe":
+                    if first_giraffe_white:
+                        hash = hash ^ self.whiteReserveRandoms[4]
+                        first_giraffe_white = not first_giraffe_white
+                    else:
+                        hash = hash ^ self.whiteReserveRandoms[5]
+
+        for animal in board.black_captures:
+            match animal:
+                case "chicken":
+                    if first_chicken_black:
+                        hash = hash ^ self.blackReserveRandoms[0]
+                        first_chicken_black = not first_chicken_black
+                    else:
+                        hash = hash ^ self.blackReserveRandoms[1]
+                case "elephant":
+                    if first_elephant_black:
+                        hash = hash ^ self.blackReserveRandoms[2]
+                        first_elephant_black = not first_elephant_black
+                    else:
+                        hash = hash ^ self.blackReserveRandoms[3]
+                case "giraffe":
+                    if first_giraffe_black:
+                        hash = hash ^ self.blackReserveRandoms[4]
+                        first_giraffe_black = not first_giraffe_black
+                    else:
+                        hash = hash ^ self.blackReserveRandoms[5]
+
+        """if board.white_captures.__contains__("chicken"):
             hash = hash ^ self.whiteReserveRandoms[0]
         else:
             hash = hash ^ self.whiteReserveRandoms[1]
@@ -145,7 +195,7 @@ class Zobrist:
         if board.black_captures.__contains__("giraffe"):
             hash = hash ^ self.blackReserveRandoms[4]
         else:
-            hash = hash ^ self.blackReserveRandoms[5]
+            hash = hash ^ self.blackReserveRandoms[5]"""
 
         return hash
 

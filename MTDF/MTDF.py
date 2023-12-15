@@ -1,5 +1,7 @@
 import copy
 import time
+
+import AlphaBeta.AlphaBeta
 from Game import LionBoard, Zobrist
 import random
 from . import MTDfTranspositionsTable
@@ -15,12 +17,13 @@ Algorithm from https://askeplaat.wordpress.com/534-2/mtdf-algorithm/
 class MTDF:
     def __init__(self):
         self.zob = Zobrist.Zobrist()
-        self.table = MTDfTranspositionsTable.TranspostionTable(25)
+        #self.table = MTDfTranspositionsTable.TranspostionTable(25)
         self.count_transpo = 0
         self.count_MTDf_iter = 0
-        self.TT = TranspostionTable.TranspostionTable(25)
-        self.upper_TT = TranspostionTable.TranspostionTable(25)
-        self.lower_TT = TranspostionTable.TranspostionTable(25)
+        #self.TT = TranspostionTable.TranspostionTable(25)
+        #self.upper_TT = TranspostionTable.TranspostionTable(25)
+        #self.lower_TT = TranspostionTable.TranspostionTable(25)
+        self.AB = AlphaBeta.AlphaBeta.Alpha_Beta_TranspostionTable()
 
 
     """function MTDF(root : node_type; f : integer; d: integer) : integer;
@@ -49,7 +52,8 @@ class MTDF:
             else:
                 beta = g
 
-            g, moves = self.alpha_beta_MTD(beta - increment, beta, depth, board, whiteTurn, [])
+            #g, moves = self.alpha_beta_MTD(beta - increment, beta, depth, board, whiteTurn, [])
+            g, moves = self.AB.alpha_beta_TT_flag(beta - increment, beta, depth, board, whiteTurn, [], True)
 
             if g < beta:
                 upperbound = g
@@ -201,13 +205,13 @@ class MTDF:
                         g = eval
                         # bestmove = move
                         best_moves = move_list
-                    elif eval == g:
+                    #elif eval == g:
                         # add a random element to selection of equal value
-                        rand = random.randint(0, 1)
-                        if rand == 1:
-                            g = eval
+                    #    rand = random.randint(0, 1)
+                    #    if rand == 1:
+                    #        g = eval
                             # bestmove = move
-                            best_moves = move_list
+                    #        best_moves = move_list
                     a = max(a, g)
                     if not(g < beta):
                         break
@@ -232,13 +236,13 @@ class MTDF:
                         g = eval
                         # bestmove = move
                         best_moves = move_list
-                    elif eval == g:
+                    #elif eval == g:
                         # add a random element to selection of equal value
-                        rand = random.randint(0, 1)
-                        if rand == 1:
-                            g = eval
+                    #    rand = random.randint(0, 1)
+                    #    if rand == 1:
+                    #        g = eval
                             # bestmove = move
-                            best_moves = move_list
+                    #        best_moves = move_list
                     b = min(beta, g)
                     if not(g > alpha):
                         break
@@ -298,13 +302,13 @@ class MTDF:
                         g = eval
                         # bestmove = move
                         best_moves = move_list
-                    elif eval == g:
+                    #elif eval == g:
                         # add a random element to selection of equal value
-                        rand = random.randint(0, 1)
-                        if rand == 1:
-                            g = eval
+                    #    rand = random.randint(0, 1)
+                    #    if rand == 1:
+                    #        g = eval
                             # bestmove = move
-                            best_moves = move_list
+                    #        best_moves = move_list
                     a = max(a, g)
                     if not(g < beta):
                         break
@@ -329,13 +333,13 @@ class MTDF:
                         g = eval
                         # bestmove = move
                         best_moves = move_list
-                    elif eval == g:
+                    #elif eval == g:
                         # add a random element to selection of equal value
-                        rand = random.randint(0, 1)
-                        if rand == 1:
-                            g = eval
+                    #    rand = random.randint(0, 1)
+                    #    if rand == 1:
+                    #        g = eval
                             # bestmove = move
-                            best_moves = move_list
+                    #        best_moves = move_list
                     b = min(beta, g)
                     if not(g > alpha):
                         break
