@@ -411,8 +411,12 @@ class LionBoard:
         _freefields.setBoard(__freefields)
         freefields = _freefields.allSetSquares()
 
+        first_giraffe = True
+        first_elephant = True
+        first_chicken = True
         for piece in Captures:
-            if piece == "giraffe":
+            if piece == "giraffe" and first_giraffe:
+                first_giraffe = False
                 for field in freefields:
                     move = Move.Move()
                     move.setMove("g", field)
@@ -421,7 +425,8 @@ class LionBoard:
                     else:
                         move.setMove("g", field)"""
                     capture_list.append(move)
-            elif piece == "elephant":
+            elif piece == "elephant" and first_elephant:
+                first_elephant = False
                 for field in freefields:
                     move = Move.Move()
                     move.setMove("e", field)
@@ -430,7 +435,8 @@ class LionBoard:
                     else:
                         move.setMove("G", field)"""
                     capture_list.append(move)
-            elif piece == "chicken":
+            elif piece == "chicken" and first_chicken:
+                first_chicken = False
                 if whiteTurn:
                     _chicken_freefields = BitBoard.BitBoard()
                     lastrow = 0b111000000000
