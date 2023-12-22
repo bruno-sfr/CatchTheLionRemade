@@ -1,5 +1,5 @@
 import signal
-from . import AlphaBeta
+from . import AlphaBeta, MiniMax
 #import AlphaBeta
 import time
 from Game import LionBoard
@@ -69,6 +69,33 @@ class iterativeDeepeningAB:
             # signal.alarm(0)
         except TimeoutError as e:
             print(e)
+            # Handle the timeout event here (e.g., show an error message, take some action, etc.)
+        return result
+
+    def iterativeDeepening_MM(self, time: int, board: LionBoard.LionBoard, WhiteTurn: bool):
+        # Set the timeout in seconds
+        timeout_seconds = time
+        self.depth = 1
+        result = 0.0
+
+        # Set the timeout handler for the SIGALRM signal
+        signal.signal(signal.SIGALRM, timeout_handler)
+
+        try:
+            # Set the alarm to trigger after the specified timeout
+            signal.alarm(timeout_seconds)
+
+            # Call your function
+            while True:
+                result = MiniMax.MiniMax(self.depth, board, WhiteTurn, [])
+                # print("Depth:", depth)
+                self.depth = self.depth + 1
+
+            # Disable the alarm since the function executed successfully
+            # signal.alarm(0)
+        except TimeoutError as e:
+            # print(e)
+            print(f"Depht {self.depth} reached")
             # Handle the timeout event here (e.g., show an error message, take some action, etc.)
         return result
 
