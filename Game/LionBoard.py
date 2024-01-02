@@ -14,8 +14,14 @@ class LionBoard:
         self.chicken = BitBoard.BitBoard()
         self.hen = BitBoard.BitBoard()
         # in written String lower case
-        self.black_captures = []
-        self.white_captures = []
+        #self.black_captures = []
+        self.black_chickens = 0
+        self.black_giraffes = 0
+        self.black_elephants = 0
+        #self.white_captures = []
+        self.white_chickens = 0
+        self.white_giraffes = 0
+        self.white_elephants = 0
 
         self.Move_History = []
 
@@ -68,17 +74,23 @@ class LionBoard:
             elif i < 0:
                 # captures
                 if char == 'E':
-                    self.white_captures.append("elephant")
+                    #self.white_captures.append("elephant")
+                    self.white_elephants = self.white_elephants + 1
                 elif char == 'G':
-                    self.white_captures.append("giraffe")
+                    #self.white_captures.append("giraffe")
+                    self.white_giraffes = self.white_giraffes + 1
                 elif char == 'C':
-                    self.white_captures.append("chicken")
+                    #self.white_captures.append("chicken")
+                    self.white_chickens = self.white_chickens + 1
                 elif char == 'e':
-                    self.black_captures.append("elephant")
+                    #self.black_captures.append("elephant")
+                    self.black_elephants = self.black_elephants + 1
                 elif char == 'g':
-                    self.black_captures.append("giraffe")
+                    #self.black_captures.append("giraffe")
+                    self.black_giraffes = self.black_giraffes + 1
                 elif char == 'c':
-                    self.black_captures.append("chicken")
+                    #self.black_captures.append("chicken")
+                    self.black_chickens = self.black_chickens + 1
             elif char == 'L':
                 self.white.setSquare(i)
                 self.lion.setSquare(i)
@@ -131,9 +143,15 @@ class LionBoard:
         # self.black_captures = copy.deepcopy(board.black_captures)
         #for i in board.black_captures:
         #    self.black_captures.append(i)
+        self.black_chickens = board.black_chickens
+        self.black_giraffes = board.black_giraffes
+        self.black_elephants = board.black_elephants
         # self.white_captures = copy.deepcopy(board.white_captures)
         #for i in board.white_captures:
         #    self.white_captures.append(i)
+        self.white_chickens = board.white_chickens
+        self.white_giraffes = board.white_giraffes
+        self.white_elephants = board.white_elephants
 
     def getFen(self):
         Fen = ""
@@ -165,24 +183,38 @@ class LionBoard:
             if i%3 == 0:
                 Fen = Fen + "/"
 
-        for animal in self.black_captures:
+        """for animal in self.black_captures:
             if animal == "giraffe":
                 Fen = Fen + "g"
             elif animal == "chicken":
                 Fen = Fen + "c"
             elif animal == "elephant":
                 Fen = Fen + "e"
+        """
+        for i in range(self.black_chickens):
+            Fen = Fen + "c"
+        for i in range(self.black_elephants):
+            Fen = Fen + "e"
+        for i in range(self.black_giraffes):
+            Fen = Fen + "g"
 
-        for animal in self.white_captures:
+        """for animal in self.white_captures:
             if animal == "giraffe":
                 Fen = Fen + "G"
             elif animal == "chicken":
                 Fen = Fen + "C"
             elif animal == "elephant":
                 Fen = Fen + "E"
+        """
+        for i in range(self.white_chickens):
+            Fen = Fen + "C"
+        for i in range(self.white_elephants):
+            Fen = Fen + "E"
+        for i in range(self.white_giraffes):
+            Fen = Fen + "G"
         return Fen
 
-    def randomBoard(self):
+    """def randomBoard(self):
         self.white.setBoard(0b000000000000)
         self.black.setBoard(0b000000000000)
         self.lion.setBoard(0b000000000000)
@@ -273,6 +305,7 @@ class LionBoard:
                 self.hen.setSquare(rand)
             else:
                 self.black_captures.append("chicken")
+"""
 
     def allpossibleMoves_BigList(self, whiteTurn:bool):
         list = self.allpossibleMoves(whiteTurn)
@@ -310,7 +343,7 @@ class LionBoard:
             hen = white_hen.allSetSquares()
             Attacker = self.white.getBoard()
             Defender = self.black.getBoard()
-            Captures = self.white_captures
+            #Captures = self.white_captures
         else:
             black_lion = BitBoard.BitBoard()
             black_lion.setBoard(self.lion.getBoard() & self.black.getBoard())
@@ -329,7 +362,7 @@ class LionBoard:
             hen = black_hen.allSetSquares()
             Attacker = self.black.getBoard()
             Defender = self.white.getBoard()
-            Captures = self.black_captures
+            #Captures = self.black_captures
 
         # lion
         for i in lion:
@@ -411,7 +444,7 @@ class LionBoard:
         _freefields.setBoard(__freefields)
         freefields = _freefields.allSetSquares()
 
-        first_giraffe = True
+        """first_giraffe = True
         first_elephant = True
         first_chicken = True
         for piece in Captures:
@@ -420,20 +453,20 @@ class LionBoard:
                 for field in freefields:
                     move = Move.Move()
                     move.setMove("g", field)
-                    """"if whiteTurn:
-                        move.setMove("G", field)
-                    else:
-                        move.setMove("g", field)"""
+                    #if whiteTurn:
+                    #    move.setMove("G", field)
+                    #else:
+                    #    move.setMove("g", field)
                     capture_list.append(move)
             elif piece == "elephant" and first_elephant:
                 first_elephant = False
                 for field in freefields:
                     move = Move.Move()
                     move.setMove("e", field)
-                    """if whiteTurn:
-                        move.setMove("E", field)
-                    else:
-                        move.setMove("G", field)"""
+                    #if whiteTurn:
+                    #    move.setMove("E", field)
+                    #else:
+                    #    move.setMove("G", field)
                     capture_list.append(move)
             elif piece == "chicken" and first_chicken:
                 first_chicken = False
@@ -450,13 +483,55 @@ class LionBoard:
                 for field in chicken_freefields:
                     move = Move.Move()
                     move.setMove("c", field)
-                    """if whiteTurn:
-                        move.setMove("C", field)
-                    else:
-                        move.setMove("c", field)"""
+                    #if whiteTurn:
+                    #    move.setMove("C", field)
+                    #else:
+                    #    move.setMove("c", field)
                     capture_list.append(move)
         list.append(capture_list)
+        """
 
+        if whiteTurn:
+            if self.white_giraffes > 0:
+                for field in freefields:
+                    move = Move.Move()
+                    move.setMove("g", field)
+                    capture_list.append(move)
+            if self.white_elephants > 0:
+                for field in freefields:
+                    move = Move.Move()
+                    move.setMove("e", field)
+                    capture_list.append(move)
+            if self.white_chickens > 0:
+                _chicken_freefields = BitBoard.BitBoard()
+                lastrow = 0b111000000000
+                _chicken_freefields.setBoard(__freefields & ~lastrow)
+                chicken_freefields = _chicken_freefields.allSetSquares()
+                for field in chicken_freefields:
+                    move = Move.Move()
+                    move.setMove("c", field)
+                    capture_list.append(move)
+        else:
+            if self.black_giraffes > 0:
+                for field in freefields:
+                    move = Move.Move()
+                    move.setMove("g", field)
+                    capture_list.append(move)
+            if self.black_elephants > 0:
+                for field in freefields:
+                    move = Move.Move()
+                    move.setMove("e", field)
+                    capture_list.append(move)
+            if self.black_chickens > 0:
+                _chicken_freefields = BitBoard.BitBoard()
+                lastrow = 0b000000000111
+                _chicken_freefields.setBoard(__freefields & ~lastrow)
+                chicken_freefields = _chicken_freefields.allSetSquares()
+                for field in chicken_freefields:
+                    move = Move.Move()
+                    move.setMove("c", field)
+                    capture_list.append(move)
+        list.append(capture_list)
         return list
 
     def makeRandomMove(self,  whiteTurn: bool):
@@ -510,12 +585,12 @@ class LionBoard:
             allMoves = self.allpossibleMoves(True)
             Attacker = self.white
             Defender = self.black
-            Captures = self.white_captures
+            #Captures = self.white_captures
         else:
             allMoves = self.allpossibleMoves(False)
             Attacker = self.black
             Defender = self.white
-            Captures = self.black_captures
+            #Captures = self.black_captures
         lion_moves = allMoves[0]
         giraffe_moves = allMoves[1]
         elephant_moves = allMoves[2]
@@ -525,38 +600,55 @@ class LionBoard:
 
         for imove in lion_moves:
             if imove.equals(move):
-                self.pieceMove(Attacker, Defender, move, Captures, self.lion)
+                #self.pieceMove(Attacker, Defender, move, Captures, self.lion)
+                self.pieceMove(Attacker, Defender, move, whiteTurn, self.lion)
                 return True
         for imove in giraffe_moves:
             if imove.equals(move):
-                self.pieceMove(Attacker, Defender, move, Captures, self.giraffe)
+                #self.pieceMove(Attacker, Defender, move, Captures, self.giraffe)
+                self.pieceMove(Attacker, Defender, move, whiteTurn, self.giraffe)
                 return True
         for imove in elephant_moves:
             if imove.equals(move):
-                self.pieceMove(Attacker, Defender, move, Captures, self.elephant)
+                #self.pieceMove(Attacker, Defender, move, Captures, self.elephant)
+                self.pieceMove(Attacker, Defender, move, whiteTurn, self.elephant)
                 return True
         for imove in chicken_moves:
             if imove.equals(move):
-                self.pieceMove(Attacker, Defender, move, Captures, self.chicken)
+                #self.pieceMove(Attacker, Defender, move, Captures, self.chicken)
+                self.pieceMove(Attacker, Defender, move, whiteTurn, self.chicken)
                 self.check_hen(whiteTurn)
                 return True
         for imove in hen_moves:
             if imove.equals(move):
-                self.pieceMove(Attacker, Defender, move, Captures, self.hen)
+                #self.pieceMove(Attacker, Defender, move, Captures, self.hen)
+                self.pieceMove(Attacker, Defender, move, whiteTurn, self.hen)
                 return True
 
         for imove in capture_moves:
             if imove.equals(move):
                 if move.getFrom() == "g":
-                    Captures.remove("giraffe")
+                    #Captures.remove("giraffe")
+                    if whiteTurn:
+                        self.white_giraffes = self.white_giraffes - 1
+                    else:
+                        self.black_giraffes = self.black_giraffes - 1
                     Attacker.setSquare(move.getTo())
                     self.giraffe.setSquare(move.getTo())
                 elif move.getFrom() == "e":
-                    Captures.remove("elephant")
+                    #Captures.remove("elephant")
+                    if whiteTurn:
+                        self.white_elephants = self.white_elephants - 1
+                    else:
+                        self.black_elephants = self.black_elephants - 1
                     Attacker.setSquare(move.getTo())
                     self.elephant.setSquare(move.getTo())
                 elif move.getFrom() == "c":
-                    Captures.remove("chicken")
+                    #Captures.remove("chicken")
+                    if whiteTurn:
+                        self.white_chickens = self.white_chickens - 1
+                    else:
+                        self.black_chickens = self.black_chickens - 1
                     Attacker.setSquare(move.getTo())
                     self.chicken.setSquare(move.getTo())
 
@@ -568,7 +660,8 @@ class LionBoard:
 
         return False
 
-    def pieceMove(self, attacker: BitBoard, defender: BitBoard, move: Move, captures: [], piece_type: BitBoard):
+    #def pieceMove(self, attacker: BitBoard, defender: BitBoard, move: Move, captures: [], piece_type: BitBoard):
+    def pieceMove(self, attacker: BitBoard, defender: BitBoard, move: Move, whiteTurn: bool, piece_type: BitBoard):
         defender_lion = BitBoard.BitBoard()
         defender_lion.setBoard(self.lion.getBoard() & defender.getBoard())
         defender_giraffe = BitBoard.BitBoard()
@@ -580,8 +673,8 @@ class LionBoard:
         defender_hen = BitBoard.BitBoard()
         defender_hen.setBoard(self.hen.getBoard() & defender.getBoard())
 
-        store_move = Store_Move.Store_Move()
-        store_move.setMove(move.getFrom(), move.getTo(), 0)
+        #store_move = Store_Move.Store_Move()
+        #store_move.setMove(move.getFrom(), move.getTo(), 0)
 
         if defender.isSquareSet(move.getTo()):
             defender.clearSquare(move.getTo())
@@ -589,50 +682,66 @@ class LionBoard:
                 self.lion.clearSquare(move.getTo())
 
                 # add capture to store move for history depending on which player
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('L')
                 else:
-                    store_move.setCapture('l')
+                    store_move.setCapture('l')"""
             elif defender_giraffe.isSquareSet(move.getTo()):
                 self.giraffe.clearSquare(move.getTo())
-                captures.append("giraffe")
+                #captures.append("giraffe")
+                if whiteTurn:
+                    self.white_giraffes = self.white_giraffes + 1
+                else:
+                    self.black_giraffes = self.black_giraffes + 1
 
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('G')
                 else:
-                    store_move.setCapture('g')
+                    store_move.setCapture('g')"""
             elif defender_elephant.isSquareSet(move.getTo()):
                 self.elephant.clearSquare(move.getTo())
-                captures.append("elephant")
+                #captures.append("elephant")
+                if whiteTurn:
+                    self.white_elephants = self.white_elephants + 1
+                else:
+                    self.black_elephants = self.black_elephants + 1
 
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('E')
                 else:
-                    store_move.setCapture('e')
+                    store_move.setCapture('e')"""
             elif defender_chicken.isSquareSet(move.getTo()):
                 self.chicken.clearSquare(move.getTo())
-                captures.append("chicken")
+                #captures.append("chicken")
+                if whiteTurn:
+                    self.white_chickens = self.white_chickens + 1
+                else:
+                    self.black_chickens = self.black_chickens + 1
 
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('C')
                 else:
-                    store_move.setCapture('c')
+                    store_move.setCapture('c')"""
             elif defender_hen.isSquareSet(move.getTo()):
                 self.hen.clearSquare(move.getTo())
-                captures.append("chicken")
+                #captures.append("chicken")
+                if whiteTurn:
+                    self.white_chickens = self.white_chickens + 1
+                else:
+                    self.black_chickens = self.black_chickens + 1
 
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('H')
                 else:
-                    store_move.setCapture('h')
+                    store_move.setCapture('h')"""
 
-        self.Move_History.append(store_move)
+        #self.Move_History.append(store_move)
         attacker.setSquare(move.getTo())
         attacker.clearSquare(move.getFrom())
         piece_type.setSquare(move.getTo())
         piece_type.clearSquare(move.getFrom())
 
-    def reverse_last_move(self):
+    """def reverse_last_move(self):
         if len(self.Move_History) == 0:
             raise Exception("Cant Reverse Move since no Move has been played")
         reverse_move = self.Move_History.pop(len(self.Move_History) - 1)
@@ -762,6 +871,7 @@ class LionBoard:
                         self.black.setSquare(reverse_move.getTo())
                         self.hen.setSquare(reverse_move.getTo())
                         self.white_captures.pop(len(self.white_captures) - 1)
+"""
 
     def isGameOver(self):
         white_lion = BitBoard.BitBoard()
@@ -838,9 +948,15 @@ class LionBoard:
         eval = eval - len(temp) * 7
 
         # capture value
-        eval = eval + self.eval_captures(self.white_captures)
+        #eval = eval + self.eval_captures(self.white_captures)
+        eval = eval + self.white_chickens * 0.5
+        eval = eval + self.white_giraffes * 2
+        eval = eval + self.white_elephants * 2
 
-        eval = eval - self.eval_captures(self.black_captures)
+        #eval = eval - self.eval_captures(self.black_captures)
+        eval = eval - self.black_chickens * 0.5
+        eval = eval - self.black_giraffes * 2
+        eval = eval - self.black_elephants * 2
 
         # freedom of units
         list = self.allpossibleMoves(True)
@@ -861,7 +977,7 @@ class LionBoard:
         else:
             return 0
 
-    def eval_captures(self, list):
+    """def eval_captures(self, list):
         eval = 0.0
         for i in list:
             if i == "giraffe":
@@ -870,9 +986,9 @@ class LionBoard:
                 eval = eval + 1.5
             elif i == "chicken":
                 eval = eval + 0.5
-        return eval
+        return eval"""
 
-    def get_Gamestate(self):
+    """def get_Gamestate(self):
         list = []
         list.append(self.white.getBoard())
         list.append(self.black.getBoard())
@@ -885,6 +1001,7 @@ class LionBoard:
         list.append(self.white_captures)
         list.append(self.black_captures)
         return list
+"""
 
     def printBoard(self):
         white_lion = BitBoard.BitBoard()
@@ -936,15 +1053,42 @@ class LionBoard:
             print()
 
         print("White Captures:")
-        for i in self.white_captures:
-            print(i)
+        for i in range(self.white_chickens):
+            print("chicken")
+        for i in range(self.white_giraffes):
+            print("giraffe")
+        for i in range(self.white_elephants):
+            print("elephant")
+        #for i in self.white_captures:
+        #    print(i)
 
         print("Black Captures:")
-        for i in self.black_captures:
-            print(i)
+        for i in range(self.black_chickens):
+            print("chicken")
+        for i in range(self.black_giraffes):
+            print("giraffe")
+        for i in range(self.black_elephants):
+            print("elephant")
+        #for i in self.black_captures:
+        #    print(i)
 
 if __name__ == '__main__':
     board = LionBoard()
+    #x = 2
+    #for y in range(x):
+    #    print(y)
+    board.setBoard_start()
+    board.printBoard()
+    print(board.getFen())
+    board.makeMove(True, 4, 7)
+    board.printBoard()
+    print(board.getFen())
+    board.makeMove(False, 10, 7)
+    board.printBoard()
+    print(board.getFen())
+    board.makeMove(True, "c", 4)
+    board.printBoard()
+    print(board.getFen())
     """board.setBoard_Fen("gle/111/3/GcE/C")
     board.printBoard()
     print(board.eval_func())"""
@@ -969,7 +1113,7 @@ if __name__ == '__main__':
     board.reverse_last_move()
     board.printBoard()"""
 
-    board.setBoard_start()
+    """board.setBoard_start()
     board.printBoard()
     board.makeMove(True, 2, 5)
     board.makeMove(True, 5, 8)
@@ -980,7 +1124,7 @@ if __name__ == '__main__':
     board.reverse_last_move()
     board.reverse_last_move()
     board.reverse_last_move()
-    board.printBoard()
+    board.printBoard()"""
 
     """list = board.allpossibleMoves(True)
     print("move lists len:",len(list))

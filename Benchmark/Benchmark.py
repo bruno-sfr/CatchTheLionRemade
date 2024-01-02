@@ -56,7 +56,7 @@ def TestStartpostion():
     MTD_no_TT = MTDF.MTDF()
     MTD_2_TT = MTDF.MTDF()
 
-    Depth = 12
+    Depth = 10
     x = range(1, Depth)
 
     for i in range(1, Depth):
@@ -119,7 +119,7 @@ def TestStartpostion():
         AB_TT_store_List.append(timetaken)
         AB_TT_store_Eval_List.append(eval)"""
 
-        print("")
+        """print("")
         print("Alpha-Beta_TT_flag")
         start = time.time()
         # eval, moves = AB.alpha_beta_TT_simple(i, board, True)
@@ -133,7 +133,7 @@ def TestStartpostion():
             move.printMove()
             break
         AB_TT_store_List.append(timetaken)
-        AB_TT_store_Eval_List.append(eval)
+        AB_TT_store_Eval_List.append(eval)"""
 
         """print("")
         print("AB_TT from MTD(f)")
@@ -170,7 +170,7 @@ def TestStartpostion():
         MTD_Eval_List.append(evalMTD)
         """
 
-        print("")
+        """print("")
         print("MTD(f) with f=bestSecondGuess")
         start = time.time()
         if i % 2 == 0:
@@ -193,7 +193,7 @@ def TestStartpostion():
         for move in movesMTD:
             move.printMove()
             break
-        MTD_second_guess_List.append(timetaken)
+        MTD_second_guess_List.append(timetaken)"""
 
 
         """print("")
@@ -289,9 +289,9 @@ def TestStartpostion():
     #axs[0].plot(x, MM_List, label='MiniMax')
     axs[0].plot(x, AB_List, label='Alpha-Beta')
     #axs[0].plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
-    axs[0].plot(x, AB_TT_store_List, label='Alpha-Beta TT Store All', linestyle='dashed')
+    #axs[0].plot(x, AB_TT_store_List, label='Alpha-Beta TT Store All', linestyle='dashed')
     #axs[0].plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashed')
-    axs[0].plot(x, MTD_second_guess_List, label='MTD(f) with f = best second guess', linestyle='dashed')
+    #axs[0].plot(x, MTD_second_guess_List, label='MTD(f) with f = best second guess', linestyle='dashed')
     #axs[0].plot(x, MTD_MiniMax_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
     #axs[0].plot(x, MTD_0_List, label='MTD(f) with f = 0', linestyle='dashed')
     #axs[0].plot(x, MTD_no_TT_List, label='MTD(f) with no TT', linestyle='dashdot')
@@ -303,9 +303,9 @@ def TestStartpostion():
     #axs[1].plot(x, MM_Eval_List, label='MiniMax')
     axs[1].plot(x, AB_Eval_List, label='Alpha-Beta')
     #axs[1].plot(x, AB_TT_Eval_List, label='Alpha-Beta TT', linestyle='dotted')
-    axs[1].plot(x, AB_TT_store_Eval_List, label='Alpha-Beta TT Store All', linestyle='dashed')
+    #axs[1].plot(x, AB_TT_store_Eval_List, label='Alpha-Beta TT Store All', linestyle='dashed')
     #axs[1].plot(x, MTD_Eval_List, label='MTD(f) with f = best guess', linestyle='dashed')
-    axs[1].plot(x, MTD_second_guess_Eval_List, label='MTD(f) with f = second best guess', linestyle='dashed')
+    #axs[1].plot(x, MTD_second_guess_Eval_List, label='MTD(f) with f = second best guess', linestyle='dashed')
     #axs[1].plot(x, MTD_MiniMax_Eval_List, label='MTD(f) with f = BestMiniMax', linestyle='dashdot')
     #axs[1].plot(x, MTD_0_Eval_List, label='MTD(f) with f = 0', linestyle='dashed')
     #axs[1].plot(x, MTD_no_TT_Eval_List, label='MTD(f) with no TT', linestyle='dashdot')
