@@ -128,10 +128,10 @@ class LionBoard:
         self.giraffe.setBoard(board.giraffe.getBoard())
         self.chicken.setBoard(board.chicken.getBoard())
         self.hen.setBoard(board.hen.getBoard())
-        self.black_captures = copy.deepcopy(board.black_captures)
+        # self.black_captures = copy.deepcopy(board.black_captures)
         #for i in board.black_captures:
         #    self.black_captures.append(i)
-        self.white_captures = copy.deepcopy(board.white_captures)
+        # self.white_captures = copy.deepcopy(board.white_captures)
         #for i in board.white_captures:
         #    self.white_captures.append(i)
 
