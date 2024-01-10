@@ -129,11 +129,11 @@ class LionBoard:
         self.chicken.setBoard(board.chicken.getBoard())
         self.hen.setBoard(board.hen.getBoard())
         # self.black_captures = copy.deepcopy(board.black_captures)
-        #for i in board.black_captures:
-        #    self.black_captures.append(i)
+        for i in board.black_captures:
+            self.black_captures.append(i)
         # self.white_captures = copy.deepcopy(board.white_captures)
-        #for i in board.white_captures:
-        #    self.white_captures.append(i)
+        for i in board.white_captures:
+            self.white_captures.append(i)
 
     def getFen(self):
         Fen = ""
@@ -843,13 +843,13 @@ class LionBoard:
         eval = eval - self.eval_captures(self.black_captures)
 
         # freedom of units
-        list = self.allpossibleMoves(True)
+        """list = self.allpossibleMoves(True)
         for i in list:
             eval = eval + len(i)/4
 
         list = self.allpossibleMoves(False)
         for i in list:
-            eval = eval - len(i)/4
+            eval = eval - len(i)/4"""
 
         return eval
 
