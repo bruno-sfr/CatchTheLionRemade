@@ -34,7 +34,7 @@ class SimGUI:
         self.canvas.create_image(500, 350, image=self.images[-1])
 
         self.text_widget = scrolledtext.ScrolledText(self.canvas, wrap=tk.WORD)
-        options = ["MiniMax", "Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS", "MCTS-Rework", "MCTS-Solver", "MCTS-Paper", "MCTS-MR", "MCTS-MR-Solver", "MCTS-MR-Paper", "MCTS-MS", "MCTS-MS-Solver"]
+        options = ["MiniMax", "Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS", "MCTS-Rework", "MCTS-Solver", "MCTS-Paper", "MCTS-MR", "MCTS-MR-Solver", "MCTS-MR-Paper", "MCTS-MS", "MCTS-MS-Solver", "MCTS-MS-Paper", "MCTS-MB-Paper"]
         self.white = ttk.Combobox(self.canvas, values=options)
         self.white.set("Select white Player")  # Set a default selection
         self.black = ttk.Combobox(self.canvas, values=options)
@@ -79,8 +79,8 @@ class SimGUI:
 
     def game(self):
         #sys.setrecursionlimit(15000)
-        #max_turns = 100
-        max_turns = 50
+        max_turns = 100
+        #max_turns = 50
         self.canvas.itemconfig(self.window_10, state="normal")
         for i in range(0, self.iterations):
             turns = 0
@@ -90,6 +90,7 @@ class SimGUI:
             board.setBoard_start()
             ID = IterativeDeepening.iterativeDeepeningAB()
             MTD = IterativeDeepeningMTD.iterativeDeepeningMTD()
+            MCTS = MCTS_Paper.MCTS()
             if i % 2 == 0:
                 whiteTurn = True
             else:
@@ -131,7 +132,8 @@ class SimGUI:
                                 ResultNode = MCTS_Solver.MCTS_MR_Solver(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                             case "MCTS-MR-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MR_Run(board, whiteTurn, self.time, 1)
+                                # ResultNode = MCTS_Paper.MCTS_MR_Run(board, whiteTurn, self.time, 1)
+                                ResultNode = MCTS.MCTS_MR_TT_Run(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                             case "MCTS-MS":
                                 #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
@@ -140,6 +142,12 @@ class SimGUI:
                             case "MCTS-MS-Solver":
                                 # ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
                                 ResultNode = MCTS_Solver.MCTS_MS_Solver(board, whiteTurn, self.time, 4, 2)
+                                move = ResultNode.move
+                            case "MCTS-MS-Paper":
+                                ResultNode = MCTS_Paper.MCTS_MS_Run(board, whiteTurn, self.time, 2, 4)
+                                move = ResultNode.move
+                            case "MCTS-MB-Paper":
+                                ResultNode = MCTS_Paper.MCTS_MB_Run(board, whiteTurn, self.time, 6)
                                 move = ResultNode.move
                     except TimeoutError:
                         print("Am i the problem?")
@@ -181,7 +189,8 @@ class SimGUI:
                                 ResultNode = MCTS_Solver.MCTS_MR_Solver(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                             case "MCTS-MR-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MR_Run(board, whiteTurn, self.time, 1)
+                                #ResultNode = MCTS_Paper.MCTS_MR_Run(board, whiteTurn, self.time, 1)
+                                ResultNode = MCTS.MCTS_MR_TT_Run(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                             case "MCTS-MS":
                                 #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
@@ -190,6 +199,12 @@ class SimGUI:
                             case "MCTS-MS-Solver":
                                 # ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
                                 ResultNode = MCTS_Solver.MCTS_MS_Solver(board, whiteTurn, self.time, 4, 2)
+                                move = ResultNode.move
+                            case "MCTS-MS-Paper":
+                                ResultNode = MCTS_Paper.MCTS_MS_Run(board, whiteTurn, self.time, 2, 4)
+                                move = ResultNode.move
+                            case "MCTS-MB-Paper":
+                                ResultNode = MCTS_Paper.MCTS_MB_Run(board, whiteTurn, self.time, 6)
                                 move = ResultNode.move
                     except TimeoutError:
                         #print("Am i the problem?")
@@ -207,6 +222,10 @@ class SimGUI:
             elif board.hasBlackWon():
                 self.add_text(f"{self.black_player} has won")
                 self.black_wins = self.black_wins + 1
+            else:
+                self.add_text(f"Time out Draw")
+                self.black_wins = self.black_wins + 0.5
+                self.white_wins = self.white_wins + 0.5
             self.white_wins_list.append(self.white_wins)
             self.black_wins_list.append(self.black_wins)
             self.add_text(f"{self.white_player} {self.white_wins} : {self.black_wins} {self.black_player}")

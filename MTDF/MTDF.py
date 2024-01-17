@@ -23,7 +23,8 @@ class MTDF:
         #self.TT = TranspostionTable.TranspostionTable(25)
         #self.upper_TT = TranspostionTable.TranspostionTable(25)
         #self.lower_TT = TranspostionTable.TranspostionTable(25)
-        self.AB = AlphaBeta.AlphaBeta.Alpha_Beta_TranspostionTable()
+        #self.AB = AlphaBeta.AlphaBeta.Alpha_Beta_TranspostionTable()
+        self.AB = AlphaBeta.AlphaBeta.Alpha_Beta_TT_Final()
 
 
     """function MTDF(root : node_type; f : integer; d: integer) : integer;
@@ -41,7 +42,8 @@ class MTDF:
     def MTDF(self, f: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, increment):
         #increment = 0.1
         g = f
-        moves = []
+        #moves = []
+        move = None
         upperbound = float('inf')
         lowerbound = float('-inf')
         while not (lowerbound >= upperbound):
@@ -53,14 +55,15 @@ class MTDF:
                 beta = g
 
             #g, moves = self.alpha_beta_MTD(beta - increment, beta, depth, board, whiteTurn, [])
-            g, moves = self.AB.alpha_beta_TT_flag(beta - increment, beta, depth, board, whiteTurn, [], True)
+            #g, moves = self.AB.alpha_beta_TT_final(beta - increment, beta, depth, board, whiteTurn, [], True)
+            g, move = self.AB.alpha_beta_TT_final(beta - increment, beta, depth, board, whiteTurn, True)
 
             if g < beta:
                 upperbound = g
             else:
                 lowerbound = g
 
-        return g, moves
+        return g, move
 
     def MTDF_with_2_TT(self, f: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, increment):
         #increment = 0.1

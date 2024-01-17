@@ -15,6 +15,9 @@ class MCTS_Node:
         self.score = self.score + value
         self.visits = self.visits + 1
 
+    def propagete_value(self, value):
+        self.score = self.score + value
+
     def add_child(self, child):
         self.children.append(child)
 

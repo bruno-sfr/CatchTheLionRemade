@@ -100,8 +100,9 @@ def MCTS_MR(state: LionBoard, whiteTurn: bool, timeout_seconds: int, depth: int)
     root = MCTS_Node.MCTS_Node(None, state, whiteTurn, none_move)
     start_time = time.time()
 
-    while time.time() - start_time < timeout_seconds:
+    while time.time() - start_time < timeout_seconds: 
         expanded_node = selection_including_Expansion(root)
+        #expanded_node = selection_including_Expansion_Rework(root, whiteTurn)
         if expanded_node:
             result = MiniMax_Rollout(expanded_node, whiteTurn, depth)
             #result = MiniMax_Rollout_win_loss(expanded_node, whiteTurn, depth)
@@ -880,14 +881,23 @@ def MiniMax_Rollout(node: MCTS_Node, player: bool, depth: int):
     while i < MAX_ITERATIONS and not state.isGameOver():
         # while not state.isGameOver():
         # state.makeRandomMove(whiteTurn)
-        eval, moves = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
+        eval, move = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
+        # eval, moves = AlphaBeta.alpha_beta_win_loss_simple(depth, state, whiteTurn)
         # check if there are moves
-        if len(moves) > 0:
-            state.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
+        if move is not None:
+            state.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            # state.printBoard()
             whiteTurn = not whiteTurn
             i = i + 1
         else:
             return 0
+        """if len(moves) > 0:
+            state.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
+            #state.printBoard()
+            whiteTurn = not whiteTurn
+            i = i + 1
+        else:
+            return 0"""
 
     if player and state.hasWhiteWon():
         return 1
@@ -1060,13 +1070,13 @@ if __name__ == '__main__':
     print("Visits:", result_node.visits)
     print("Score:", result_node.score)"""
 
-    """
     print("MCTS_MR")
     result_node = MCTS_MR(board, True, 3, 2)
     result_node.move.printMove()
-    print("Result node Children Count:", len(result_node.children))
+    print("Root node Visits:", result_node.parent.visits)
+    #print("Result node Children Count:", len(result_node.children))
     print("Visits:", result_node.visits)
-    print("Score:", result_node.score)"""
+    print("Score:", result_node.score)
 
     """print("MCTS-MS")
     result_node = MCTS_MS_rework(board, True, 1, 4, 5)
