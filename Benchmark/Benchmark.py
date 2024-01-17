@@ -49,6 +49,7 @@ def TestStartpostion():
 
     AB = AlphaBeta.Alpha_Beta_TranspostionTable()
     AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
+    AB_Final = AlphaBeta.Alpha_Beta_TT_Final()
     MTD = MTDF.MTDF()
     MTD_second_guess = MTDF.MTDF()
     MTD_MiniMax = MTDF.MTDF()
@@ -56,7 +57,7 @@ def TestStartpostion():
     MTD_no_TT = MTDF.MTDF()
     MTD_2_TT = MTDF.MTDF()
 
-    Depth = 12
+    Depth = 10
     x = range(1, Depth)
 
     for i in range(1, Depth):
@@ -83,9 +84,10 @@ def TestStartpostion():
         timetaken = (end - start)
         print("eval:", evalAB)
         print("time:", timetaken)
-        for move in moves:
-            move.printMove()
-            break
+        moves.printMove()
+        #for move in moves:
+        #    move.printMove()
+        #    break
         AB_List.append(timetaken)
         AB_Eval_List.append(evalAB)
 
@@ -119,12 +121,10 @@ def TestStartpostion():
         AB_TT_store_List.append(timetaken)
         AB_TT_store_Eval_List.append(eval)"""
 
-        print("")
+        """print("")
         print("Alpha-Beta_TT_flag")
         start = time.time()
-        # eval, moves = AB.alpha_beta_TT_simple(i, board, True)
         eval, moves = AB_store.alpha_beta_TT_flag(float('-inf'), float('inf'), i, board, whiteTurn, [], True)
-        #eval, moves = AB_store.alpha_beta_TT_flag_gpt(float('-inf'), float('inf'), i, board, True, [], True)
         end = time.time()
         timetaken = (end - start)
         print("eval:", eval)
@@ -132,6 +132,18 @@ def TestStartpostion():
         for move in moves:
             move.printMove()
             break
+        AB_TT_store_List.append(timetaken)
+        AB_TT_store_Eval_List.append(eval)"""
+
+        print("")
+        print("Alpha-Beta_TT_final")
+        start = time.time()
+        eval, move = AB_Final.alpha_beta_TT_final(float('-inf'), float('inf'), i, board, whiteTurn, True)
+        end = time.time()
+        timetaken = (end - start)
+        print("eval:", eval)
+        print("time:", timetaken)
+        move.printMove()
         AB_TT_store_List.append(timetaken)
         AB_TT_store_Eval_List.append(eval)
 
@@ -188,11 +200,11 @@ def TestStartpostion():
             print("eval:", evalMTD_uneven)
             MTD_second_guess_Eval_List.append(evalMTD_uneven)
         print("time:", timetaken)
-        if len(movesMTD) == 0:
-            print("No Move found")
-        for move in movesMTD:
-            move.printMove()
-            break
+        #if len(movesMTD) == 0:
+        #    print("No Move found")
+        #for move in movesMTD:
+        movesMTD.printMove()
+        #    break
         MTD_second_guess_List.append(timetaken)
 
 
@@ -283,7 +295,12 @@ def TestStartpostion():
     x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
     plt.xticks(x_list)
 
-    fig, axs = plt.subplots(2, sharex=True)
+    plt.plot(x, AB_List, label='Alpha-Beta')
+    plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT', linestyle='dotted')
+    plt.plot(x, MTD_second_guess_List, label='MTD(f)', linestyle='dashed')
+    plt.legend(loc='upper left')
+
+    """fig, axs = plt.subplots(2, sharex=True)
     fig.suptitle("Comparison")
 
     #axs[0].plot(x, MM_List, label='MiniMax')
@@ -310,12 +327,12 @@ def TestStartpostion():
     #axs[1].plot(x, MTD_0_Eval_List, label='MTD(f) with f = 0', linestyle='dashed')
     #axs[1].plot(x, MTD_no_TT_Eval_List, label='MTD(f) with no TT', linestyle='dashdot')
     #axs[1].plot(x, MTD_2_TT_Eval_List, label='MTD(f) with 2 TT', linestyle='dashdot')
-    axs[1].set(ylabel='Eval')
+    axs[1].set(ylabel='Eval')"""
 
     #axs[0].legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left', ncols=2, mode="expand", borderaxespad=0.)
     plt.xlabel("Depth")
-    #plt.ylabel("Time taken")
-    #plt.title("Benchmark")
+    plt.ylabel("Time taken")
+    plt.title("Benchmark")
     plt.savefig(f"../Resources/Benchmark_Start_Depth_{Depth}.png")
     plt.show()
 
@@ -611,3 +628,11 @@ if __name__ == '__main__':
     #MTD_Increment_Comparison()
     #MateIn1()
     #Random_Benchmark()
+
+    """board = LionBoard.LionBoard()
+    board.setBoard_start()
+    board.makeMove(True, 4, 7)
+    board.printBoard()
+    eval, move = AlphaBeta.alpha_beta_win_loss_simple(4, board, False)
+    print(eval)
+    move.printMove()"""

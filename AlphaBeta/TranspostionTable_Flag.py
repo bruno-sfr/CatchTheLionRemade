@@ -1,5 +1,7 @@
 from . import HashEntry_Flag
+#import HashEntry_Flag
 from . import AB_Flag
+#import AB_Flag
 #import HashEntry
 
 class TranspostionTable:
