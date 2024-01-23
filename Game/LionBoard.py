@@ -2,7 +2,7 @@ import copy
 import random
 from Game import BitBoard
 from Game import Move
-from Game import Store_Move
+#from Game import Store_Move
 
 class LionBoard:
     def __init__(self):
@@ -561,9 +561,9 @@ class LionBoard:
                     self.chicken.setSquare(move.getTo())
 
                 # add move from capture to history
-                store_move = Store_Move.Store_Move()
+                """store_move = Store_Move.Store_Move()
                 store_move.setMove(move.getFrom(), move.getTo(), 0)
-                self.Move_History.append(store_move)
+                self.Move_History.append(store_move)"""
                 return True
 
         return False
@@ -580,8 +580,8 @@ class LionBoard:
         defender_hen = BitBoard.BitBoard()
         defender_hen.setBoard(self.hen.getBoard() & defender.getBoard())
 
-        store_move = Store_Move.Store_Move()
-        store_move.setMove(move.getFrom(), move.getTo(), 0)
+        """store_move = Store_Move.Store_Move()
+        store_move.setMove(move.getFrom(), move.getTo(), 0)"""
 
         if defender.isSquareSet(move.getTo()):
             defender.clearSquare(move.getTo())
@@ -589,50 +589,50 @@ class LionBoard:
                 self.lion.clearSquare(move.getTo())
 
                 # add capture to store move for history depending on which player
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('L')
                 else:
-                    store_move.setCapture('l')
+                    store_move.setCapture('l')"""
             elif defender_giraffe.isSquareSet(move.getTo()):
                 self.giraffe.clearSquare(move.getTo())
                 captures.append("giraffe")
 
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('G')
                 else:
-                    store_move.setCapture('g')
+                    store_move.setCapture('g')"""
             elif defender_elephant.isSquareSet(move.getTo()):
                 self.elephant.clearSquare(move.getTo())
                 captures.append("elephant")
 
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('E')
                 else:
-                    store_move.setCapture('e')
+                    store_move.setCapture('e')"""
             elif defender_chicken.isSquareSet(move.getTo()):
                 self.chicken.clearSquare(move.getTo())
                 captures.append("chicken")
 
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('C')
                 else:
-                    store_move.setCapture('c')
+                    store_move.setCapture('c')"""
             elif defender_hen.isSquareSet(move.getTo()):
                 self.hen.clearSquare(move.getTo())
                 captures.append("chicken")
 
-                if defender == self.white:
+                """if defender == self.white:
                     store_move.setCapture('H')
                 else:
-                    store_move.setCapture('h')
+                    store_move.setCapture('h')"""
 
-        self.Move_History.append(store_move)
+        #self.Move_History.append(store_move)
         attacker.setSquare(move.getTo())
         attacker.clearSquare(move.getFrom())
         piece_type.setSquare(move.getTo())
         piece_type.clearSquare(move.getFrom())
 
-    def reverse_last_move(self):
+    """def reverse_last_move(self):
         if len(self.Move_History) == 0:
             raise Exception("Cant Reverse Move since no Move has been played")
         reverse_move = self.Move_History.pop(len(self.Move_History) - 1)
@@ -762,7 +762,7 @@ class LionBoard:
                         self.black.setSquare(reverse_move.getTo())
                         self.hen.setSquare(reverse_move.getTo())
                         self.white_captures.pop(len(self.white_captures) - 1)
-
+"""
     def isGameOver(self):
         white_lion = BitBoard.BitBoard()
         white_lion.setBoard(self.lion.getBoard() & self.white.getBoard())
@@ -843,13 +843,13 @@ class LionBoard:
         eval = eval - self.eval_captures(self.black_captures)
 
         # freedom of units
-        """list = self.allpossibleMoves(True)
+        list = self.allpossibleMoves(True)
         for i in list:
             eval = eval + len(i)/4
 
         list = self.allpossibleMoves(False)
         for i in list:
-            eval = eval - len(i)/4"""
+            eval = eval - len(i)/4
 
         return eval
 

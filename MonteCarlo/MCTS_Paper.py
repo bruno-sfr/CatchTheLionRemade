@@ -402,7 +402,8 @@ def MCTS_MS(N: MCTS_Node, whiteTurn: bool, threshold: int, depth: int):
     best_child = select_Paper(N)
     N.visits = N.visits + 1
     if best_child is None:
-        best_child = select_Paper(N)
+        return 0
+        #best_child = select_Paper(N)
 
     if best_child.score != float('-inf') and best_child.score != float('inf'):
         if best_child.visits == 0:

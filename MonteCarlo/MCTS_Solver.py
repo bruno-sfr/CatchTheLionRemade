@@ -164,13 +164,13 @@ def MCTS_MR_Solver(state: LionBoard, whiteTurn: bool, timeout_seconds: int, dept
     start_time = time.time()
 
     while time.time() - start_time < timeout_seconds:
-        expanded_node = selection_including_Expansion_Solver_NegaMax(root, whiteTurn)
-        #expanded_node = selection_including_Expansion_Solver_MiniMax(root, whiteTurn)
+        #expanded_node = selection_including_Expansion_Solver_NegaMax(root, whiteTurn)
+        expanded_node = selection_including_Expansion_Solver_MiniMax(root, whiteTurn)
         if expanded_node:
             result = MiniMax_Rollout(expanded_node, whiteTurn, depth)
             # result = MiniMax_Rollout_win_loss(expanded_node, whiteTurn, depth)
-            backpropagate_Solver_NegaMax(expanded_node, result)
-            #backpropagate_Solver_MiniMax(expanded_node, result)
+            #backpropagate_Solver_NegaMax(expanded_node, result)
+            backpropagate_Solver_MiniMax(expanded_node, result)
     """print("Root Visits:", root.visits)
     print("Root children:")
     i2 = 1
@@ -498,11 +498,11 @@ def selection_including_Expansion_Solver_MiniMax_MS(node: MCTS_Node, whiteTurn: 
                         node.add_child(new_child)
                         backpropagate_Solver_MiniMax(new_child, float('-inf'))
                 return
-    if node.visits >= visit_threshold:
+    if node.visits == visit_threshold:
         for move in move_list:
             check_board = copy.deepcopy(node.state)
             check_board.makeMove(node.whiteTurn, move.getFrom(), move.getTo())
-            eval, moves = AlphaBeta.alpha_beta_win_loss_simple(depth, check_board, not (node.whiteTurn))
+            eval, move = AlphaBeta.alpha_beta_win_loss_simple(depth, check_board, not (node.whiteTurn))
             # mcts plays for white
             if whiteTurn:
                 # shallow win/loss? then backpropaged result
@@ -554,7 +554,7 @@ def selection_including_Expansion_Solver_MiniMax_MS(node: MCTS_Node, whiteTurn: 
         for child in node.children:
             if best_child.UCT() < child.UCT():
                 best_child = child
-        return selection_including_Expansion_Solver_MiniMax(best_child, whiteTurn)
+        return selection_including_Expansion_Solver_MiniMax_MS(best_child, whiteTurn, depth, visit_threshold)
     else:
         # no move possible, is terminal node
         # print("Terminal Node")
@@ -712,14 +712,25 @@ def MiniMax_Rollout(node: MCTS_Node, player: bool, depth: int):
     while i < MAX_ITERATIONS and not state.isGameOver():
         # while not state.isGameOver():
         # state.makeRandomMove(whiteTurn)
-        eval, moves = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
-        # check if there are moves
-        if len(moves) > 0:
-            state.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
+        #eval, moves = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
+        eval, move = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
+        if move is not None:
+            state.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            # state.printBoard()
             whiteTurn = not whiteTurn
             i = i + 1
         else:
-            return 0
+            if player == whiteTurn:
+                return -1
+            else:
+                return 1
+        # check if there are moves
+        #if len(moves) > 0:
+        #    state.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
+        #    whiteTurn = not whiteTurn
+        #    i = i + 1
+        #else:
+        #    return 0
 
     if player and state.hasWhiteWon():
         return 1
@@ -922,9 +933,10 @@ if __name__ == '__main__':
 
     print("")
     print("MCTS")
-    result_node = MCTS_Solver(board, True, 3)
+    #result_node = MCTS_Solver(board, True, 3)
     #result_node = MCTS_MR_Solver(board, True, 3, 2)
     #result_node = MCTS_MS_Solver(board, True, 3, 4, 2)
+    result_node = MCTS_MS_Solver(board, True, 1, 4, 2)
     result_node.move.printMove()
     #print("Result node Children Count:", len(result_node.children))
     print("Root node Children Count:", len(result_node.parent.children))

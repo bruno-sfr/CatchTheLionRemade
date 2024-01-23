@@ -82,6 +82,7 @@ class LionGUI:
     def begin_game(self):
         self.clear_board()
         self.draw_board_fen("elg/1c1/1C1/GLE/")
+        #self.draw_board_fen("3/3/1H1/3/")
         self.mouse_func = self.canvas.bind("<Button-1>", self.on_mouse_click_game)
         self.whiteTurn = True
         self.update_game_text(self.whiteTurn)
