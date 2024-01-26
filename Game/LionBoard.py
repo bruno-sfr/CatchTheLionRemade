@@ -769,9 +769,19 @@ class LionBoard:
         if len(white_lion.allSetSquares()) == 0:
             return True
 
+        #check whether white lion has reached last file
+        white_lion_pos = white_lion.allSetSquares()
+        if white_lion_pos[0] == 9 or white_lion_pos[0] == 10 or white_lion_pos[0] == 11:
+            return True
+
         black_lion = BitBoard.BitBoard()
         black_lion.setBoard(self.lion.getBoard() & self.black.getBoard())
         if len(black_lion.allSetSquares()) == 0:
+            return True
+
+        # check whether black lion has reached first file
+        black_lion_pos = black_lion.allSetSquares()
+        if black_lion_pos[0] == 0 or black_lion_pos[0] == 1 or black_lion_pos[0] == 2:
             return True
         return False
 
@@ -780,6 +790,13 @@ class LionBoard:
         black_lion.setBoard(self.lion.getBoard() & self.black.getBoard())
         if len(black_lion.allSetSquares()) == 0:
             return True
+
+        white_lion = BitBoard.BitBoard()
+        white_lion.setBoard(self.lion.getBoard() & self.white.getBoard())
+        # check whether white lion has reached last file
+        white_lion_pos = white_lion.allSetSquares()
+        if white_lion_pos[0] == 9 or white_lion_pos[0] == 10 or white_lion_pos[0] == 11:
+            return True
         return False
 
     def hasBlackWon(self):
@@ -787,17 +804,25 @@ class LionBoard:
         white_lion.setBoard(self.lion.getBoard() & self.white.getBoard())
         if len(white_lion.allSetSquares()) == 0:
             return True
+
+        black_lion = BitBoard.BitBoard()
+        black_lion.setBoard(self.lion.getBoard() & self.black.getBoard())
+        # check whether black lion has reached first file
+        black_lion_pos = black_lion.allSetSquares()
+        if black_lion_pos[0] == 0 or black_lion_pos[0] == 1 or black_lion_pos[0] == 2:
+            return True
         return False
 
     def eval_func(self):
         eval = 0.0
 
+        if self.hasWhiteWon():
+            eval = eval + 1000
         # piece value
-        white_lion = BitBoard.BitBoard()
-        white_lion.setBoard(self.lion.getBoard() & self.white.getBoard())
-        temp = white_lion.allSetSquares()
+        #white_lion = BitBoard.BitBoard()
+        #white_lion.setBoard(self.lion.getBoard() & self.white.getBoard())
+        #temp = white_lion.allSetSquares()
         #eval = eval + len(temp) * 1000
-        eval = eval + len(temp) * 1000
         white_giraffe = BitBoard.BitBoard()
         white_giraffe.setBoard(self.giraffe.getBoard() & self.white.getBoard())
         temp = white_giraffe.allSetSquares()
@@ -815,11 +840,13 @@ class LionBoard:
         temp = white_hen.allSetSquares()
         eval = eval + len(temp) * 7
 
-        black_lion = BitBoard.BitBoard()
-        black_lion.setBoard(self.lion.getBoard() & self.black.getBoard())
-        temp = black_lion.allSetSquares()
+        if self.hasBlackWon():
+            eval = eval - 1000
+        #black_lion = BitBoard.BitBoard()
+        #black_lion.setBoard(self.lion.getBoard() & self.black.getBoard())
+        #temp = black_lion.allSetSquares()
         #eval = eval - len(temp) * 1000
-        eval = eval - len(temp) * 1000
+        #eval = eval - len(temp) * 1000
         black_giraffe = BitBoard.BitBoard()
         black_giraffe.setBoard(self.giraffe.getBoard() & self.black.getBoard())
         temp = black_giraffe.allSetSquares()
