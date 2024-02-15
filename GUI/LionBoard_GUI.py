@@ -4,18 +4,15 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from Game import LionBoard, Move
 from AlphaBeta import IterativeDeepening, AlphaBeta
-from MTDF import IterativeDeepeningMTD, MTDF, MTDfTranspositionsTable
-from MonteCarlo import MCTS
+from MonteCarlo import MCTS_Solvers
 
 
 class LionGUI:
     def __init__(self, root, frame):
         self.root = root
         self.frame = frame
-        #self.canvas = tk.Canvas(self.frame, width=1000, height=700, bd=0, highlightthickness=0)
         self.canvas = tk.Canvas(self.frame, width=1000, height=700)
         self.mouse_func = None
-        #self.canvas.bind("<Button-1>", self.on_mouse_click_game)
         self.canvas.pack()
         self.firstclick = True
         self._from = 0
@@ -33,7 +30,7 @@ class LionGUI:
         self.board = LionBoard.LionBoard()
         self.whiteTurn = True
         self.AB = IterativeDeepening.iterativeDeepeningAB()
-        self.MTD = IterativeDeepeningMTD.iterativeDeepeningMTD()
+        self.MTD = IterativeDeepening.iterativeDeepeningMTD()
 
         # Draw Background
         img = Image.open("../GUI_Resources/Catch_The_Lion_Board.png")
@@ -61,20 +58,6 @@ class LionGUI:
         self.canvas.itemconfig(self.window_4, state="hidden")
         self.canvas.itemconfig(self.window_5, state="hidden")
 
-        #button1 = tk.Button(self, text="Quit", command=self.quit, anchor=W)
-        #self.button1 = tk.Button(self.canvas, text="Begin Game", command=self.begin_game, anchor="center")
-        #self.button1.configure(width=25, height=25, activebackground="blue", relief="flat")
-       # self.button1.configure(width=10, activebackground="#33B5E5", relief="flat")
-        #self.button1_window = self.canvas.create_window(50, 100, width=100, height=30, window=self.button1)
-        #self.text = tk.Label(self.frame, text="Centered Label 1")
-        #self.root.wm_attributes('-transparent')
-        #self.text_window = self.canvas.create_window(10, 10, anchor="nw", window=self.text)
-
-        #quitImage = ImageTk.PhotoImage(Image.open("../GUI_Resources/Button.png").resize((200, 200)))
-        #quitButton = self.canvas.create_image(200, 200, image=quitImage)
-        #self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Button.png").resize((200, 200))))
-        #quitButton = self.canvas.create_image(200, 200, image=self.images[-1])
-        #self.canvas.tag_bind(quitButton, "<Button-1>", self.quitGame)
     def quitGame(self, event):
         self.root.destroy()
 
@@ -125,7 +108,7 @@ class LionGUI:
         self.time_label = tk.Label(self.canvas, text="Time per turn:")
         self.time_entry = tk.Entry(self.frame)
 
-        options = ["Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS", "MCTS Full Expansion", "MCTS-MR"]
+        options = ["Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS-Solver", "MCTS-MR", "MCTS-MS", "MCTS-MB"]
 
         self.AI_select = ttk.Combobox(self.frame, values=options)
         self.AI_select.set("Select AI Player")  # Set a default selection
@@ -139,7 +122,6 @@ class LionGUI:
         self.canvas.itemconfig(self.window_3, state="normal")
         self.canvas.itemconfig(self.window_4, state="normal")
         self.canvas.itemconfig(self.window_5, state="normal")
-        #self.window_3 = self.canvas.create_window(850, 190, width=120, height=30, window=self.Go_back_button)
 
     def on_AI_select(self, event):
         selected_item = self.AI_select.get()
@@ -181,7 +163,6 @@ class LionGUI:
     def on_mouse_click_game_AI(self, event):
         x, y = event.x, event.y
         try:
-            #animal, index = self.get_index(x, y)
             index = self.get_index(x, y)
         except Exception:
             return
@@ -224,7 +205,6 @@ class LionGUI:
     def on_mouse_click_game(self, event):
         x, y = event.x, event.y
         try:
-            #animal, index = self.get_index(x, y)
             index = self.get_index(x, y)
         except Exception:
             return
@@ -307,8 +287,6 @@ class LionGUI:
                     index = 'e'
         else:
             raise Exception("Input out of Grid Bounds")
-        #returns if its animal or reserve index
-        #return animal, index
         return index
 
     def draw_animal(self, index: int, animal:str):
@@ -353,7 +331,6 @@ class LionGUI:
             self.canvas.delete(self.animals[index])
 
     def draw_reserve(self, animal: str):
-        # print(f"draw reserve:{animal}")
         match animal:
             case 'e':
                 if not self.captures[0]:
@@ -399,7 +376,6 @@ class LionGUI:
                 # captures
                 self.draw_reserve(char)
             else:
-                #print(f"Index:{i} Animal:{char}")
                 self.draw_animal(i, char)
                 i = i - 1
 
@@ -430,24 +406,21 @@ class LionGUI:
             case "MTD(f)":
                  eval, move = self.MTD.iterativeDeepening_MTD(self.AI_time, self.board, self.whiteTurn)
                  self.makeMove(move.getFrom(), move.getTo())
-            case "MCTS":
-                result_node = MCTS.MCTS(self.board, self.whiteTurn, self.AI_time)
-                self.makeMove(result_node.move.getFrom(), result_node.move.getTo())
-            case "MCTS Full Expansion":
-                result_node = MCTS.MCTS_full_expansion(self.board, self.whiteTurn, self.AI_time)
+            case "MCTS-Solver":
+                result_node = MCTS_Solvers.MCTS_Solver_Run(self.board, self.whiteTurn, self.AI_time)
                 self.makeMove(result_node.move.getFrom(), result_node.move.getTo())
             case "MCTS-MR":
-                result_node = MCTS.MCTS_MR(self.board, self.whiteTurn, self.AI_time,3)
+                result_node = MCTS_Solvers.MCTS_MR_Run(self.board, self.whiteTurn, self.AI_time, 1)
+                self.makeMove(result_node.move.getFrom(), result_node.move.getTo())
+            case "MCTS-MS":
+                result_node = MCTS_Solvers.MCTS_MS_Run(self.board, self.whiteTurn, self.AI_time, 2, 4)
+                self.makeMove(result_node.move.getFrom(), result_node.move.getTo())
+            case "MCTS-MB":
+                result_node = MCTS_Solvers.MCTS_MB_Run(self.board, self.whiteTurn, self.AI_time, 3)
                 self.makeMove(result_node.move.getFrom(), result_node.move.getTo())
 
     def makeMove(self, x:int, y:int):
-        #print(f"from:{x} to:{y}, whiteTurn:{self.whiteTurn}")
-        #print(self.board.getFen())
-        #bool = self.board.makeMove(self.whiteTurn, x, y)
-        #print(bool)
-        #self.board.printBoard()
         if self.board.makeMove(self.whiteTurn, x, y):
-            #print("we in if boyzzz")
             self.draw_board()
             if self.board.isGameOver():
                 self.end_game()
@@ -456,33 +429,3 @@ class LionGUI:
             self.update_game_text(self.whiteTurn)
             return True
         return False
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.geometry("1000x700")
-
-    Lion_frame = tk.Frame(root)
-    GUI = LionGUI(root, Lion_frame)
-    Lion_frame.pack(expand=True, fill="both")
-    Lion_frame.tkraise()
-
-    #GUI.create_rectangle(310 + 5, 100 + 3, 435 - 3, 225 - 5, fill="blue", alpha=.3)
-    #GUI.draw_animal(0, "L")
-    #GUI.draw_board_fen("elg/1c1/1C1/GLE/")
-    #GUI.mark_field(4)
-    #GUI.board.randomBoard()
-    #GUI.makeMove(4,7)
-    #GUI.clear_board()
-    #print(GUI.board.getFen())
-    #GUI.draw_board_fen(GUI.board.getFen())
-    #GUI.draw_board()
-    #GUI.draw_board()
-    """GUI.draw_reserve("E")
-    GUI.draw_reserve("G")
-    GUI.draw_reserve("C")
-    GUI.draw_reserve("e")
-    GUI.draw_reserve("g")"""
-    #GUI.draw_reserve("c")
-    #GUI.draw_animal(0, "L")
-    root.mainloop()

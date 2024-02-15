@@ -6,9 +6,8 @@ import matplotlib.pyplot as plt
 
 from PIL import Image, ImageTk
 from Game import LionBoard, Move
-from AlphaBeta import IterativeDeepening, MiniMax
-from MonteCarlo import MCTS, MCTS_Solver, MCTS_Paper, MCTS_Paper_Rework
-from MTDF import IterativeDeepeningMTD
+from AlphaBeta import IterativeDeepening
+from MonteCarlo import MCTS_Solvers
 
 
 class SimGUI:
@@ -34,7 +33,8 @@ class SimGUI:
         self.canvas.create_image(500, 350, image=self.images[-1])
 
         self.text_widget = scrolledtext.ScrolledText(self.canvas, wrap=tk.WORD)
-        options = ["MiniMax", "Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS", "MCTS-Rework", "MCTS-MR", "MCTS-MS", "MCTS-Solver", "MCTS-MR-Solver", "MCTS-MS-Solver", "MCTS-Paper", "MCTS-MR-Paper", "MCTS-MS-Paper", "MCTS-MB-Paper", "MCTS-Paper-Rework", "MCTS-Paper-MR-Rework", "MCTS-Paper-MS-Rework", "MCTS-Paper-MB-Rework"]
+        options = ["MiniMax", "Alpha-Beta", "Alpha-Beta with TT", "MTD(f)",
+                   "MCTS-Solver", "MCTS-MR", "MCTS-MS", "MCTS-MB"]
         self.white = ttk.Combobox(self.canvas, values=options)
         self.white.set("Select white Player")  # Set a default selection
         self.black = ttk.Combobox(self.canvas, values=options)
@@ -89,8 +89,7 @@ class SimGUI:
             board = LionBoard.LionBoard()
             board.setBoard_start()
             ID = IterativeDeepening.iterativeDeepeningAB()
-            MTD = IterativeDeepeningMTD.iterativeDeepeningMTD()
-            MCTS = MCTS_Paper.MCTS()
+            MTD = IterativeDeepening.iterativeDeepeningMTD()
             if i % 2 == 0:
                 whiteTurn = True
             else:
@@ -113,58 +112,17 @@ class SimGUI:
                             case "MTD(f)":
                                 eval, move = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
                                 #move = moves[0]
-                            case "MCTS":
-                                ResultNode = MCTS.MCTS(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                            case "MCTS-Rework":
-                                ResultNode = MCTS.MCTS_Rework(board, whiteTurn, self.time)
-                                move = ResultNode.move
                             case "MCTS-Solver":
-                                ResultNode = MCTS_Solver.MCTS_Solver(board, whiteTurn, self.time)
+                                ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, self.time)
                                 move = ResultNode.move
-                            case "MCTS-Paper":
-                                ResultNode = MCTS_Paper.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-Paper-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
                             case "MCTS-MR":
-                                ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 1)
+                                ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, self.time, 3)
                                 move = ResultNode.move
-                            case "MCTS-MR-Solver":
-                                ResultNode = MCTS_Solver.MCTS_MR_Solver(board, whiteTurn, self.time, 1)
-                                move = ResultNode.move
-                            case "MCTS-MR-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MR_Run(board, whiteTurn, self.time, 1)
-                                #ResultNode = MCTS.MCTS_MR_TT_Run(board, whiteTurn, self.time, 2)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-Paper-MR-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MR_Run(board, whiteTurn, self.time, 3)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
                             case "MCTS-MS":
-                                #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 10)
+                                ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, self.time, 5, 6)
                                 move = ResultNode.move
-                            case "MCTS-MS-Solver":
-                                # ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS_Solver.MCTS_MS_Solver(board, whiteTurn, self.time, 4, 2)
-                                move = ResultNode.move
-                            case "MCTS-MS-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MS_Run(board, whiteTurn, self.time, 5, 2)
-                                move = ResultNode.move
-                            case "MCTS-Paper-MS-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, whiteTurn, self.time, 5, 6)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-MB-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MB_Run(board, whiteTurn, self.time, 6)
-                                move = ResultNode.move
-                            case "MCTS-Paper-MB-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MB_Run(board, whiteTurn, self.time, 1)
+                            case "MCTS-MB":
+                                ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                     except TimeoutError:
                         print("Am i the problem?")
@@ -187,59 +145,17 @@ class SimGUI:
                             case "MTD(f)":
                                 eval, move = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
                                 #move = moves[0]
-                            case "MCTS":
-                                ResultNode = MCTS.MCTS(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                            case "MCTS-Rework":
-                                ResultNode = MCTS.MCTS_Rework(board, whiteTurn, self.time)
-                                #ResultNode = MCTS_Paper_Rework.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
                             case "MCTS-Solver":
-                                ResultNode = MCTS_Solver.MCTS_Solver(board, whiteTurn, self.time)
+                                ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, self.time)
                                 move = ResultNode.move
-                            case "MCTS-Paper":
-                                ResultNode = MCTS_Paper.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-Paper-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
                             case "MCTS-MR":
-                                ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 1)
+                                ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, self.time, 3)
                                 move = ResultNode.move
-                            case "MCTS-MR-Solver":
-                                ResultNode = MCTS_Solver.MCTS_MR_Solver(board, whiteTurn, self.time, 1)
-                                move = ResultNode.move
-                            case "MCTS-MR-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MR_Run(board, whiteTurn, self.time, 1)
-                                #ResultNode = MCTS.MCTS_MR_TT_Run(board, whiteTurn, self.time, 2)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-Paper-MR-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MR_Run(board, whiteTurn, self.time, 1)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
                             case "MCTS-MS":
-                                #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 10)
+                                ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, self.time, 5, 6)
                                 move = ResultNode.move
-                            case "MCTS-MS-Solver":
-                                # ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS_Solver.MCTS_MS_Solver(board, whiteTurn, self.time, 4, 2)
-                                move = ResultNode.move
-                            case "MCTS-MS-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MS_Run(board, whiteTurn, self.time, 10, 4)
-                                move = ResultNode.move
-                            case "MCTS-Paper-MS-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, whiteTurn, self.time, 1, 4)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
-                            case "MCTS-MB-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MB_Run(board, whiteTurn, self.time, 6)
-                                move = ResultNode.move
-                            case "MCTS-Paper-MB-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MB_Run(board, whiteTurn, self.time, 3)
+                            case "MCTS-MB":
+                                ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                     except TimeoutError:
                         #print("Am i the problem?")
