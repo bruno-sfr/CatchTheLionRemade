@@ -34,7 +34,7 @@ class SimGUI:
         self.canvas.create_image(500, 350, image=self.images[-1])
 
         self.text_widget = scrolledtext.ScrolledText(self.canvas, wrap=tk.WORD)
-        options = ["MiniMax", "Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS", "MCTS-Rework", "MCTS-MR", "MCTS-MS", "MCTS-Solver", "MCTS-MR-Solver", "MCTS-MS-Solver", "MCTS-Paper", "MCTS-MR-Paper", "MCTS-MS-Paper", "MCTS-MB-Paper", "MCTS-Paper-Rework", "MCTS-Paper-MR-Rework", "MCTS-Paper-MS-Rework"]
+        options = ["MiniMax", "Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS", "MCTS-Rework", "MCTS-MR", "MCTS-MS", "MCTS-Solver", "MCTS-MR-Solver", "MCTS-MS-Solver", "MCTS-Paper", "MCTS-MR-Paper", "MCTS-MS-Paper", "MCTS-MB-Paper", "MCTS-Paper-Rework", "MCTS-Paper-MR-Rework", "MCTS-Paper-MS-Rework", "MCTS-Paper-MB-Rework"]
         self.white = ttk.Combobox(self.canvas, values=options)
         self.white.set("Select white Player")  # Set a default selection
         self.black = ttk.Combobox(self.canvas, values=options)
@@ -101,8 +101,8 @@ class SimGUI:
                     try:
                         match self.white_player:
                             case "MiniMax":
-                                #eval, moves = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
-                                eval, moves = MiniMax.MiniMax(2, board, whiteTurn, [])
+                                eval, moves = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
+                                #eval, moves = MiniMax.MiniMax(4, board, whiteTurn, [])
                                 move = moves[0]
                             case "Alpha-Beta":
                                 eval, move = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
@@ -142,7 +142,7 @@ class SimGUI:
                                 move = ResultNode.move
                                 print(ResultNode.parent.visits)
                             case "MCTS-Paper-MR-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MR_Run(board, whiteTurn, self.time, 1)
+                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MR_Run(board, whiteTurn, self.time, 3)
                                 move = ResultNode.move
                                 #print(ResultNode.parent.visits)
                             case "MCTS-MS":
@@ -157,11 +157,14 @@ class SimGUI:
                                 ResultNode = MCTS_Paper.MCTS_MS_Run(board, whiteTurn, self.time, 5, 2)
                                 move = ResultNode.move
                             case "MCTS-Paper-MS-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, whiteTurn, self.time, 2, 4)
+                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, whiteTurn, self.time, 5, 6)
                                 move = ResultNode.move
                                 print(ResultNode.parent.visits)
                             case "MCTS-MB-Paper":
                                 ResultNode = MCTS_Paper.MCTS_MB_Run(board, whiteTurn, self.time, 6)
+                                move = ResultNode.move
+                            case "MCTS-Paper-MB-Rework":
+                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MB_Run(board, whiteTurn, self.time, 1)
                                 move = ResultNode.move
                     except TimeoutError:
                         print("Am i the problem?")
@@ -173,8 +176,8 @@ class SimGUI:
                     try:
                         match self.black_player:
                             case "MiniMax":
-                                eval, move = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
-                                #move = moves[0]
+                                eval, moves = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
+                                move = moves[0]
                             case "Alpha-Beta":
                                 eval, move = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
                                 #move = moves
@@ -229,11 +232,14 @@ class SimGUI:
                                 ResultNode = MCTS_Paper.MCTS_MS_Run(board, whiteTurn, self.time, 10, 4)
                                 move = ResultNode.move
                             case "MCTS-Paper-MS-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, whiteTurn, self.time, 2, 4)
+                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, whiteTurn, self.time, 1, 4)
                                 move = ResultNode.move
-                                print(ResultNode.parent.visits)
+                                #print(ResultNode.parent.visits)
                             case "MCTS-MB-Paper":
                                 ResultNode = MCTS_Paper.MCTS_MB_Run(board, whiteTurn, self.time, 6)
+                                move = ResultNode.move
+                            case "MCTS-Paper-MB-Rework":
+                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MB_Run(board, whiteTurn, self.time, 3)
                                 move = ResultNode.move
                     except TimeoutError:
                         #print("Am i the problem?")

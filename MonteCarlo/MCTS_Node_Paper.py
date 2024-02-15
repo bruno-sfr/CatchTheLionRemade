@@ -26,9 +26,13 @@ class MCTS_Node_Paper:
         if self.parent:
             parent = self.parent
 
-        C = 0.7
-        """ADDED Minus as Test"""
-        UCT = -self.score / self.visits + math.sqrt(C * math.log(parent.visits)/self.visits)
+        #C = 0.7
+        C = math.sqrt(2)
+        #C = 50
+        """ADDED Minus as Test, or now 1 - winrate to invert winrate"""
+        #UCT = (1 - (self.score / self.visits)) + math.sqrt(C * math.log(parent.visits)/self.visits)
+        UCT = -self.score / self.visits + math.sqrt(C * math.log(parent.visits) / self.visits)
+        #UCT = -self.score / self.visits + C * math.sqrt(math.log(parent.visits) / self.visits)
         return UCT
 
     def printTree(self, depth:int):

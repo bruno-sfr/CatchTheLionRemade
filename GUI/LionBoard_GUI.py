@@ -75,14 +75,13 @@ class LionGUI:
         #self.images.append(ImageTk.PhotoImage(Image.open("../GUI_Resources/Button.png").resize((200, 200))))
         #quitButton = self.canvas.create_image(200, 200, image=self.images[-1])
         #self.canvas.tag_bind(quitButton, "<Button-1>", self.quitGame)
-
     def quitGame(self, event):
         self.root.destroy()
 
     def begin_game(self):
         self.clear_board()
         self.draw_board_fen("elg/1c1/1C1/GLE/")
-        #self.draw_board_fen("3/3/1H1/3/")
+        #self.draw_board_fen("3/2L/2l/3/")
         self.mouse_func = self.canvas.bind("<Button-1>", self.on_mouse_click_game)
         self.whiteTurn = True
         self.update_game_text(self.whiteTurn)
@@ -423,14 +422,14 @@ class LionGUI:
         print("AI whiteturn:", self.whiteTurn)
         match self.AI_player:
             case "Alpha-Beta":
-                eval, moves = self.AB.iterativeDeepening_AB(self.AI_time, self.board, self.whiteTurn)
-                self.makeMove(moves[0].getFrom(), moves[0].getTo())
+                eval, move = self.AB.iterativeDeepening_AB(self.AI_time, self.board, self.whiteTurn)
+                self.makeMove(move.getFrom(), move.getTo())
             case "Alpha-Beta with TT":
-                eval, moves = self.AB.iterativeDeepening_AB_TT(self.AI_time, self.board, self.whiteTurn)
-                self.makeMove(moves[0].getFrom(), moves[0].getTo())
+                eval, move = self.AB.iterativeDeepening_AB_TT(self.AI_time, self.board, self.whiteTurn)
+                self.makeMove(move.getFrom(), move.getTo())
             case "MTD(f)":
-                 eval, moves = self.MTD.iterativeDeepening_MTD(self.AI_time, self.board, self.whiteTurn)
-                 self.makeMove(moves[0].getFrom(), moves[0].getTo())
+                 eval, move = self.MTD.iterativeDeepening_MTD(self.AI_time, self.board, self.whiteTurn)
+                 self.makeMove(move.getFrom(), move.getTo())
             case "MCTS":
                 result_node = MCTS.MCTS(self.board, self.whiteTurn, self.AI_time)
                 self.makeMove(result_node.move.getFrom(), result_node.move.getTo())

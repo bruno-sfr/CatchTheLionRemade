@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from AlphaBeta import AlphaBeta, MiniMax
 from Game import LionBoard
 from MTDF import MTDF
+from MonteCarlo import MCTS_Paper_Rework
 
 
 def TestStartpostion():
@@ -623,10 +624,145 @@ def Random_Benchmark():
     plt.savefig(".../Resources/Benchmark_Random_Iter_15.png")
     plt.show()
 
+def MateIn3_AB():
+    board = LionBoard.LionBoard()
+    board.setBoard_start()
+
+    board.setBoard_Fen("eg1/lc1/1CL/G1E/")
+    """best move is 3 to 6"""
+    #board.setBoard_Fen("eg1/1l1/GE1/1L1/cC")
+    """Best Move is 5 to 8"""
+
+    board.printBoard()
+    times = []
+    for i in range(100):
+        starttime = time.time()
+        eval, move = AlphaBeta.alpha_beta_simple(5, board, True)
+        endtime = time.time()
+        # print("eval:", eval)
+        times.append(endtime - starttime)
+    move.printMove()
+    avg = 0
+    for i in range(100):
+        avg = avg + times[i]
+    print("Avg. time =", avg / len(times))
+
+def MateIn3():
+    # sys.setrecursionlimit(5000)
+    board = LionBoard.LionBoard()
+    board.setBoard_start()
+
+    #board.setBoard_Fen("eg1/lc1/1CL/G1E/")
+    """best move is 3 to 6"""
+    board.setBoard_Fen("eg1/1l1/GE1/1L1/cC")
+    """Best Move is 5 to 8"""
+
+    print("AB:")
+    eval, move = AlphaBeta.alpha_beta_simple(5, board, True)
+    optimalMove = move
+    move.printMove()
+
+    Test_MCTS = False
+    Test_MCTS_MR = False
+    Test_MCTS_MB = False
+    Test_MCTS_MS = False
+    MCTS_passed_time = 0
+    MCTS_MR_passed_time = 0
+    MCTS_MB_passed_time = 0
+    MCTS_MS_passed_time = 0
+    time_iter = 0.1
+    Iterations = 50
+    Interval = 100
+    print("MCTS Test")
+    for i in range(Interval):
+        print("----------------------------------------")
+        print("Time:", (i+1) * time_iter + 1)
+        if Test_MCTS:
+            print("MCTS")
+            Movelist = []
+            AllMovesAreSame = True
+            for i2 in range(Iterations):
+                result_node = MCTS_Paper_Rework.MCTS_Paper_Run(board, True, (i+1) * time_iter)
+                Movelist.append(result_node.move)
+                #result_node.move.printMove()
+            for move in Movelist:
+                if not move.equals(optimalMove):
+                    AllMovesAreSame = False
+            if AllMovesAreSame:
+                print("Test passed at", (i+1) * time_iter)
+                MCTS_passed_time = (i+1) * time_iter
+                Test_MCTS = False
+            else:
+                print("Test Failed")
+
+        if Test_MCTS_MS:
+            print("MCTS-MS")
+            Movelist = []
+            AllMovesAreSame = True
+            for i2 in range(Iterations):
+                result_node = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, True, (i+1) * time_iter, 1,4)
+                Movelist.append(result_node.move)
+                #result_node.move.printMove()
+            for move in Movelist:
+                if not move.equals(optimalMove):
+                    AllMovesAreSame = False
+            if AllMovesAreSame:
+                print("Test passed at", (i+1) * time_iter)
+                MCTS_MS_passed_time = (i + 1) * time_iter
+                Test_MCTS_MS = False
+            else:
+                print("Test Failed")
+
+        if Test_MCTS_MR:
+            print("MCTS-MR")
+            Movelist = []
+            AllMovesAreSame = True
+            for i2 in range(Iterations):
+                result_node = MCTS_Paper_Rework.MCTS_Paper_MR_Run(board, True, (i+1) * time_iter, 1)
+                Movelist.append(result_node.move)
+                #result_node.move.printMove()
+            for move in Movelist:
+                if not move.equals(optimalMove):
+                    AllMovesAreSame = False
+            if AllMovesAreSame:
+                print("Test passed at", (i+1) * time_iter)
+                MCTS_MR_passed_time = (i + 1) * time_iter
+                Test_MCTS_MR = False
+            else:
+                print("Test Failed")
+
+        if Test_MCTS_MB:
+            print("MCTS-MB")
+            Movelist = []
+            AllMovesAreSame = True
+            for i2 in range(Iterations):
+                result_node = MCTS_Paper_Rework.MCTS_Paper_MB_Run(board, True, (i+1) * time_iter, 3)
+                Movelist.append(result_node.move)
+                #result_node.move.printMove()
+            for move in Movelist:
+                if not move.equals(optimalMove):
+                    AllMovesAreSame = False
+            if AllMovesAreSame:
+                print("Test passed at", (i+1) * time_iter)
+                MCTS_MB_passed_time = (i + 1) * time_iter
+                Test_MCTS_MB = False
+            else:
+                print("Test Failed")
+
+        if not Test_MCTS and not Test_MCTS_MS and not Test_MCTS_MR and not Test_MCTS_MB:
+            break
+
+    print("Results:")
+    print("MCTS passed at:", MCTS_passed_time)
+    print("MCTS-MR passed at:", MCTS_MR_passed_time)
+    print("MCTS-MB passed at:", MCTS_MB_passed_time)
+    print("MCTS-MS passed at:", MCTS_MS_passed_time)
+
 if __name__ == '__main__':
-    TestStartpostion()
+    #TestStartpostion()
     #MTD_Increment_Comparison()
-    #MateIn1()
+    #MateIn3()
+    MateIn3_AB()
     #Random_Benchmark()
 
     """board = LionBoard.LionBoard()

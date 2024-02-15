@@ -32,6 +32,13 @@ class BitBoard:
                 list.append(i)
         return list
 
+    def checksum(self):
+        checksum = 0
+        for i in range(12):
+            if (self.bitboard & (1 << i)) != 0:
+                checksum = checksum + 1
+        return checksum
+
     def printBitBoard(self):
         for i in reversed(range(4)):
             for i2 in range(3):

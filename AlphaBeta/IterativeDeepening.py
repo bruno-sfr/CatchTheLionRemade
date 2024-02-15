@@ -17,7 +17,7 @@ def timeout_handler(signum, frame):
 # Add some long-running computation or loop
 class iterativeDeepeningAB:
     def __init__(self):
-        self.AB = AlphaBeta.Alpha_Beta_TranspostionTable()
+        self.AB = AlphaBeta.Alpha_Beta_TT_Final()
         self.depth = 1
 
     def iterativeDeepening_AB_TT(self, time: int, board: LionBoard.LionBoard, WhiteTurn: bool):
@@ -35,7 +35,7 @@ class iterativeDeepeningAB:
 
             # Call your function
             while True:
-                result = self.AB.alpha_beta_TT_simple(depth, board, WhiteTurn)
+                result = self.AB.alpha_beta_TT_final_simple(depth, board, WhiteTurn)
                 # print("Depth:", depth)
                 depth = depth + 1
 
@@ -68,7 +68,7 @@ class iterativeDeepeningAB:
             # Disable the alarm since the function executed successfully
             # signal.alarm(0)
         except TimeoutError as e:
-            print(e)
+            print(f"Depth {self.depth} reached")
             # Handle the timeout event here (e.g., show an error message, take some action, etc.)
         return result
 
