@@ -15,7 +15,7 @@ Algorithm from https://askeplaat.wordpress.com/534-2/mtdf-algorithm/
 class MTDF:
     def __init__(self):
         self.zob = Zobrist.Zobrist()
-        self.AB = Alpha_Beta_TT_Final()
+        self.AB = Alpha_Beta_TT()
 
     def MTDF(self, f: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, increment):
         #increment = 0.1
@@ -31,7 +31,7 @@ class MTDF:
             else:
                 beta = g
 
-            g, move = self.AB.alpha_beta_TT_final(beta - increment, beta, depth, board, whiteTurn, True)
+            g, move = self.AB.alpha_beta_TT(beta - increment, beta, depth, board, whiteTurn)
 
             if g < beta:
                 upperbound = g
@@ -40,12 +40,12 @@ class MTDF:
 
         return g, move
 
-class Alpha_Beta_TT_Final:
+class Alpha_Beta_TT:
     def __init__(self):
         self.zob = Zobrist.Zobrist()
         self.table = TranspostionTable_Final.TranspostionTable(20)
 
-    def alpha_beta_TT_final(self, alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, storeAll: bool):
+    def alpha_beta_TT(self, alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
         """
         :param alpha: best of max player
         :param beta:  best of min player
@@ -97,7 +97,7 @@ class Alpha_Beta_TT_Final:
                     new_board.setBoard(board)
                     new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     new_whiteTurn = not whiteTurn
-                    eval, Temp_Move = self.alpha_beta_TT_final(a, beta, depth - 1, new_board, new_whiteTurn, storeAll)
+                    eval, Temp_Move = self.alpha_beta_TT(a, beta, depth - 1, new_board, new_whiteTurn)
                     if eval > maxEval:
                         maxEval = eval
                         bestmove = move
@@ -131,7 +131,7 @@ class Alpha_Beta_TT_Final:
                     new_board.setBoard(board)
                     new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     new_whiteTurn = not whiteTurn
-                    eval, Temp_Move = self.alpha_beta_TT_final(alpha, b, depth - 1, new_board, new_whiteTurn, storeAll)
+                    eval, Temp_Move = self.alpha_beta_TT(alpha, b, depth - 1, new_board, new_whiteTurn)
                     if eval < minEval:
                         minEval = eval
                         bestmove = move
@@ -155,8 +155,8 @@ class Alpha_Beta_TT_Final:
                 self.table.storeEntry(newEntry)
             return minEval, bestmove
 
-    def alpha_beta_TT_final_simple(self, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
-        eval, move = self.alpha_beta_TT_final(float('-inf'), float('inf'), depth, board, whiteTurn, True)
+    def alpha_beta_TT_simple(self, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+        eval, move = self.alpha_beta_TT(float('-inf'), float('inf'), depth, board, whiteTurn)
         return eval, move
 
 def alpha_beta_allMoves(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, moves: list):
@@ -346,7 +346,49 @@ def alpha_beta_win_loss_simple(depth: int, board: LionBoard.LionBoard, whiteTurn
     eval, move = alpha_beta_win_loss(float('-inf'), float('inf'), depth, board, whiteTurn)
     return eval, move
 
-def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool, moves: list):
+def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+    if depth == 0:
+        eval = board.eval_func()
+        return eval, None
+
+    if board.isGameOver():
+        eval = board.eval_func()
+        return eval, None
+
+    if whiteTurn:
+        maxEval = float('-inf')
+        bestmove = Move.Move()
+        list = board.allpossibleMoves(whiteTurn)
+        for i in list:
+            for move in i:
+                # new_board = copy.deepcopy(board)
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_whiteTurn = not whiteTurn
+                eval, temp_move = MiniMax(depth - 1, new_board, new_whiteTurn)
+                if eval > maxEval:
+                    maxEval = eval
+                    bestmove = move
+        return maxEval, bestmove
+    else:
+        minEval = float('inf')
+        bestmove = Move.Move()
+        list = board.allpossibleMoves(whiteTurn)
+        for i in list:
+            for move in i:
+                # new_board = copy.deepcopy(board)
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_whiteTurn = not whiteTurn
+                eval, temp_move = MiniMax(depth - 1, new_board, new_whiteTurn)
+                if eval < minEval:
+                    minEval = eval
+                    bestmove = move
+        return minEval, bestmove
+
+"""def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool, moves: list):
     if depth == 0:
         eval = board.eval_func()
         return eval, moves
@@ -391,4 +433,4 @@ def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool, moves: list
                 if eval < minEval:
                     minEval = eval
                     best_moves = move_list
-        return minEval, best_moves
+        return minEval, best_moves"""

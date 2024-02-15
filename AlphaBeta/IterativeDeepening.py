@@ -56,7 +56,7 @@ class iterativeDeepeningMTD:
 
 class iterativeDeepeningAB:
     def __init__(self):
-        self.AB = AlphaBeta.Alpha_Beta_TT_Final()
+        self.AB = AlphaBeta.Alpha_Beta_TT()
         self.depth = 1
 
     def iterativeDeepening_AB_TT(self, time: int, board: LionBoard.LionBoard, WhiteTurn: bool):
@@ -74,7 +74,7 @@ class iterativeDeepeningAB:
 
             # Call your function
             while True:
-                result = self.AB.alpha_beta_TT_final_simple(depth, board, WhiteTurn)
+                result = self.AB.alpha_beta_TT_simple(depth, board, WhiteTurn)
                 # print("Depth:", depth)
                 depth = depth + 1
 
@@ -126,7 +126,7 @@ class iterativeDeepeningAB:
 
             # Call your function
             while True:
-                result = AlphaBeta.MiniMax(self.depth, board, WhiteTurn, [])
+                result = AlphaBeta.MiniMax(self.depth, board, WhiteTurn)
                 # print("Depth:", depth)
                 self.depth = self.depth + 1
 

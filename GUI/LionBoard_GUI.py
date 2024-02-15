@@ -48,11 +48,11 @@ class LionGUI:
         self.Color_select.bind("<<ComboboxSelected>>", self.on_color_select)
 
 
-        self.window_1 = self.canvas.create_window(850, 110, width=120, height=30, window=self.PvP_button)
-        self.window_2 = self.canvas.create_window(850, 150, width=120, height=30, window=self.PvA_button)
-        self.window_3 = self.canvas.create_window(850, 180, width=120, height=30)
-        self.window_4 = self.canvas.create_window(850, 220, width=120, height=30)
-        self.window_5 = self.canvas.create_window(850, 260, width=120, height=30)
+        self.window_1 = self.canvas.create_window(850, 110, width=170, height=30, window=self.PvP_button)
+        self.window_2 = self.canvas.create_window(850, 150, width=170, height=30, window=self.PvA_button)
+        self.window_3 = self.canvas.create_window(850, 180, width=170, height=30)
+        self.window_4 = self.canvas.create_window(850, 220, width=170, height=30)
+        self.window_5 = self.canvas.create_window(850, 260, width=170, height=30)
         self.canvas.itemconfig(self.window_3, window=self.Color_select)
         self.canvas.itemconfig(self.window_3, state="normal")
         self.canvas.itemconfig(self.window_4, state="hidden")

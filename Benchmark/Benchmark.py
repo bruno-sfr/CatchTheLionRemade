@@ -25,26 +25,26 @@ def TestStartpostion():
     AB_TT_store_Eval_List = []
     MTD_second_guess_Eval_List = []
 
-    AB_Final = AlphaBeta.Alpha_Beta_TT_Final()
+    AB= AlphaBeta.Alpha_Beta_TT()
     MTD_second_guess = AlphaBeta.MTDF()
 
     Depth = 10
-    x = range(1, Depth)
+    x = range(1, Depth + 1)
 
-    for i in range(1, Depth):
+    for i in range(1, Depth + 1):
         print("Depth:", i)
-        print("MiniMax")
+        """print("MiniMax")
         start = time.time()
-        evalMM, moves = AlphaBeta.MiniMax(i, board, whiteTurn, [])
+        evalMM, moves = AlphaBeta.MiniMax(i, board, whiteTurn)
         end = time.time()
         timetaken = (end - start)
         print("eval:", evalMM)
         print("time:", timetaken)
         moves.printMove()
         MM_List.append(timetaken)
-        MM_Eval_List.append(evalMM)
+        MM_Eval_List.append(evalMM)"""
 
-        print("Depth:", i)
+        print("")
         print("Alpha-Beta")
         start = time.time()
         evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, whiteTurn)
@@ -57,9 +57,9 @@ def TestStartpostion():
         AB_Eval_List.append(evalAB)
 
         print("")
-        print("Alpha-Beta_TT_final")
+        print("Alpha-Beta_TT")
         start = time.time()
-        eval, move = AB_Final.alpha_beta_TT_final(float('-inf'), float('inf'), i, board, whiteTurn, True)
+        eval, move = AB.alpha_beta_TT_simple(i, board, whiteTurn)
         end = time.time()
         timetaken = (end - start)
         print("eval:", eval)
@@ -94,7 +94,7 @@ def TestStartpostion():
     x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
     plt.xticks(x_list)
 
-    plt.plot(x, MM_List, label='MiniMax')
+    #plt.plot(x, MM_List, label='MiniMax')
     plt.plot(x, AB_List, label='Alpha-Beta')
     plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT', linestyle='dotted')
     plt.plot(x, MTD_second_guess_List, label='MTD(f)', linestyle='dashed')
@@ -414,7 +414,7 @@ def MateIn3():
     print("MCTS-MS passed at:", MCTS_MS_passed_time)
 
 if __name__ == '__main__':
-    #TestStartpostion()
+    TestStartpostion()
     #MateIn3()
-    MateIn3_AB()
+    #MateIn3_AB()
     #Random_Benchmark()

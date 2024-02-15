@@ -48,5 +48,3 @@ class GUI:
 if __name__ == "__main__":
     GUI = GUI()
     GUI.Start_GUI()
-    #GUI.root.mainloop()
-    # GUI.show_frame(GUI.game_frame)
