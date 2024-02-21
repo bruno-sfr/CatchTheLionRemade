@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from Game import LionBoard, Move
 from AlphaBeta import IterativeDeepening
 from AlphaBeta import AlphaBeta
-from MonteCarlo import MCTS
 
 
 def ABvsABTT_fixedDepth():
@@ -133,123 +132,7 @@ def ABvsABTT_iterativeDeepening():
     plt.savefig("../Resources/Benchmark_ABvsABTT_Iterative_Deepening_20s.png")
     plt.show()
 
-def ABvsMCTS():
-    AB_wins = 0
-    MCTS_wins = 0
-    AB_wins_List = [0]
-    MCTS_wins_List = [0]
-    time = 10
-    Iterations = 10
-    for i in range(0, Iterations):
-        board = LionBoard.LionBoard()
-        board.setBoard_start()
-        ID = IterativeDeepening.iterativeDeepeningAB()
-        if i % 2 == 0:
-            whiteTurn = True
-        else:
-            whiteTurn = False
-        while not board.isGameOver():
-            # board.printBoard()
-            if whiteTurn:
-                print("Alpha-Beta")
-                eval, moves = ID.iterativeDeepening_AB_TT(time, board, whiteTurn)
-                if len(moves) == 0:
-                    print("no move Returned")
-                # _from = moves[0].getFrom
-                # _tp = moves[0].getTo
-                moves[0].printMove()
-                print("Making Move:", board.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo()))
-            else:
-                print("MCTS")
-                ResultNode = MCTS.MCTS(board, whiteTurn, time)
-                if len(moves) == 0:
-                    print("no move Returned")
-                # _from = moves[0].getFrom
-                # _tp = moves[0].getTo
-                ResultNode.move.printMove()
-                print("Making Move:", board.makeMove(whiteTurn, ResultNode.move.getFrom(), ResultNode.move.getTo()))
-            whiteTurn = not whiteTurn
-        if board.hasWhiteWon():
-            AB_wins = AB_wins + 1
-        elif board.hasBlackWon():
-            MCTS_wins = MCTS_wins + 1
-        print("--------------------")
-        print("AB:", AB_wins)
-        print("MCTS:", MCTS_wins)
-        print("--------------------")
-        AB_wins_List.append(AB_wins)
-        MCTS_wins_List.append(MCTS_wins)
-        # board.printBoard()
-    x = range(0, Iterations+1)
-    x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
-    plt.xticks(x_list)
-
-    plt.plot(x, AB_wins_List, label='Alpha-Beta')
-    plt.plot(x, MCTS_wins_List, label='MCTS')
-    plt.xlabel("Rounds")
-    plt.ylabel("Wins")
-    plt.title("Comparison ID AB vs MCTS Time 10s")
-    plt.legend()
-    plt.savefig("../Resources/Benchmark_ABvsMCTS_Iterative_Deepening_10s.png")
-    plt.show()
-
-def MCTSvsMCTS_FE():
-    MCTS_FE_wins = 0
-    MCTS_wins = 0
-    MCTS_FE_wins_List = [0]
-    MCTS_wins_List = [0]
-    time = 10
-    Iterations = 5
-    for i in range(0, Iterations):
-        board = LionBoard.LionBoard()
-        board.setBoard_start()
-        if i % 2 == 0:
-            whiteTurn = True
-        else:
-            whiteTurn = False
-        while not board.isGameOver():
-            # board.printBoard()
-            if whiteTurn:
-                print("MCTS Full Expansion")
-                ResultNode = MCTS.MCTS_full_expansion(board, whiteTurn, time)
-                #print("MCTS MR")
-                #ResultNode = MCTS.MCTS_MR(board, whiteTurn, time, 3)
-                ResultNode.move.printMove()
-                print("Making Move:", board.makeMove(whiteTurn, ResultNode.move.getFrom(), ResultNode.move.getTo()))
-            else:
-                print("MCTS")
-                ResultNode = MCTS.MCTS(board, whiteTurn, time)
-                #ResultNode = MCTS.MCTS_MR_win_loss(board, whiteTurn, time, 3)
-                ResultNode.move.printMove()
-                print("Making Move:", board.makeMove(whiteTurn, ResultNode.move.getFrom(), ResultNode.move.getTo()))
-            whiteTurn = not whiteTurn
-        if board.hasWhiteWon():
-            MCTS_FE_wins = MCTS_FE_wins + 1
-        elif board.hasBlackWon():
-            MCTS_wins = MCTS_wins + 1
-        print("--------------------")
-        print("MCTS_FE:", MCTS_FE_wins)
-        print("MCTS:", MCTS_wins)
-        print("--------------------")
-        MCTS_FE_wins_List.append(MCTS_FE_wins)
-        MCTS_wins_List.append(MCTS_wins)
-        # board.printBoard()
-    x = range(0, Iterations+1)
-    x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
-    plt.xticks(x_list)
-
-    plt.plot(x, MCTS_FE_wins_List, label='MCTS_MR')
-    plt.plot(x, MCTS_wins_List, label='MCTS Win/loss')
-    plt.xlabel("Rounds")
-    plt.ylabel("Wins")
-    plt.title("Comparison MCTS_MR vs MCTS Time 10s")
-    plt.legend()
-    plt.savefig("../Resources/Benchmark_MCTS_MRvsMCTS_Iterative_Deepening_10s_depth_4.png")
-    plt.show()
-
 if __name__ == '__main__':
     #sys.setrecursionlimit(15000)
-    #ABvsABTT_fixedDepth()
+    ABvsABTT_fixedDepth()
     #ABvsABTT_iterativeDeepening()
-    #ABvsMCTS()
-    MCTSvsMCTS_FE()

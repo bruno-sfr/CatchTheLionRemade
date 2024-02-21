@@ -6,9 +6,8 @@ import matplotlib.pyplot as plt
 
 from PIL import Image, ImageTk
 from Game import LionBoard, Move
-from AlphaBeta import IterativeDeepening, MiniMax
-from MonteCarlo import MCTS, MCTS_Solver, MCTS_Paper, MCTS_Paper_Rework
-from MTDF import IterativeDeepeningMTD
+from AlphaBeta import IterativeDeepening
+from MonteCarlo import MCTS_Solvers
 
 
 class SimGUI:
@@ -20,6 +19,10 @@ class SimGUI:
         self.images = []
 
         self.white_player = ""
+        self.white_Depth = 0
+        self.white_Threshold = 0
+        self.black_Depth = 0
+        self.black_Threshold = 0
         self.black_player = ""
         self.time = 0
         self.iterations = 0
@@ -34,12 +37,14 @@ class SimGUI:
         self.canvas.create_image(500, 350, image=self.images[-1])
 
         self.text_widget = scrolledtext.ScrolledText(self.canvas, wrap=tk.WORD)
-        options = ["MiniMax", "Alpha-Beta", "Alpha-Beta with TT", "MTD(f)", "MCTS", "MCTS-Rework", "MCTS-MR", "MCTS-MS", "MCTS-Solver", "MCTS-MR-Solver", "MCTS-MS-Solver", "MCTS-Paper", "MCTS-MR-Paper", "MCTS-MS-Paper", "MCTS-MB-Paper", "MCTS-Paper-Rework", "MCTS-Paper-MR-Rework", "MCTS-Paper-MS-Rework", "MCTS-Paper-MB-Rework"]
+        options = ["MiniMax", "Alpha-Beta", "Alpha-Beta with TT", "MTD(f)",
+                   "MCTS-Solver", "MCTS-MR", "MCTS-MS", "MCTS-MB"]
         self.white = ttk.Combobox(self.canvas, values=options)
         self.white.set("Select white Player")  # Set a default selection
+        self.white.bind("<<ComboboxSelected>>", self.white_select)
         self.black = ttk.Combobox(self.canvas, values=options)
         self.black.set("Select black Player")  # Set a default selection
-        #white.bind("<<ComboboxSelected>>", on_select_white)
+        self.black.bind("<<ComboboxSelected>>", self.black_select)
         self.time_label = tk.Label(self.canvas, text="Enter Time per Turn:")
         self.time_entry = tk.Entry(self.canvas)
         self.iterations_label = tk.Label(self.canvas, text="Enter Rounds to be played:")
@@ -47,6 +52,7 @@ class SimGUI:
         self.begin_button = tk.Button(self.canvas, text="Begin Simulation", command=self.Begin, anchor="center")
         self.plot_button = tk.Button(self.canvas, text="Plot Simulation", command=self.plot_result, anchor="center")
         self.round_Label = tk.Label(self.canvas, text="Rounds to be played")
+        self.Game_state_Label = tk.Label(self.canvas, text="Game State")
 
         self.window_1 = self.canvas.create_window(350, 350, width=600, height=600, window=self.text_widget)
         self.window_2 = self.canvas.create_window(825, 100, width=200, height=30, window=self.white)
@@ -57,8 +63,94 @@ class SimGUI:
         self.window_7 = self.canvas.create_window(825, 300, width=200, height=30, window=self.iterations_entry)
         self.window_8 = self.canvas.create_window(825, 350, width=200, height=30, window=self.begin_button)
         self.window_9 = self.canvas.create_window(825, 400, width=200, height=30, window=self.plot_button)
-        self.window_10 = self.canvas.create_window(350, 27, width=200, height=30, window=self.round_Label)
+        self.window_10 = self.canvas.create_window(350, 27, width=160, height=30, window=self.round_Label)
+        self.window_11 = self.canvas.create_window(350, 670, width=300, height=30, window=self.Game_state_Label)
+
         self.canvas.itemconfig(self.window_10, state="hidden")
+        self.canvas.itemconfig(self.window_11, state="hidden")
+
+        self.white_select_1 = self.canvas.create_window(747, 450, width=150, height=30)
+        self.white_select_2 = self.canvas.create_window(747, 500, width=150, height=30)
+        self.white_select_3 = self.canvas.create_window(747, 525, width=150, height=30)
+        self.white_select_4 = self.canvas.create_window(747, 575, width=150, height=30)
+        self.white_select_5 = self.canvas.create_window(747, 600, width=150, height=30)
+        self.canvas.itemconfig(self.white_select_1, state="hidden")
+        self.canvas.itemconfig(self.white_select_2, state="hidden")
+        self.canvas.itemconfig(self.white_select_3, state="hidden")
+        self.canvas.itemconfig(self.white_select_4, state="hidden")
+        self.canvas.itemconfig(self.white_select_5, state="hidden")
+
+        self.black_select_1 = self.canvas.create_window(903, 450, width=150, height=30)
+        self.black_select_2 = self.canvas.create_window(903, 500, width=150, height=30)
+        self.black_select_3 = self.canvas.create_window(903, 525, width=150, height=30)
+        self.black_select_4 = self.canvas.create_window(903, 575, width=150, height=30)
+        self.black_select_5 = self.canvas.create_window(903, 600, width=150, height=30)
+        self.canvas.itemconfig(self.black_select_1, state="hidden")
+        self.canvas.itemconfig(self.black_select_2, state="hidden")
+        self.canvas.itemconfig(self.black_select_3, state="hidden")
+        self.canvas.itemconfig(self.black_select_4, state="hidden")
+        self.canvas.itemconfig(self.black_select_5, state="hidden")
+
+    def white_select(self, event):
+        self.white_player = self.white.get()
+        self.white_text = tk.Label(self.canvas, text=f"{self.white_player}")
+        self.canvas.itemconfig(self.white_select_1, state="normal", window=self.white_text)
+        match self.white_player:
+            case "MCTS-MR" | "MCTS-MB":
+                self.white_parameter_1 = tk.Label(self.canvas, text=f"Depth:")
+                self.white_parameter_1_entry = tk.Entry(self.canvas)
+                self.canvas.itemconfig(self.white_select_2, state="normal", window=self.white_parameter_1)
+                self.canvas.itemconfig(self.white_select_3, state="normal", window=self.white_parameter_1_entry)
+                self.canvas.itemconfig(self.white_select_4, state="hidden")
+                self.canvas.itemconfig(self.white_select_5, state="hidden")
+            case "MCTS-MS":
+                self.white_parameter_1 = tk.Label(self.canvas, text=f"Depth:")
+                self.white_parameter_1_entry = tk.Entry(self.canvas)
+                self.white_parameter_2 = tk.Label(self.canvas, text=f"Threshold:")
+                self.white_parameter_2_entry = tk.Entry(self.canvas)
+                self.canvas.itemconfig(self.white_select_2, state="normal", window=self.white_parameter_1)
+                self.canvas.itemconfig(self.white_select_3, state="normal", window=self.white_parameter_1_entry)
+                self.canvas.itemconfig(self.white_select_4, state="normal", window=self.white_parameter_2)
+                self.canvas.itemconfig(self.white_select_5, state="normal", window=self.white_parameter_2_entry)
+            case _:
+                # all ABs
+                self.white_parameter = tk.Label(self.canvas, text=f"No additional")
+                self.white_parameter_2 = tk.Label(self.canvas, text=f"Parameters")
+                self.canvas.itemconfig(self.white_select_2, state="normal", window=self.white_parameter)
+                self.canvas.itemconfig(self.white_select_3, state="normal", window=self.white_parameter_2)
+                self.canvas.itemconfig(self.white_select_4, state="hidden")
+                self.canvas.itemconfig(self.white_select_5, state="hidden")
+
+    def black_select(self, event):
+        self.black_player = self.black.get()
+        self.black_text = tk.Label(self.canvas, text=f"{self.black_player}")
+        self.canvas.itemconfig(self.black_select_1, state="normal", window=self.black_text)
+        match self.black_player:
+            case "MCTS-MR" | "MCTS-MB":
+                self.black_parameter_1 = tk.Label(self.canvas, text=f"Depth:")
+                self.black_parameter_1_entry = tk.Entry(self.canvas)
+                self.canvas.itemconfig(self.black_select_2, state="normal", window=self.black_parameter_1)
+                self.canvas.itemconfig(self.black_select_3, state="normal", window=self.black_parameter_1_entry)
+                self.canvas.itemconfig(self.black_select_4, state="hidden")
+                self.canvas.itemconfig(self.black_select_5, state="hidden")
+            case "MCTS-MS":
+                self.black_parameter_1 = tk.Label(self.canvas, text=f"Depth:")
+                self.black_parameter_1_entry = tk.Entry(self.canvas)
+                self.black_parameter_2 = tk.Label(self.canvas, text=f"Threshold:")
+                self.black_parameter_2_entry = tk.Entry(self.canvas)
+                self.canvas.itemconfig(self.black_select_2, state="normal", window=self.black_parameter_1)
+                self.canvas.itemconfig(self.black_select_3, state="normal", window=self.black_parameter_1_entry)
+                self.canvas.itemconfig(self.black_select_4, state="normal", window=self.black_parameter_2)
+                self.canvas.itemconfig(self.black_select_5, state="normal", window=self.black_parameter_2_entry)
+            case _:
+                # all ABs
+                self.black_parameter = tk.Label(self.canvas, text=f"No additional")
+                self.black_parameter_2 = tk.Label(self.canvas, text=f"Parameters")
+                self.canvas.itemconfig(self.black_select_2, state="normal", window=self.black_parameter)
+                self.canvas.itemconfig(self.black_select_3, state="normal", window=self.black_parameter_2)
+                self.canvas.itemconfig(self.black_select_4, state="hidden")
+                self.canvas.itemconfig(self.black_select_5, state="hidden")
+
 
     def add_text(self, new_text):
         self.text_widget.insert(tk.END, new_text + "\n")
@@ -67,21 +159,35 @@ class SimGUI:
 
     def Begin(self):
         #self.add_text("Hello")
-        self.white_player = self.white.get()
-        self.black_player = self.black.get()
         self.time = int(self.time_entry.get())
         self.iterations = int(self.iterations_entry.get())
         self.white_wins = 0
         self.white_wins_list = [0]
         self.black_wins = 0
         self.black_wins_list = [0]
+        self.canvas.itemconfig(self.window_10, state="normal")
+        self.canvas.itemconfig(self.window_11, state="normal")
+        match self.white_player:
+            case "MCTS-MR" | "MCTS-MB":
+                self.white_Depth = int(self.white_parameter_1_entry.get())
+            case "MCTS-MS":
+                self.white_Depth = int(self.white_parameter_1_entry.get())
+                self.white_Threshold = int(self.white_parameter_2_entry.get())
+
+        match self.black_player:
+            case "MCTS-MR" | "MCTS-MB":
+                self.black_Depth = int(self.black_parameter_1_entry.get())
+            case "MCTS-MS":
+                self.black_Depth = int(self.black_parameter_1_entry.get())
+                self.black_Threshold = int(self.black_parameter_2_entry.get())
+        self.Game_state_Label.config(
+            text=f"{self.white_player} 0 : 0 {self.black_player}")
         self.game()
 
     def game(self):
         #sys.setrecursionlimit(15000)
         max_turns = 100
         #max_turns = 50
-        self.canvas.itemconfig(self.window_10, state="normal")
         for i in range(0, self.iterations):
             turns = 0
             self.round_Label.config(text=f"Round {i + 1} of {self.iterations}")
@@ -89,8 +195,7 @@ class SimGUI:
             board = LionBoard.LionBoard()
             board.setBoard_start()
             ID = IterativeDeepening.iterativeDeepeningAB()
-            MTD = IterativeDeepeningMTD.iterativeDeepeningMTD()
-            MCTS = MCTS_Paper.MCTS()
+            MTD = IterativeDeepening.iterativeDeepeningMTD()
             if i % 2 == 0:
                 whiteTurn = True
             else:
@@ -101,9 +206,7 @@ class SimGUI:
                     try:
                         match self.white_player:
                             case "MiniMax":
-                                eval, moves = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
-                                #eval, moves = MiniMax.MiniMax(4, board, whiteTurn, [])
-                                move = moves[0]
+                                eval, move = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
                             case "Alpha-Beta":
                                 eval, move = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
                                 #move = move
@@ -113,58 +216,17 @@ class SimGUI:
                             case "MTD(f)":
                                 eval, move = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
                                 #move = moves[0]
-                            case "MCTS":
-                                ResultNode = MCTS.MCTS(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                            case "MCTS-Rework":
-                                ResultNode = MCTS.MCTS_Rework(board, whiteTurn, self.time)
-                                move = ResultNode.move
                             case "MCTS-Solver":
-                                ResultNode = MCTS_Solver.MCTS_Solver(board, whiteTurn, self.time)
+                                ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, self.time)
                                 move = ResultNode.move
-                            case "MCTS-Paper":
-                                ResultNode = MCTS_Paper.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-Paper-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
                             case "MCTS-MR":
-                                ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 1)
+                                ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, self.time, self.white_Depth)
                                 move = ResultNode.move
-                            case "MCTS-MR-Solver":
-                                ResultNode = MCTS_Solver.MCTS_MR_Solver(board, whiteTurn, self.time, 1)
-                                move = ResultNode.move
-                            case "MCTS-MR-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MR_Run(board, whiteTurn, self.time, 1)
-                                #ResultNode = MCTS.MCTS_MR_TT_Run(board, whiteTurn, self.time, 2)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-Paper-MR-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MR_Run(board, whiteTurn, self.time, 3)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
                             case "MCTS-MS":
-                                #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 10)
+                                ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, self.time, self.white_Threshold, self.white_Depth)
                                 move = ResultNode.move
-                            case "MCTS-MS-Solver":
-                                # ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS_Solver.MCTS_MS_Solver(board, whiteTurn, self.time, 4, 2)
-                                move = ResultNode.move
-                            case "MCTS-MS-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MS_Run(board, whiteTurn, self.time, 5, 2)
-                                move = ResultNode.move
-                            case "MCTS-Paper-MS-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, whiteTurn, self.time, 5, 6)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-MB-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MB_Run(board, whiteTurn, self.time, 6)
-                                move = ResultNode.move
-                            case "MCTS-Paper-MB-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MB_Run(board, whiteTurn, self.time, 1)
+                            case "MCTS-MB":
+                                ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, self.time, self.white_Depth)
                                 move = ResultNode.move
                     except TimeoutError:
                         print("Am i the problem?")
@@ -187,59 +249,17 @@ class SimGUI:
                             case "MTD(f)":
                                 eval, move = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
                                 #move = moves[0]
-                            case "MCTS":
-                                ResultNode = MCTS.MCTS(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                            case "MCTS-Rework":
-                                ResultNode = MCTS.MCTS_Rework(board, whiteTurn, self.time)
-                                #ResultNode = MCTS_Paper_Rework.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
                             case "MCTS-Solver":
-                                ResultNode = MCTS_Solver.MCTS_Solver(board, whiteTurn, self.time)
+                                ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, self.time)
                                 move = ResultNode.move
-                            case "MCTS-Paper":
-                                ResultNode = MCTS_Paper.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-Paper-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_Run(board, whiteTurn, self.time)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
                             case "MCTS-MR":
-                                ResultNode = MCTS.MCTS_MR(board, whiteTurn, self.time, 1)
+                                ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, self.time, self.black_Depth)
                                 move = ResultNode.move
-                            case "MCTS-MR-Solver":
-                                ResultNode = MCTS_Solver.MCTS_MR_Solver(board, whiteTurn, self.time, 1)
-                                move = ResultNode.move
-                            case "MCTS-MR-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MR_Run(board, whiteTurn, self.time, 1)
-                                #ResultNode = MCTS.MCTS_MR_TT_Run(board, whiteTurn, self.time, 2)
-                                move = ResultNode.move
-                                print(ResultNode.parent.visits)
-                            case "MCTS-Paper-MR-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MR_Run(board, whiteTurn, self.time, 1)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
                             case "MCTS-MS":
-                                #ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS.MCTS_MS_rework(board, whiteTurn, self.time, 4, 10)
+                                ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, self.time, self.black_Threshold, self.black_Depth)
                                 move = ResultNode.move
-                            case "MCTS-MS-Solver":
-                                # ResultNode = MCTS.MCTS_MS(board, whiteTurn, self.time, 4, 2)
-                                ResultNode = MCTS_Solver.MCTS_MS_Solver(board, whiteTurn, self.time, 4, 2)
-                                move = ResultNode.move
-                            case "MCTS-MS-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MS_Run(board, whiteTurn, self.time, 10, 4)
-                                move = ResultNode.move
-                            case "MCTS-Paper-MS-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, whiteTurn, self.time, 1, 4)
-                                move = ResultNode.move
-                                #print(ResultNode.parent.visits)
-                            case "MCTS-MB-Paper":
-                                ResultNode = MCTS_Paper.MCTS_MB_Run(board, whiteTurn, self.time, 6)
-                                move = ResultNode.move
-                            case "MCTS-Paper-MB-Rework":
-                                ResultNode = MCTS_Paper_Rework.MCTS_Paper_MB_Run(board, whiteTurn, self.time, 3)
+                            case "MCTS-MB":
+                                ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, self.time, self.black_Depth)
                                 move = ResultNode.move
                     except TimeoutError:
                         #print("Am i the problem?")
@@ -263,7 +283,8 @@ class SimGUI:
                 self.white_wins = self.white_wins + 0.5
             self.white_wins_list.append(self.white_wins)
             self.black_wins_list.append(self.black_wins)
-            self.add_text(f"{self.white_player} {self.white_wins} : {self.black_wins} {self.black_player}")
+            #self.add_text(f"{self.white_player} {self.white_wins} : {self.black_wins} {self.black_player}")
+            self.Game_state_Label.config(text=f"{self.white_player} {self.white_wins} : {self.black_wins} {self.black_player}")
         self.round_Label.config(text="Finished")
 
     def plot_result(self):
@@ -275,7 +296,20 @@ class SimGUI:
         plt.plot(x, self.black_wins_list, label=self.black_player)
         plt.xlabel("Rounds")
         plt.ylabel("Wins")
-        plt.title(f"Comparison {self.white_player} vs {self.black_player} Time {self.time}")
+        self.white_player_name = self.white_player
+        self.black_player_name = self.black_player
+        match self.white_player:
+            case "MCTS-MR" | "MCTS-MB":
+                self.white_player_name = self.white_player + " Depth:" + str(self.white_Depth)
+            case "MCTS-MS":
+                self.white_player_name = self.white_player + " Depth:" + str(self.white_Depth) + " Threshold:" + str(self.white_Threshold)
+        match self.black_player:
+            case "MCTS-MR" | "MCTS-MB":
+                self.black_player_name = self.black_player + " Depth:" + str(self.black_Depth)
+            case "MCTS-MS":
+                self.black_player_name = self.black_player + " Depth:" + str(self.black_Depth) + " Threshold:" + str(self.black_Threshold)
+
+        plt.title(f"{self.white_player_name} vs {self.black_player_name}, Time {self.time}, Iterations {self.iterations}")
         plt.legend()
         plt.savefig(f"../Resources/Benchmark_GUI_{self.white_player}_vs_{self.black_player}_{self.time}s.png")
         #plt.show()

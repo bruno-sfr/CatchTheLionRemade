@@ -3,81 +3,48 @@ import time
 
 import matplotlib.pyplot as plt
 
-from AlphaBeta import AlphaBeta, MiniMax
+from AlphaBeta import AlphaBeta
 from Game import LionBoard
-from MTDF import MTDF
-from MonteCarlo import MCTS_Paper_Rework
+from MonteCarlo import MCTS_Solvers
 
 
 def TestStartpostion():
     board = LionBoard.LionBoard()
     board.setBoard_start()
-    #board.randomBoard()
-    #board.setBoard_Fen("el1/1Cg/L2/2E/cE")
-    #board.setBoard_Fen("g11/1lg/111/L1h/ceE")
     whiteTurn = True
-    """MTD = MTDF.MTDF()
-    MTD_MiniMax = MTDF.MTDF()
-    MTD_0 = MTDF.MTDF()"""
-    #AB = AlphaBeta.Alpha_Beta_TranspostionTable()
-    #AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
-    evalMTD = 0.0
     evalMTD_even = 0.0
     evalMTD_uneven = 0.0
-    evalMTD_2 = 0.0
 
     AB_List = []
     MM_List = []
-    AB_TT_List = []
     AB_TT_store_List = []
-    MTD_List = []
     MTD_second_guess_List = []
-    MTD_0_List = []
-    MTD_MiniMax_List = []
-    MTD_no_TT_List = []
-    MTD_2_TT_List = []
 
     AB_Eval_List = []
     MM_Eval_List = []
-    AB_TT_Eval_List = []
     AB_TT_store_Eval_List = []
-    MTD_Eval_List = []
     MTD_second_guess_Eval_List = []
-    MTD_0_Eval_List = []
-    MTD_MiniMax_Eval_List = []
-    MTD_no_TT_Eval_List = []
-    MTD_2_TT_Eval_List = []
 
-    AB = AlphaBeta.Alpha_Beta_TranspostionTable()
-    AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
-    AB_Final = AlphaBeta.Alpha_Beta_TT_Final()
-    MTD = MTDF.MTDF()
-    MTD_second_guess = MTDF.MTDF()
-    MTD_MiniMax = MTDF.MTDF()
-    MTD_0 = MTDF.MTDF()
-    MTD_no_TT = MTDF.MTDF()
-    MTD_2_TT = MTDF.MTDF()
+    AB= AlphaBeta.Alpha_Beta_TT()
+    MTD_second_guess = AlphaBeta.MTDF()
 
     Depth = 10
-    x = range(1, Depth)
+    x = range(1, Depth + 1)
 
-    for i in range(1, Depth):
-        """print("Depth:", i)
-        print("MiniMax")
+    for i in range(1, Depth + 1):
+        print("Depth:", i)
+        """print("MiniMax")
         start = time.time()
-        evalMM, moves = MiniMax.MiniMax(i, board, whiteTurn, [])
+        evalMM, moves = AlphaBeta.MiniMax(i, board, whiteTurn)
         end = time.time()
         timetaken = (end - start)
         print("eval:", evalMM)
         print("time:", timetaken)
-        for move in moves:
-            move.printMove()
-            break
+        moves.printMove()
         MM_List.append(timetaken)
         MM_Eval_List.append(evalMM)"""
 
-        #print("")
-        print("Depth:", i)
+        print("")
         print("Alpha-Beta")
         start = time.time()
         evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, whiteTurn)
@@ -86,60 +53,13 @@ def TestStartpostion():
         print("eval:", evalAB)
         print("time:", timetaken)
         moves.printMove()
-        #for move in moves:
-        #    move.printMove()
-        #    break
         AB_List.append(timetaken)
         AB_Eval_List.append(evalAB)
 
-        """print("")
+        print("")
         print("Alpha-Beta_TT")
         start = time.time()
-        #eval, moves = AB.alpha_beta_TT_simple(i, board, True)
-        eval, moves = AB.alpha_beta_TT(float('-inf'), float('inf'), i, board, whiteTurn, [], False)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", eval)
-        print("time:", timetaken)
-        for move in moves:
-            move.printMove()
-            break
-        AB_TT_List.append(timetaken)
-        AB_TT_Eval_List.append(eval)"""
-
-        """print("")
-        print("Alpha-Beta_TT_store_All")
-        start = time.time()
-        # eval, moves = AB.alpha_beta_TT_simple(i, board, True)
-        eval, moves = AB_store.alpha_beta_TT(float('-inf'), float('inf'), i, board, whiteTurn, [], True)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", eval)
-        print("time:", timetaken)
-        for move in moves:
-            move.printMove()
-            break
-        AB_TT_store_List.append(timetaken)
-        AB_TT_store_Eval_List.append(eval)"""
-
-        """print("")
-        print("Alpha-Beta_TT_flag")
-        start = time.time()
-        eval, moves = AB_store.alpha_beta_TT_flag(float('-inf'), float('inf'), i, board, whiteTurn, [], True)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", eval)
-        print("time:", timetaken)
-        for move in moves:
-            move.printMove()
-            break
-        AB_TT_store_List.append(timetaken)
-        AB_TT_store_Eval_List.append(eval)"""
-
-        print("")
-        print("Alpha-Beta_TT_final")
-        start = time.time()
-        eval, move = AB_Final.alpha_beta_TT_final(float('-inf'), float('inf'), i, board, whiteTurn, True)
+        eval, move = AB.alpha_beta_TT_simple(i, board, whiteTurn)
         end = time.time()
         timetaken = (end - start)
         print("eval:", eval)
@@ -147,41 +67,6 @@ def TestStartpostion():
         move.printMove()
         AB_TT_store_List.append(timetaken)
         AB_TT_store_Eval_List.append(eval)
-
-        """print("")
-        print("AB_TT from MTD(f)")
-        start = time.time()
-        evalMTD, movesMTD = MTD.alpha_beta_MTD(float('-inf'), float('inf'), i, board, whiteTurn, [])
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalMTD)
-        print("time:", timetaken)
-        if len(movesMTD) == 0:
-            print("No Move found")
-        for move in movesMTD:
-            move.printMove()
-            break
-        MTD_List.append(timetaken)
-        MTD_Eval_List.append(evalMTD)"""
-
-        #print("----------------------------------")
-
-        """print("")
-        print("MTD(f) with f=bestGuess")
-        start = time.time()
-        evalMTD, movesMTD = MTD.MTDF(evalMTD, i, board, whiteTurn, 0.1)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalMTD)
-        print("time:", timetaken)
-        if len(movesMTD) == 0:
-            print("No Move found")
-        for move in movesMTD:
-            move.printMove()
-            break
-        MTD_List.append(timetaken)
-        MTD_Eval_List.append(evalMTD)
-        """
 
         print("")
         print("MTD(f) with f=bestSecondGuess")
@@ -201,101 +86,15 @@ def TestStartpostion():
             print("eval:", evalMTD_uneven)
             MTD_second_guess_Eval_List.append(evalMTD_uneven)
         print("time:", timetaken)
-        #if len(movesMTD) == 0:
-        #    print("No Move found")
-        #for move in movesMTD:
         movesMTD.printMove()
-        #    break
         MTD_second_guess_List.append(timetaken)
-
-
-        """print("")
-        print("MTD(f) with 2 TT and f=bestGuess")
-        start = time.time()
-        evalMTD_2, movesMTD_2 = MTD_2_TT.MTDF_with_2_TT(evalMTD_2, i, board, whiteTurn, 0.1)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalMTD_2)
-        print("time:", timetaken)
-        if len(movesMTD_2) == 0:
-            print("No Move found")
-        for move in movesMTD_2:
-            move.printMove()
-            break
-        MTD_2_TT_List.append(timetaken)
-        MTD_2_TT_Eval_List.append(evalMTD_2)"""
-
-        """print("")
-        print("MTD(f) with Minimax")
-        start = time.time()
-        eval, moves = MTD_MiniMax.MTDF(evalAB, i, board, whiteTurn, 0.1)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", eval)
-        print("time:", timetaken)
-        if len(moves) == 0:
-            print("No Move found")
-        for move in moves:
-            move.printMove()
-            break
-        MTD_MiniMax_List.append(timetaken)
-        MTD_MiniMax_Eval_List.append(eval)"""
-
-        """print("")
-        print("MTD(f) with f=BestMiniMax")
-        start = time.time()
-        eval, moves = MTD_MiniMax.MTDF(evalAB, i, board, whiteTurn, 0.1)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", eval)
-        print("time:", timetaken)
-        if len(moves) == 0:
-            print("No Move found")
-        for move in moves:
-            move.printMove()
-            break
-        MTD_MiniMax_List.append(timetaken)
-        MTD_MiniMax_Eval_List.append(eval)"""
-
-        """print("")
-        print("MTD(f) with f=0")
-        start = time.time()
-        evalMTD_0, movesMTD_0 = MTD_0.MTDF(0, i, board, whiteTurn, 0.1)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalMTD_0)
-        print("time:", timetaken)
-        print("tt use", MTD_0.count_transpo)
-        if len(movesMTD_0) == 0:
-            print("No Move found")
-        for move in movesMTD_0:
-            move.printMove()
-            break
-        MTD_0_List.append(timetaken)
-        MTD_0_Eval_List.append(evalMTD_0)"""
-
-        """print("")
-        print("MTD(f) with no TT")
-        start = time.time()
-        evalMTD_no_tt, movesMTD_no_tt = MTD_no_TT.MTDF_no_TT(0, i, board, whiteTurn, 0.1)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalMTD_no_tt)
-        print("time:", timetaken)
-        print("tt use", MTD_no_TT.count_transpo)
-        if len(movesMTD_no_tt) == 0:
-            print("No Move found")
-        for move in movesMTD_no_tt:
-            move.printMove()
-            break
-        MTD_no_TT_List.append(timetaken)
-        MTD_no_TT_Eval_List.append(evalMTD_no_tt)"""
         print("----------------------------------")
     print("Benchmark complete")
 
     x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
     plt.xticks(x_list)
 
+    #plt.plot(x, MM_List, label='MiniMax')
     plt.plot(x, AB_List, label='Alpha-Beta')
     plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT', linestyle='dotted')
     plt.plot(x, MTD_second_guess_List, label='MTD(f)', linestyle='dashed')
@@ -330,154 +129,10 @@ def TestStartpostion():
     #axs[1].plot(x, MTD_2_TT_Eval_List, label='MTD(f) with 2 TT', linestyle='dashdot')
     axs[1].set(ylabel='Eval')"""
 
-    #axs[0].legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left', ncols=2, mode="expand", borderaxespad=0.)
     plt.xlabel("Depth")
     plt.ylabel("Time taken")
     plt.title("Benchmark")
     plt.savefig(f"../Resources/Benchmark_Start_Depth_{Depth}.png")
-    plt.show()
-
-def MTD_Increment_Comparison():
-    board = LionBoard.LionBoard()
-    #board.setBoard_start()
-    board.randomBoard()
-    DiffList = []
-
-    print("Alpha-Beta")
-    evalAB, moves = AlphaBeta.alpha_beta_simple(8, board, True)
-    print("eval:", evalAB)
-    for move in moves:
-        move.printMove()
-        break
-
-    print("----------------------------------")
-    increment = 0.0000000001
-    increment_list = []
-    time_list = []
-    for i in range(1, 20):
-        MTD = MTDF.MTDF()
-        increment_list.append(increment)
-        print("Increment:", increment)
-        start = time.time()
-        evalMTD, movesMTD = MTD.MTDF(evalAB, 7, board, True, increment)
-        end = time.time()
-        timetaken = (end - start)
-        time_list.append(timetaken)
-        print("eval:", evalMTD)
-        print("time:", timetaken)
-        if len(movesMTD) == 0:
-            print("No Move found")
-        for move in movesMTD:
-            move.printMove()
-            break
-        Diffrence = abs(evalAB - evalMTD)
-        print("Diffrence:", Diffrence)
-        DiffList.append(Diffrence)
-        increment = increment * 10
-    print("----------------------------------")
-
-    #x = range(1, 20)
-    #x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
-    #plt.xticks(x_list)
-
-    #plt.plot(increment_list, DiffList, label='Diffrence')
-    plt.semilogx(increment_list, DiffList, label='Diffrence')
-    plt.semilogx(increment_list, time_list, label='Time')
-    plt.xlabel("Increment")
-    plt.ylabel("Diffrence")
-    plt.title("Benchmark Increment")
-    plt.legend()
-    plt.savefig("../Resources/Benchmark_Increment_3.png")
-    plt.show()
-
-def MateIn1():
-    board = LionBoard.LionBoard()
-    #board.setBoard_Fen("2l/L2/1EC/3/")
-    board.setBoard_Fen("G1l/2c/2C/L1G/E")
-    board.printBoard()
-    MTD = MTDF.MTDF()
-    MTD_0 = MTDF.MTDF()
-    AB = AlphaBeta.Alpha_Beta_TranspostionTable()
-    evalMTD = 0.0
-
-    AB_List = []
-    AB_TT_List = []
-    MTD_List = []
-    MTD_0_List = []
-    Depth = 8
-    x = range(1, Depth)
-
-    for i in range(1, Depth):
-        print("Depth:", i)
-        print("Alpha-Beta")
-        start = time.time()
-        eval, moves = AlphaBeta.alpha_beta_simple(i, board, True)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", eval)
-        print("time:", timetaken)
-        for move in moves:
-            move.printMove()
-            break
-        AB_List.append(timetaken)
-
-        print("")
-        print("Alpha-Beta_TT")
-        start = time.time()
-        eval, moves = AB.alpha_beta_TT_simple(i, board, True)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", eval)
-        print("time:", timetaken)
-        for move in moves:
-            move.printMove()
-            break
-        AB_TT_List.append(timetaken)
-
-        print("")
-        print("MTD(f) with f=bestGuess")
-        start = time.time()
-        evalMTD, movesMTD = MTD.MTDF(evalMTD, i, board, True)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalMTD)
-        print("time:", timetaken)
-        if len(movesMTD) == 0:
-            print("No Move found")
-        for move in movesMTD:
-            move.printMove()
-            break
-        MTD_List.append(timetaken)
-
-        print("")
-        print("MTD(f) with f=0")
-        start = time.time()
-        evalMTD_0, movesMTD_0 = MTD_0.MTDF(0, i, board, True)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalMTD_0)
-        print("time:", timetaken)
-        if len(movesMTD_0) == 0:
-            print("No Move found")
-        for move in movesMTD_0:
-            move.printMove()
-            break
-        MTD_0_List.append(timetaken)
-        print("----------------------------------")
-    print("Benchmark complete")
-
-    x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
-    plt.xticks(x_list)
-
-    plt.plot(x, AB_List, label='Alpha-Beta')
-    plt.plot(x, AB_TT_List, label='Alpha-Beta TT')
-    plt.plot(x, MTD_List, label='MTD(f) with f = best guess')
-    plt.plot(x, MTD_0_List, label='MTD(f) with f = 0')
-    plt.xlabel("Depth")
-    plt.ylabel("Time taken")
-    plt.title("Benchmark")
-    plt.legend()
-    plt.savefig("../Resources/Benchmark_Mate in few.png")
     plt.show()
 
 def Random_Benchmark():
@@ -498,9 +153,9 @@ def Random_Benchmark():
 
     for i2 in range(0, Iterations):
         board.randomBoard()
-        MTD = MTDF.MTDF()
-        MTD_0 = MTDF.MTDF()
-        MTD_no_TT = MTDF.MTDF()
+        MTD = AlphaBeta.MTDF()
+        MTD_0 = AlphaBeta.MTDF()
+        MTD_no_TT = AlphaBeta.MTDF()
         AB = AlphaBeta.Alpha_Beta_TranspostionTable()
         AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
 
@@ -682,7 +337,7 @@ def MateIn3():
             Movelist = []
             AllMovesAreSame = True
             for i2 in range(Iterations):
-                result_node = MCTS_Paper_Rework.MCTS_Paper_Run(board, True, (i+1) * time_iter)
+                result_node = MCTS_Solvers.MCTS_Solver_Run(board, True, (i+1) * time_iter)
                 Movelist.append(result_node.move)
                 #result_node.move.printMove()
             for move in Movelist:
@@ -700,7 +355,7 @@ def MateIn3():
             Movelist = []
             AllMovesAreSame = True
             for i2 in range(Iterations):
-                result_node = MCTS_Paper_Rework.MCTS_Paper_MS_Run(board, True, (i+1) * time_iter, 1,4)
+                result_node = MCTS_Solvers.MCTS_MS_Run(board, True, (i+1) * time_iter, 1,4)
                 Movelist.append(result_node.move)
                 #result_node.move.printMove()
             for move in Movelist:
@@ -718,7 +373,7 @@ def MateIn3():
             Movelist = []
             AllMovesAreSame = True
             for i2 in range(Iterations):
-                result_node = MCTS_Paper_Rework.MCTS_Paper_MR_Run(board, True, (i+1) * time_iter, 1)
+                result_node = MCTS_Solvers.MCTS_MR_Run(board, True, (i+1) * time_iter, 1)
                 Movelist.append(result_node.move)
                 #result_node.move.printMove()
             for move in Movelist:
@@ -736,7 +391,7 @@ def MateIn3():
             Movelist = []
             AllMovesAreSame = True
             for i2 in range(Iterations):
-                result_node = MCTS_Paper_Rework.MCTS_Paper_MB_Run(board, True, (i+1) * time_iter, 3)
+                result_node = MCTS_Solvers.MCTS_MB_Run(board, True, (i+1) * time_iter, 3)
                 Movelist.append(result_node.move)
                 #result_node.move.printMove()
             for move in Movelist:
@@ -759,16 +414,7 @@ def MateIn3():
     print("MCTS-MS passed at:", MCTS_MS_passed_time)
 
 if __name__ == '__main__':
-    #TestStartpostion()
-    #MTD_Increment_Comparison()
+    TestStartpostion()
     #MateIn3()
-    MateIn3_AB()
+    #MateIn3_AB()
     #Random_Benchmark()
-
-    """board = LionBoard.LionBoard()
-    board.setBoard_start()
-    board.makeMove(True, 4, 7)
-    board.printBoard()
-    eval, move = AlphaBeta.alpha_beta_win_loss_simple(4, board, False)
-    print(eval)
-    move.printMove()"""
