@@ -34,13 +34,9 @@ class iterativeDeepeningMTD:
 
             # Call your function
             while True:
-                #eval, moves = self.MTD.MTDF(eval, depth, board, WhiteTurn, 0.1)
-                # print("Depth:", depth)
                 if depth % 2 == 0:
-                    #print("Run Even")
                     evalMTD_even, moves = self.MTD.MTDF(evalMTD_even, depth, board, WhiteTurn, 0.1)
                 else:
-                    #print("Run Uneven")
                     evalMTD_uneven, moves = self.MTD.MTDF(evalMTD_uneven, depth, board, WhiteTurn, 0.1)
                 depth = depth + 1
             # Disable the alarm since the function executed successfully
