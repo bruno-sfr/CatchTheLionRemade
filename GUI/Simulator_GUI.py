@@ -114,9 +114,10 @@ class SimGUI:
                 self.canvas.itemconfig(self.white_select_5, state="normal", window=self.white_parameter_2_entry)
             case _:
                 # all ABs
-                self.white_parameter = tk.Label(self.canvas, text=f"No additional Parameters")
+                self.white_parameter = tk.Label(self.canvas, text=f"No additional")
+                self.white_parameter_2 = tk.Label(self.canvas, text=f"Parameters")
                 self.canvas.itemconfig(self.white_select_2, state="normal", window=self.white_parameter)
-                self.canvas.itemconfig(self.white_select_3, state="hidden")
+                self.canvas.itemconfig(self.white_select_3, state="normal", window=self.white_parameter_2)
                 self.canvas.itemconfig(self.white_select_4, state="hidden")
                 self.canvas.itemconfig(self.white_select_5, state="hidden")
 
@@ -143,9 +144,10 @@ class SimGUI:
                 self.canvas.itemconfig(self.black_select_5, state="normal", window=self.black_parameter_2_entry)
             case _:
                 # all ABs
-                self.black_parameter = tk.Label(self.canvas, text=f"No additional Parameters")
+                self.black_parameter = tk.Label(self.canvas, text=f"No additional")
+                self.black_parameter_2 = tk.Label(self.canvas, text=f"Parameters")
                 self.canvas.itemconfig(self.black_select_2, state="normal", window=self.black_parameter)
-                self.canvas.itemconfig(self.black_select_3, state="hidden")
+                self.canvas.itemconfig(self.black_select_3, state="normal", window=self.black_parameter_2)
                 self.canvas.itemconfig(self.black_select_4, state="hidden")
                 self.canvas.itemconfig(self.black_select_5, state="hidden")
 

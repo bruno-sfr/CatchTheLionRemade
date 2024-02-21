@@ -10,6 +10,8 @@ class MCTS_Node:
         self.move = move
         self.score = 0
         self.visits = 0
+        self.AB_Run = False
+        self.AB_eval = 0
 
     def add_value(self, value):
         self.score = self.score + value

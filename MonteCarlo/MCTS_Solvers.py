@@ -248,14 +248,17 @@ def MCTS_MB(N: MCTS_Node, depth: int):
         # child node has won, so that child produces loss for this node, how about the other children?
         for child in N.children:
             if -child.score != R:
-                eval, move = AlphaBeta.alpha_beta_win_loss_simple(depth, child.state, child.whiteTurn)
+                if not child.AB_Run:
+                    eval, move = AlphaBeta.alpha_beta_win_loss_simple(depth, child.state, child.whiteTurn)
+                    child.AB_eval = eval
+                    child.AB_Run = True
                 if child.whiteTurn:
                     # child plays for white
-                    if eval == 1:
+                    if child.AB_eval == 1:
                         #child wins
                         child.add_value(float('inf'))
                         continue
-                    elif eval == -1:
+                    elif child.AB_eval == -1:
                         #child losses, so win for node
                         child.add_value(float('-inf'))
                         N.score = float('inf')
@@ -266,11 +269,11 @@ def MCTS_MB(N: MCTS_Node, depth: int):
                         return R
                 else:
                     # child plays for black
-                    if eval == -1:
+                    if child.AB_eval == -1:
                         #child wins
                         child.add_value(float('inf'))
                         continue
-                    elif eval == 1:
+                    elif child.AB_eval == 1:
                         #child losses, so win for node
                         child.add_value(float('-inf'))
                         N.score = float('inf')
@@ -466,11 +469,10 @@ if __name__ == '__main__':
 
     #board.setBoard_Fen("eg1/lc1/1CL/G1E/")
     """best move is 3 to 6"""
-    board.setBoard_Fen("eg1/1l1/GE1/1L1/cC")
+    #board.setBoard_Fen("eg1/1l1/GE1/1L1/cC")
     """Best Move is 5 to 8"""
-    #board.makeMove(True, 1, 3)
-    #board.makeMove(False, 10, 6)
-    board.printBoard()
+
+    """board.printBoard()
     times = []
     for i in range(100):
         #print("AB:")
@@ -484,17 +486,13 @@ if __name__ == '__main__':
     avg = 0
     for i in range(100):
         avg = avg + times[i]
-    print("Avg. time =", avg/ len(times))
-    #eval, moves = AlphaBeta.alpha_beta_allMoves_simple(5, board, True)
-    #print("eval:", eval)
-    #for move in moves:
-    #    move.printMove()
+    print("Avg. time =", avg/ len(times))"""
 
-    """print("MCTS:")
+    print("MCTS:")
     #result_node = MCTS_Paper_Run(board, True, 2)
     #result_node = MCTS_Paper_MS_Run(board, True, 2, 2,4)
-    result_node = MCTS_Paper_MR_Run(board, True, 2, 2)
-    #result_node = MCTS_Paper_MB_Run(board, True, 1, 4)
+    #result_node = MCTS_MR_Run(board, True, 2, 2)
+    result_node = MCTS_MB_Run(board, True, 1, 3)
     Root = result_node.parent
     #for i in range(len(Root.children)):
     #    print("Child",i, "value:", Root.children[i].score)
@@ -504,4 +502,4 @@ if __name__ == '__main__':
     # print("Root node Children Count:", len(result_node.parent.children))
     print("Root node Visits:", result_node.parent.visits)
     print("Visits:", result_node.visits)
-    print("Score:", -result_node.score)"""
+    print("Score:", -result_node.score)
