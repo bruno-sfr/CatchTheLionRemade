@@ -1,5 +1,6 @@
 import sys
 from datetime import datetime
+from pathlib import Path
 
 from Game import LionBoard, Move
 from AlphaBeta import IterativeDeepening
@@ -116,7 +117,8 @@ for i in range(0, iterations):
         white_wins = white_wins + 0.5
     print(f"{white_player} {white_wins} : {black_wins} {black_player}")
 print("Finished")
-with open(f'./Resources/{white_player}_{white_Depth}_vs_{black_player}_{black_Depth}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3]}.txt', 'a') as the_file:
+Path(f"/home/bruno.schaffer/CatchTheLionRemade/Resources/{white_player}_vs_{black_player}/{iterations}_{game_time}_{white_player}_{white_Depth}_{white_Threshold}_vs_{black_player}_{black_Depth}_{black_Threshold}").mkdir(parents=True, exist_ok=True)
+with open(f'/home/bruno.schaffer/CatchTheLionRemade/Resources/{white_player}_vs_{black_player}/{iterations}_{game_time}_{white_player}_{white_Depth}_{white_Threshold}_vs_{black_player}_{black_Depth}_{black_Threshold}/{time.time()}.txt', 'a') as the_file:
     the_file.write(f"{white_wins}:{black_wins}\n")
     the_file.write(f"{white_player}:{black_player}\n")
     the_file.write(f"{white_player} Depth: {white_Depth} Threshold: {white_Threshold}\n")
