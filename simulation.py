@@ -34,7 +34,9 @@ black_Threshold = int(sys.argv[8])
 
 
 white_wins = 0
+white_sims = []
 black_wins = 0
+black_sims = []
 #second = str(sys.argv[2])
 
 for i in range(0, iterations):
@@ -62,15 +64,19 @@ for i in range(0, iterations):
                         eval, move = MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
                     case "MCTS-Solver":
                         ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
+                        white_sims.append(ResultNode.visits)
                         move = ResultNode.move
                     case "MCTS-MR":
                         ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, game_time, white_Depth)
+                        white_sims.append(ResultNode.visits)
                         move = ResultNode.move
                     case "MCTS-MS":
                         ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, game_time, white_Threshold, white_Depth)
+                        white_sims.append(ResultNode.visits)
                         move = ResultNode.move
                     case "MCTS-MB":
                         ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, game_time, white_Depth)
+                        white_sims.append(ResultNode.visits)
                         move = ResultNode.move
             except TimeoutError:
                 print("Am i the problem?")
@@ -90,15 +96,19 @@ for i in range(0, iterations):
                         eval, move = MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
                     case "MCTS-Solver":
                         ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
+                        black_sims.append(ResultNode.visits)
                         move = ResultNode.move
                     case "MCTS-MR":
                         ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, game_time, black_Depth)
+                        black_sims.append(ResultNode.visits)
                         move = ResultNode.move
                     case "MCTS-MS":
                         ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, game_time, black_Threshold, black_Depth)
+                        black_sims.append(ResultNode.visits)
                         move = ResultNode.move
                     case "MCTS-MB":
                         ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, game_time, black_Depth)
+                        black_sims.append(ResultNode.visits)
                         move = ResultNode.move
             except TimeoutError:
                 #print("Am i the problem?")
@@ -117,9 +127,30 @@ for i in range(0, iterations):
         white_wins = white_wins + 0.5
     print(f"{white_player} {white_wins} : {black_wins} {black_player}")
 print("Finished")
+
+white_avg = 0
+if len(white_sims) > 0:
+    for sim in white_sims:
+        white_avg = white_avg + sim
+    white_avg = white_avg / len(white_sims)
+
+black_avg = 0
+if len(black_sims) > 0:
+    for sim in black_sims:
+        black_avg = black_avg + sim
+    black_avg = black_avg / len(black_sims)
+
 Path(f"/home/bruno.schaffer/CatchTheLionRemade/Resources/{white_player}_vs_{black_player}/{iterations}_{game_time}_{white_player}_{white_Depth}_{white_Threshold}_vs_{black_player}_{black_Depth}_{black_Threshold}").mkdir(parents=True, exist_ok=True)
 with open(f'/home/bruno.schaffer/CatchTheLionRemade/Resources/{white_player}_vs_{black_player}/{iterations}_{game_time}_{white_player}_{white_Depth}_{white_Threshold}_vs_{black_player}_{black_Depth}_{black_Threshold}/{time.time()}.txt', 'a') as the_file:
     the_file.write(f"{white_wins}:{black_wins}\n")
     the_file.write(f"{white_player}:{black_player}\n")
+    the_file.write(f"Average Simulation count: {white_avg}:{black_avg}\n")
     the_file.write(f"{white_player} Depth: {white_Depth} Threshold: {white_Threshold}\n")
     the_file.write(f"{black_player} Depth: {black_Depth} Threshold: {black_Threshold}\n")
+"""Path(f"./Resources/{white_player}_vs_{black_player}/{iterations}_{game_time}_{white_player}_{white_Depth}_{white_Threshold}_vs_{black_player}_{black_Depth}_{black_Threshold}").mkdir(parents=True, exist_ok=True)
+with open(f'./Resources/{white_player}_vs_{black_player}/{iterations}_{game_time}_{white_player}_{white_Depth}_{white_Threshold}_vs_{black_player}_{black_Depth}_{black_Threshold}/{time.time()}.txt', 'a') as the_file:
+    the_file.write(f"{white_wins}:{black_wins}\n")
+    the_file.write(f"{white_player}:{black_player}\n")
+    the_file.write(f"Average Simulation count: {white_avg}:{black_avg}\n")
+    the_file.write(f"{white_player} Depth: {white_Depth} Threshold: {white_Threshold}\n")
+    the_file.write(f"{black_player} Depth: {black_Depth} Threshold: {black_Threshold}\n")"""
