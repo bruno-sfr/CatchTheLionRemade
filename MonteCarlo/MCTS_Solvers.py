@@ -363,14 +363,16 @@ def MiniMax_simulation(node: MCTS_Node, depth: int):
     state = LionBoard.LionBoard()
     state.setBoard(node.state)
     whiteTurn = copy.deepcopy(node.whiteTurn)
-    MAX_ITERATIONS = 25
+    MAX_ITERATIONS = 100
     i = 0
     while i < MAX_ITERATIONS and not state.isGameOver():
         # while not state.isGameOver():
         try:
             eval, move = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
-            #move.printMove()
-            state.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            if move is not None:
+                state.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            else:
+                raise Exception("Move was None type")
         except Exception as e:
             print(e)
             # count as Draw
