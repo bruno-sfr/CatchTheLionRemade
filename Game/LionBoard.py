@@ -759,6 +759,91 @@ class LionBoard:
 
         return eval
 
+    def advanced_eval_func(self):
+        eval = 0.0
+
+        if self.hasWhiteWon():
+            eval = eval + 1000
+        if self.hasBlackWon():
+            eval = eval - 1000
+        # piece value
+        white_giraffe = BitBoard.BitBoard()
+        white_giraffe.setBoard(self.giraffe.getBoard() & self.white.getBoard())
+        eval = eval + white_giraffe.checksum() * 5
+        white_elephant = BitBoard.BitBoard()
+        white_elephant.setBoard(self.elephant.getBoard() & self.white.getBoard())
+        eval = eval + white_elephant.checksum() * 3
+        white_chicken = BitBoard.BitBoard()
+        white_chicken.setBoard(self.chicken.getBoard() & self.white.getBoard())
+        eval = eval + white_chicken.checksum() * 1
+        white_hen = BitBoard.BitBoard()
+        white_hen.setBoard(self.hen.getBoard() & self.white.getBoard())
+        eval = eval + white_hen.checksum() * 7
+
+        black_giraffe = BitBoard.BitBoard()
+        black_giraffe.setBoard(self.giraffe.getBoard() & self.black.getBoard())
+        eval = eval - black_giraffe.checksum() * 5
+        black_elephant = BitBoard.BitBoard()
+        black_elephant.setBoard(self.elephant.getBoard() & self.black.getBoard())
+        eval = eval - black_elephant.checksum() * 3
+        black_chicken = BitBoard.BitBoard()
+        black_chicken.setBoard(self.chicken.getBoard() & self.black.getBoard())
+        eval = eval - black_chicken.checksum() * 1
+        black_hen = BitBoard.BitBoard()
+        black_hen.setBoard(self.hen.getBoard() & self.black.getBoard())
+        eval = eval - black_hen.checksum() * 7
+
+        # lion push
+        firstline = 0b000000000111
+        secondline = 0b000000111000
+        thirdline = 0b000111000000
+        lastline = 0b111000000000
+        white_lion = BitBoard.BitBoard()
+        white_lion.setBoard(self.lion.getBoard() & self.white.getBoard())
+        if white_lion.getBoard() & firstline > 0:
+            eval = eval + 0
+        elif white_lion.getBoard() & secondline > 0:
+            eval = eval + 2
+        elif white_lion.getBoard() & thirdline > 0:
+            eval = eval + 5
+        elif white_lion.getBoard() & lastline > 0:
+            eval = eval + 10
+
+        black_lion = BitBoard.BitBoard()
+        black_lion.setBoard(self.lion.getBoard() & self.black.getBoard())
+        if black_lion.getBoard() & firstline > 0:
+            eval = eval - 10
+        elif black_lion.getBoard() & secondline > 0:
+            eval = eval - 5
+        elif black_lion.getBoard() & thirdline > 0:
+            eval = eval - 2
+        elif black_lion.getBoard() & lastline > 0:
+            eval = eval - 0
+
+        # capture value
+        eval = eval + self.eval_captures(self.white_captures)
+
+        eval = eval - self.eval_captures(self.black_captures)
+
+        # freedom of units
+        # lion, giraffe, elephant, chicken, hen, capture
+        # + 0.5 per possible move, ignore capture moves
+        list = self.allpossibleMoves(True)
+        eval = eval + len(list[0])/2
+        eval = eval + len(list[1])/2
+        eval = eval + len(list[2])/2
+        eval = eval + len(list[3])/2
+        eval = eval + len(list[5])/2
+
+        list = self.allpossibleMoves(False)
+        eval = eval - len(list[0]) / 2
+        eval = eval - len(list[1]) / 2
+        eval = eval - len(list[2]) / 2
+        eval = eval - len(list[3]) / 2
+        eval = eval - len(list[5]) / 2
+
+        return eval
+
     def eval_win_loss(self):
         if self.hasWhiteWon():
             return 1

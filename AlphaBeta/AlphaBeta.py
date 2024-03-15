@@ -40,10 +40,147 @@ class MTDF:
 
         return g, move
 
+    def MTDF_advanced(self, f: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, increment):
+        #increment = 0.1
+        g = f
+        #moves = []
+        move = None
+        upperbound = float('inf')
+        lowerbound = float('-inf')
+        while not (lowerbound >= upperbound):
+            beta = 0.0
+            if g == lowerbound:
+                beta = g + increment
+            else:
+                beta = g
+
+            g, move = self.AB.alpha_beta_advanced_TT(beta - increment, beta, depth, board, whiteTurn)
+
+            if g < beta:
+                upperbound = g
+            else:
+                lowerbound = g
+
+        return g, move
+
 class Alpha_Beta_TT:
     def __init__(self):
         self.zob = Zobrist.Zobrist()
         self.table = TranspostionTable_Final.TranspostionTable(20)
+
+    def alpha_beta_advanced_TT(self, alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+        """
+        :param alpha: best of max player
+        :param beta:  best of min player
+        :param depth: depth left
+        :param board: game state
+        :param whiteTurn: white is max player, black min player
+        :param moves: list of move that lead to this game state
+        :return: eval, list of moves
+        """
+        boardhash = self.zob.generateHash(board, whiteTurn)
+        #boardFen = board.getFen()
+        entry = self.table.probeEntry(boardhash)
+        if entry != None:
+            # check if hash matches
+            if entry.Hash == boardhash:
+                if entry.Depth == depth:
+                    if entry.Flag == AB_Flag.Flag.EXACT:
+                        return entry.Eval, entry.Move
+                    elif entry.Flag == AB_Flag.Flag.LOWERBOUND:
+                        # Update alpha with the lower bound
+                        if entry.Eval >= beta:
+                            return entry.Eval, entry.Move
+                        alpha = max(alpha, entry.Eval)
+                    elif entry.Flag == AB_Flag.Flag.UPPERBOUND:
+                        # Update beta with the upper bound
+                        if entry.Eval <= alpha:
+                            return entry.Eval, entry.Move
+                        beta = min(beta, entry.Eval)
+
+        if depth == 0:
+            eval = board.advanced_eval_func()
+            #newEntry = HashEntry_Final.HashEntry(boardhash, depth, eval, AB_Flag.Flag.EXACT, Move.Move())
+            #self.table.storeEntry(newEntry)
+            return eval, None
+
+        # if eval > 900 or eval < -900:
+        if board.isGameOver():
+            eval = board.advanced_eval_func()
+            return eval, None
+
+        if whiteTurn:
+            maxEval = float('-inf')
+            a = alpha
+            bestmove = Move.Move()
+            list = board.allpossibleMoves(whiteTurn)
+            for i in list:
+                for move in i:
+                    new_board = LionBoard.LionBoard()
+                    new_board.setBoard(board)
+                    new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                    new_whiteTurn = not whiteTurn
+                    eval, Temp_Move = self.alpha_beta_advanced_TT(a, beta, depth - 1, new_board, new_whiteTurn)
+                    if eval > maxEval:
+                        maxEval = eval
+                        bestmove = move
+                    a = max(a, eval)
+                    if not (maxEval < beta):
+                        break
+                else:
+                    continue
+                break
+
+            if maxEval <= alpha:
+                # Alpha Cutoff
+                newEntry = HashEntry_Final.HashEntry(boardhash, depth, maxEval, AB_Flag.Flag.UPPERBOUND, bestmove)
+                self.table.storeEntry(newEntry)
+            elif alpha < maxEval < beta:
+                newEntry = HashEntry_Final.HashEntry(boardhash, depth, maxEval, AB_Flag.Flag.EXACT, bestmove)
+                self.table.storeEntry(newEntry)
+            elif maxEval >= beta:
+                # Beta Cutoff
+                newEntry = HashEntry_Final.HashEntry(boardhash, depth, maxEval, AB_Flag.Flag.LOWERBOUND, bestmove)
+                self.table.storeEntry(newEntry)
+            return maxEval, bestmove
+        else:
+            minEval = float('inf')
+            b = beta
+            bestmove = Move.Move()
+            list = board.allpossibleMoves(whiteTurn)
+            for i in list:
+                for move in i:
+                    new_board = LionBoard.LionBoard()
+                    new_board.setBoard(board)
+                    new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                    new_whiteTurn = not whiteTurn
+                    eval, Temp_Move = self.alpha_beta_advanced_TT(alpha, b, depth - 1, new_board, new_whiteTurn)
+                    if eval < minEval:
+                        minEval = eval
+                        bestmove = move
+                    b = min(b, eval)
+                    if not (minEval > alpha):
+                        break
+                else:
+                    continue
+                break
+
+            if minEval <= alpha:
+                # Alpha Cutoff
+                newEntry = HashEntry_Final.HashEntry(boardhash, depth, minEval, AB_Flag.Flag.UPPERBOUND, bestmove)
+                self.table.storeEntry(newEntry)
+            elif alpha < minEval < beta:
+                newEntry = HashEntry_Final.HashEntry(boardhash, depth, minEval, AB_Flag.Flag.EXACT, bestmove)
+                self.table.storeEntry(newEntry)
+            elif minEval >= beta:
+                # Beta Cutoff
+                newEntry = HashEntry_Final.HashEntry(boardhash, depth, minEval, AB_Flag.Flag.LOWERBOUND, bestmove)
+                self.table.storeEntry(newEntry)
+            return minEval, bestmove
+
+    def alpha_beta_advanced_TT_simple(self, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+        eval, move = self.alpha_beta_advanced_TT(float('-inf'), float('inf'), depth, board, whiteTurn)
+        return eval, move
 
     def alpha_beta_TT(self, alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
         """
@@ -286,6 +423,67 @@ def alpha_beta_simple(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     eval, move = alpha_beta(float('-inf'), float('inf'), depth, board, whiteTurn)
     return eval, move
 
+def alpha_beta_advanced(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+    """
+    :param alpha: best of max player
+    :param beta:  best of min player
+    :param depth: depth left
+    :param board: game state
+    :param whiteTurn: white is max player, black min player
+    :param moves: list of move that lead to this game state
+    :return: eval, list of moves
+    """
+
+    if depth == 0:
+        eval = board.advanced_eval_func()
+        return eval, None
+
+    if board.isGameOver():
+        eval = board.advanced_eval_func()
+        return eval, None
+
+    if whiteTurn:
+        maxEval = float('-inf')
+        bestmove = Move.Move()
+        list = board.allpossibleMoves(whiteTurn)
+        for i in list:
+            for move in i:
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_white_turn = not whiteTurn
+                eval, Temp_Move = alpha_beta_advanced(alpha, beta, depth - 1, new_board, new_white_turn)
+                if eval > maxEval:
+                    maxEval = eval
+                    bestmove = move
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    return maxEval, bestmove
+        return maxEval, bestmove
+    else:
+        minEval = float('inf')
+        bestmove = Move.Move()
+        list = board.allpossibleMoves(whiteTurn)
+        for i in list:
+            for move in i:
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_white_turn = not whiteTurn
+                eval, Temp_Move = alpha_beta_advanced(alpha, beta, depth - 1, new_board, new_white_turn)
+                if eval < minEval:
+                    minEval = eval
+                    bestmove = move
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    return minEval, bestmove
+        return minEval, bestmove
+
+
+def alpha_beta_advanced_simple(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+    eval, move = alpha_beta_advanced(float('-inf'), float('inf'), depth, board, whiteTurn)
+    return eval, move
+
 def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     """
     :param alpha: best of max player
@@ -383,6 +581,48 @@ def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
                 new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                 new_whiteTurn = not whiteTurn
                 eval, temp_move = MiniMax(depth - 1, new_board, new_whiteTurn)
+                if eval < minEval:
+                    minEval = eval
+                    bestmove = move
+        return minEval, bestmove
+
+def MiniMax_advanced(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+    if depth == 0:
+        eval = board.advanced_eval_func()
+        return eval, None
+
+    if board.isGameOver():
+        eval = board.advanced_eval_func()
+        return eval, None
+
+    if whiteTurn:
+        maxEval = float('-inf')
+        bestmove = Move.Move()
+        list = board.allpossibleMoves(whiteTurn)
+        for i in list:
+            for move in i:
+                # new_board = copy.deepcopy(board)
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_whiteTurn = not whiteTurn
+                eval, temp_move = MiniMax_advanced(depth - 1, new_board, new_whiteTurn)
+                if eval > maxEval:
+                    maxEval = eval
+                    bestmove = move
+        return maxEval, bestmove
+    else:
+        minEval = float('inf')
+        bestmove = Move.Move()
+        list = board.allpossibleMoves(whiteTurn)
+        for i in list:
+            for move in i:
+                # new_board = copy.deepcopy(board)
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_whiteTurn = not whiteTurn
+                eval, temp_move = MiniMax_advanced(depth - 1, new_board, new_whiteTurn)
                 if eval < minEval:
                     minEval = eval
                     bestmove = move

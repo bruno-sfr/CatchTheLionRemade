@@ -1,3 +1,4 @@
+import datetime
 import math
 import time
 
@@ -8,7 +9,7 @@ from Game import LionBoard
 from MonteCarlo import MCTS_Solvers
 
 
-def TestStartpostion():
+def TestPostion():
     board = LionBoard.LionBoard()
     board.setBoard_start()
     whiteTurn = True
@@ -25,79 +26,92 @@ def TestStartpostion():
     AB_TT_store_Eval_List = []
     MTD_second_guess_Eval_List = []
 
-    AB= AlphaBeta.Alpha_Beta_TT()
+    #AB= AlphaBeta.Alpha_Beta_TT()
     MTD_second_guess = AlphaBeta.MTDF()
 
-    Depth = 10
+    Depth = 8
+    iterations = 5
     x = range(1, Depth + 1)
 
     for i in range(1, Depth + 1):
         print("Depth:", i)
-        """print("MiniMax")
-        start = time.time()
-        evalMM, moves = AlphaBeta.MiniMax(i, board, whiteTurn)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalMM)
-        print("time:", timetaken)
-        moves.printMove()
-        MM_List.append(timetaken)
-        MM_Eval_List.append(evalMM)"""
+        print("Alpha-Beta")
+        avg_timetaken = 0
+        for i2 in range(iterations):
+            start = time.time()
+            evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, whiteTurn)
+            end = time.time()
+            #print("eval:", evalAB)
+            timetaken = (end - start)
+            print("timetaken", timetaken)
+            avg_timetaken = avg_timetaken + timetaken
+        avg_timetaken = avg_timetaken/iterations
+        print("avg time:", avg_timetaken)
+        AB_List.append(avg_timetaken)
+        #AB_Eval_List.append(evalAB)
 
         print("")
-        print("Alpha-Beta")
-        start = time.time()
-        evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, whiteTurn)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", evalAB)
-        print("time:", timetaken)
-        moves.printMove()
-        AB_List.append(timetaken)
-        AB_Eval_List.append(evalAB)
+        print("MiniMax")
+        avg_timetaken = 0
+        for i2 in range(iterations):
+            start = time.time()
+            evalMM, moves = AlphaBeta.MiniMax(i, board, whiteTurn)
+            #print("eval:", evalMM)
+            end = time.time()
+            timetaken = (end - start)
+            print("timetaken", timetaken)
+            avg_timetaken = avg_timetaken + timetaken
+        avg_timetaken = avg_timetaken / iterations
+        print("avg time:", avg_timetaken)
+        MM_List.append(avg_timetaken)
+        #MM_Eval_List.append(evalMM)
 
         print("")
         print("Alpha-Beta_TT")
-        start = time.time()
-        eval, move = AB.alpha_beta_TT_simple(i, board, whiteTurn)
-        end = time.time()
-        timetaken = (end - start)
-        print("eval:", eval)
-        print("time:", timetaken)
-        move.printMove()
-        AB_TT_store_List.append(timetaken)
-        AB_TT_store_Eval_List.append(eval)
+        avg_timetaken = 0
+        for i2 in range(iterations):
+            AB = AlphaBeta.Alpha_Beta_TT()
+            start = time.time()
+            eval, move = AB.alpha_beta_TT_simple(i, board, whiteTurn)
+            #print("eval:", eval)
+            end = time.time()
+            timetaken = (end - start)
+            print("timetaken:", timetaken)
+            avg_timetaken = avg_timetaken + timetaken
+        avg_timetaken = avg_timetaken / iterations
+        print("avg time:", avg_timetaken)
+        AB_TT_store_List.append(avg_timetaken)
+        #AB_TT_store_Eval_List.append(eval)
 
         print("")
         print("MTD(f) with f=bestSecondGuess")
-        start = time.time()
-        if i % 2 == 0:
-            print("Run Even")
-            evalMTD_even, movesMTD = MTD_second_guess.MTDF(evalMTD_even, i, board, whiteTurn, 0.1)
-        else:
-            print("Run Uneven")
-            evalMTD_uneven, movesMTD = MTD_second_guess.MTDF(evalMTD_uneven, i, board, whiteTurn, 0.1)
-        end = time.time()
-        timetaken = (end - start)
-        if i % 2 == 0:
-            print("eval:", evalMTD_even)
-            MTD_second_guess_Eval_List.append(evalMTD_even)
-        else:
-            print("eval:", evalMTD_uneven)
-            MTD_second_guess_Eval_List.append(evalMTD_uneven)
-        print("time:", timetaken)
-        movesMTD.printMove()
-        MTD_second_guess_List.append(timetaken)
+        avg_timetaken = 0
+        for i2 in range(iterations):
+            MTD_second_guess = AlphaBeta.MTDF()
+            start = time.time()
+            if i % 2 == 0:
+                evalMTD_even, movesMTD = MTD_second_guess.MTDF(evalMTD_even, i, board, whiteTurn, 0.1)
+                #print("eval:", evalMTD_even)
+            else:
+                evalMTD_uneven, movesMTD = MTD_second_guess.MTDF(evalMTD_uneven, i, board, whiteTurn, 0.1)
+                #print("eval:", evalMTD_uneven)
+            end = time.time()
+            timetaken = (end - start)
+            print("timetaken:",timetaken)
+            avg_timetaken = avg_timetaken + timetaken
+        avg_timetaken = avg_timetaken / iterations
+        print("avg time:", avg_timetaken)
+        MTD_second_guess_List.append(avg_timetaken)
         print("----------------------------------")
     print("Benchmark complete")
 
     x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
     plt.xticks(x_list)
 
-    #plt.plot(x, MM_List, label='MiniMax')
-    plt.plot(x, AB_List, label='Alpha-Beta')
-    plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT', linestyle='dotted')
-    plt.plot(x, MTD_second_guess_List, label='MTD(f)', linestyle='dashed')
+    plt.plot(x, MM_List, label='MiniMax', color='magenta')
+    plt.plot(x, AB_List, label='Alpha-Beta', color='red')
+    plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT', color='blue')
+    plt.plot(x, MTD_second_guess_List, label='MTD(f)', color='green')
     plt.legend(loc='upper left')
 
     """fig, axs = plt.subplots(2, sharex=True)
@@ -130,78 +144,160 @@ def TestStartpostion():
     axs[1].set(ylabel='Eval')"""
 
     plt.xlabel("Depth")
-    plt.ylabel("Time taken")
-    plt.title("Benchmark")
-    plt.savefig(f"../Resources/Benchmark_Start_Depth_{Depth}.png")
+    plt.ylabel("Time taken in s")
+    plt.title("Comparison of MiniMax-Algorithms on Start Position")
+    plt.savefig(f"../Resources/Benchmark_Start_Pos_Depth_{Depth}_{iterations}.png")
+    plt.show()
+
+def Mate_in_Benchmark():
+    board = LionBoard.LionBoard()
+    Depth = 5
+    MM_List = [0] * (Depth)
+    AB_List = [0] * (Depth)
+    MTD_List = [0] * (Depth)
+    AB_TT_store_List = [0] * (Depth)
+    x = range(1, Depth + 1)
+    iterations = 5
+    boards = ["eg1/lc1/1CL/G1E/", "eg1/1l1/GE1/1L1/cC", "1l1/G2/L1g/2E/cCE", "eg1/lc1/1CL/G1E/", "1g1/G1l/3/1LE/cC"]
+
+    for fen in boards:
+        board.setBoard_Fen(fen)
+        MTD = AlphaBeta.MTDF()
+        AB = AlphaBeta.Alpha_Beta_TT()
+
+        evalMTD_even = 0.0
+        evalMTD_uneven = 0.0
+        for i in range(1, Depth+1):
+            print("Depth:", i)
+            """print("MiniMax")
+            avg_timetaken = 0
+            for i2 in range(iterations):
+                start = time.time()
+                evalMM, moves = AlphaBeta.MiniMax(i, board, True)
+                print("eval:", evalMM)
+                end = time.time()
+                timetaken = (end - start)
+                print("timetaken", timetaken)
+                avg_timetaken = avg_timetaken + timetaken
+            avg_timetaken = avg_timetaken / iterations
+            print("avg time:", avg_timetaken)
+            # moves.printMove()
+            MM_List[i - 1] = MM_List[i - 1] + avg_timetaken"""
+
+            print("")
+            print("Alpha-Beta")
+            avg_timetaken = 0
+            for i2 in range(iterations):
+                start = time.time()
+                evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, True)
+                end = time.time()
+                print("eval:", evalAB)
+                timetaken = (end - start)
+                print("timetaken", timetaken)
+                avg_timetaken = avg_timetaken + timetaken
+            avg_timetaken = avg_timetaken / iterations
+            print("avg time:", avg_timetaken)
+            AB_List[i-1] = AB_List[i-1] + avg_timetaken
+
+            print("")
+            print("Alpha-Beta_TT")
+            avg_timetaken = 0
+            for i2 in range(iterations):
+                AB = AlphaBeta.Alpha_Beta_TT()
+                start = time.time()
+                eval, move = AB.alpha_beta_TT_simple(i, board, True)
+                print("eval:", eval)
+                end = time.time()
+                timetaken = (end - start)
+                print("timetaken:", timetaken)
+                avg_timetaken = avg_timetaken + timetaken
+            avg_timetaken = avg_timetaken / iterations
+            print("avg time:", avg_timetaken)
+            AB_TT_store_List[i - 1] = AB_TT_store_List[i - 1] + avg_timetaken
+
+            print("")
+            print("MTD(f) with f=bestGuess")
+            avg_timetaken = 0
+            for i2 in range(iterations):
+                MTD_second_guess = AlphaBeta.MTDF()
+                start = time.time()
+                if i % 2 == 0:
+                    evalMTD_even, movesMTD = MTD_second_guess.MTDF(evalMTD_even, i, board, True, 0.1)
+                    print("eval:", evalMTD_even)
+                else:
+                    evalMTD_uneven, movesMTD = MTD_second_guess.MTDF(evalMTD_uneven, i, board, True, 0.1)
+                    print("eval:", evalMTD_uneven)
+                end = time.time()
+                timetaken = (end - start)
+                print("timetaken:", timetaken)
+                avg_timetaken = avg_timetaken + timetaken
+            avg_timetaken = avg_timetaken / iterations
+            print("avg time:", avg_timetaken)
+            MTD_List[i - 1] = MTD_List[i - 1] + avg_timetaken
+            print("----------------------------------")
+        print("Board done!")
+        print("----------------------------------")
+    print("Benchmark complete")
+
+    for i in range(0, Depth-1):
+        #MM_List[i] = MM_List[i] / len(boards)
+        AB_List[i] = AB_List[i] / len(boards)
+        AB_TT_store_List[i] = AB_TT_store_List[i] / len(boards)
+        MTD_List[i] = MTD_List[i] / len(boards)
+
+    x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
+    plt.xticks(x_list)
+
+    #plt.plot(x, MM_List, label='MiniMax')
+    plt.plot(x, AB_List, label='Alpha-Beta')
+    plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT')
+    plt.plot(x, MTD_List, label='MTD')
+    plt.xlabel("Depth")
+    plt.ylabel("Time taken in s")
+    plt.title("Benchmark Mate in 3")
+    plt.legend()
+    plt.savefig(f"../Resources/Benchmark_Mate_in_3.png")
     plt.show()
 
 def Random_Benchmark():
     board = LionBoard.LionBoard()
-    #board.randomBoard()
-    #board.printBoard()
 
     Depth = 8
     Iterations = 5
 
-    AB_List = [0] * (Depth - 1)
-    AB_TT_List = [0] * (Depth - 1)
-    MTD_List = [0] * (Depth - 1)
-    AB_TT_store_List = [0] * (Depth - 1)
-    MTD_no_TT_List = [0] * (Depth - 1)
-    #MTD_0_List = []
-    x = range(1, Depth)
+    AB_List = [0] * (Depth)
+    MTD_List = [0] * (Depth )
+    AB_TT_store_List = [0] * (Depth)
+    x = range(1, Depth + 1)
 
     for i2 in range(0, Iterations):
         board.randomBoard()
         MTD = AlphaBeta.MTDF()
-        MTD_0 = AlphaBeta.MTDF()
-        MTD_no_TT = AlphaBeta.MTDF()
-        AB = AlphaBeta.Alpha_Beta_TranspostionTable()
-        AB_store = AlphaBeta.Alpha_Beta_TranspostionTable()
+        AB = AlphaBeta.Alpha_Beta_TT()
 
         evalMTD = 0.0
         evalMTD_no_tt = 0.0
-        for i in range(1, Depth):
+        for i in range(1, Depth+1):
             print("Depth:", i)
             print("Alpha-Beta")
             start = time.time()
-            eval, moves = AlphaBeta.alpha_beta_simple(i, board, True)
+            evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, True)
             end = time.time()
             timetaken = (end - start)
-            print("eval:", eval)
+            print("eval:", evalAB)
             print("time:", timetaken)
-            for move in moves:
-                move.printMove()
-                break
+            # moves.printMove()
             AB_List[i-1] = AB_List[i-1] + timetaken
 
-            """print("")
+            print("")
             print("Alpha-Beta_TT")
             start = time.time()
-            eval, moves = AB.alpha_beta_TT(float('-inf'), float('inf'), i, board, True, [], False)
+            eval, move = AB.alpha_beta_TT_simple(i, board, True)
             end = time.time()
             timetaken = (end - start)
             print("eval:", eval)
             print("time:", timetaken)
-            for move in moves:
-                move.printMove()
-                break
-            #AB_TT_List.append(timetaken)
-            AB_TT_List[i - 1] = AB_TT_List[i - 1] + timetaken"""
-
-            print("")
-            print("Alpha-Beta_TT_store_All")
-            start = time.time()
-            # eval, moves = AB.alpha_beta_TT_simple(i, board, True)
-            eval, moves = AB_store.alpha_beta_TT(float('-inf'), float('inf'), i, board, True, [], True)
-            end = time.time()
-            timetaken = (end - start)
-            print("eval:", eval)
-            print("time:", timetaken)
-            for move in moves:
-                move.printMove()
-                break
-            #AB_TT_store_List.append(timetaken)
+            # move.printMove()
             AB_TT_store_List[i - 1] = AB_TT_store_List[i - 1] + timetaken
 
             print("")
@@ -212,45 +308,8 @@ def Random_Benchmark():
             timetaken = (end - start)
             print("eval:", evalMTD)
             print("time:", timetaken)
-            if len(movesMTD) == 0:
-                print("No Move found")
-            for move in movesMTD:
-                move.printMove()
-                break
             #MTD_List.append(timetaken)
             MTD_List[i - 1] = MTD_List[i - 1] + timetaken
-
-            """
-            print("")
-            print("MTD(f) with f=0")
-            start = time.time()
-            evalMTD_0, movesMTD_0 = MTD_0.MTDF(0, i, board, True)
-            end = time.time()
-            timetaken = (end - start)
-            print("eval:", evalMTD_0)
-            print("time:", timetaken)
-            if len(movesMTD_0) == 0:
-                print("No Move found")
-            for move in movesMTD_0:
-                move.printMove()
-                break
-            MTD_0_List.append(timetaken)"""
-
-            """print("")
-            print("MTD(f) with no TT")
-            start = time.time()
-            evalMTD_no_tt, movesMTD_no_tt = MTD_no_TT.MTDF_no_TT(0, i, board, True, 0.1)
-            end = time.time()
-            timetaken = (end - start)
-            print("eval:", evalMTD_no_tt)
-            print("time:", timetaken)
-            print("tt use", MTD_no_TT.count_transpo)
-            if len(movesMTD_no_tt) == 0:
-                print("No Move found")
-            for move in movesMTD_no_tt:
-                move.printMove()
-                break
-            MTD_no_TT_List[i - 1] = MTD_no_TT_List[i - 1] + timetaken"""
             print("----------------------------------")
         print("Iteration",i2,"completed")
         print("----------------------------------")
@@ -258,35 +317,32 @@ def Random_Benchmark():
 
     for i in range(0, Depth-1):
         AB_List[i] = AB_List[i] / Iterations
-        AB_TT_List[i] = AB_TT_List[i] / Iterations
         AB_TT_store_List[i] = AB_TT_store_List[i] / Iterations
         MTD_List[i] = MTD_List[i] / Iterations
-        MTD_no_TT_List[i] = MTD_no_TT_List[i] / Iterations
 
     x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
     plt.xticks(x_list)
 
     plt.plot(x, AB_List, label='Alpha-Beta')
-    #plt.plot(x, AB_TT_List, label='Alpha-Beta TT', linestyle='dotted')
-    plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT Store All', linestyle='dashed')
-    plt.plot(x, MTD_List, label='MTD(f) with f = best guess', linestyle='dashdot')
-    #plt.plot(x, MTD_no_TT_List, label='MTD(f) with no TT', linestyle='dotted')
-    #plt.plot(x, MTD_0_List, label='MTD(f) with f = 0')
+    plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT', linestyle='dashed')
+    plt.plot(x, MTD_List, label='MTD', linestyle='dashdot')
     plt.xlabel("Depth")
     plt.ylabel("Time taken")
     plt.title("Benchmark Randomboard")
     plt.legend()
-    plt.savefig(".../Resources/Benchmark_Random_Iter_15.png")
+    plt.savefig(f"../Resources/Benchmark_Random_Iter_{Iterations}.png")
     plt.show()
 
 def MateIn3_AB():
     board = LionBoard.LionBoard()
     board.setBoard_start()
 
-    board.setBoard_Fen("eg1/lc1/1CL/G1E/")
+    #board.setBoard_Fen("eg1/lc1/1CL/G1E/")
     """best move is 3 to 6"""
     #board.setBoard_Fen("eg1/1l1/GE1/1L1/cC")
     """Best Move is 5 to 8"""
+    board.setBoard_Fen("1l1/G2/L1g/2E/cCE")
+    """Best Move is 8 to 7"""
 
     board.printBoard()
     times = []
@@ -309,18 +365,25 @@ def MateIn3():
 
     #board.setBoard_Fen("eg1/lc1/1CL/G1E/")
     """best move is 3 to 6"""
-    board.setBoard_Fen("eg1/1l1/GE1/1L1/cC")
+    #board.setBoard_Fen("eg1/1l1/GE1/1L1/cC")
     """Best Move is 5 to 8"""
+    #board.setBoard_Fen("1l1/G2/L1g/2E/cCE")
+    """Best Move is 8 to 7"""
+    #board.setBoard_Fen("eg1/lc1/1CL/G1E/")
+    """Best Move is 3 to 6"""
+    board.setBoard_Fen("1g1/G1l/3/1LE/cC")
+    """Best Move is 0 to 4"""
+    board.printBoard()
 
     print("AB:")
     eval, move = AlphaBeta.alpha_beta_simple(5, board, True)
     optimalMove = move
     move.printMove()
 
-    Test_MCTS = False
-    Test_MCTS_MR = False
-    Test_MCTS_MB = False
-    Test_MCTS_MS = False
+    Test_MCTS = True
+    Test_MCTS_MR = True
+    Test_MCTS_MB = True
+    Test_MCTS_MS = True
     MCTS_passed_time = 0
     MCTS_MR_passed_time = 0
     MCTS_MB_passed_time = 0
@@ -331,7 +394,7 @@ def MateIn3():
     print("MCTS Test")
     for i in range(Interval):
         print("----------------------------------------")
-        print("Time:", (i+1) * time_iter + 1)
+        print("Time:", (i+1) * time_iter)
         if Test_MCTS:
             print("MCTS")
             Movelist = []
@@ -414,7 +477,8 @@ def MateIn3():
     print("MCTS-MS passed at:", MCTS_MS_passed_time)
 
 if __name__ == '__main__':
-    TestStartpostion()
+    #TestPostion()
     #MateIn3()
     #MateIn3_AB()
+    Mate_in_Benchmark()
     #Random_Benchmark()

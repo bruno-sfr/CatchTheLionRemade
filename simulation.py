@@ -36,17 +36,21 @@ black_Threshold = int(sys.argv[8])
 white_wins = 0
 white_sims = []
 white_depths = []
+white_draw = 0
 black_wins = 0
 black_sims = []
 black_depths = []
+black_draw = 0
 #second = str(sys.argv[2])
 
 for i in range(0, iterations):
     turns = 0
     board = LionBoard.LionBoard()
     board.setBoard_start()
-    ID = IterativeDeepening.iterativeDeepeningAB()
-    MTD = IterativeDeepening.iterativeDeepeningMTD()
+    White_ID = IterativeDeepening.iterativeDeepeningAB()
+    White_MTD = IterativeDeepening.iterativeDeepeningMTD()
+    Black_ID = IterativeDeepening.iterativeDeepeningAB()
+    Black_MTD = IterativeDeepening.iterativeDeepeningMTD()
     if i % 2 == 0:
         whiteTurn = True
     else:
@@ -57,18 +61,32 @@ for i in range(0, iterations):
             try:
                 match white_player:
                     case "MiniMax":
-                        eval, move, depth = ID.iterativeDeepening_MM(game_time, board, whiteTurn)
+                        eval, move, depth = White_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
+                        white_depths.append(depth)
+                    case "MiniMax_Advanced":
+                        eval, move, depth = White_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
                         white_depths.append(depth)
                     case "Alpha_Beta":
-                        eval, move, depth = ID.iterativeDeepening_AB(game_time, board, whiteTurn)
+                        eval, move, depth = White_ID.iterativeDeepening_AB(game_time, board, whiteTurn)
+                        white_depths.append(depth)
+                    case "Alpha_Beta_Advanced":
+                        eval, move, depth = White_ID.iterativeDeepening_AB_A(game_time, board, whiteTurn)
                         white_depths.append(depth)
                     case "Alpha_Beta_Fix":
                         eval, move = AlphaBeta.alpha_beta_simple(white_Depth, board, whiteTurn)
+                    case "Alpha_Beta_Advanced_Fix":
+                        eval, move = AlphaBeta.alpha_beta_advanced_simple(white_Depth, board, whiteTurn)
+                    case "Alpha_Beta_TT_Advanced":
+                        eval, move, depth = White_ID.iterativeDeepening_AB_advanced_TT(game_time, board, whiteTurn)
+                        white_depths.append(depth)
                     case "Alpha_Beta_TT":
-                        eval, move, depth = ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
+                        eval, move, depth = White_ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
+                        white_depths.append(depth)
+                    case "MTD_Advanced":
+                        eval, move, depth = White_MTD.iterativeDeepening_MTD_advanced(game_time, board, whiteTurn)
                         white_depths.append(depth)
                     case "MTD":
-                        eval, move, depth = MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
+                        eval, move, depth = White_MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
                         white_depths.append(depth)
                     case "MCTS_Solver":
                         ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
@@ -89,24 +107,39 @@ for i in range(0, iterations):
             except TimeoutError:
                 print("Am i the problem?")
                 pass
+            move.printMove()
             board.makeMove(whiteTurn, move.getFrom(), move.getTo())
         else:
             move = Move.Move()
             try:
                 match black_player:
                     case "MiniMax":
-                        eval, move, depth = ID.iterativeDeepening_MM(game_time, board, whiteTurn)
+                        eval, move, depth = Black_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
+                        black_depths.append(depth)
+                    case "MiniMax_Advanced":
+                        eval, move, depth = Black_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
                         black_depths.append(depth)
                     case "Alpha_Beta":
-                        eval, move, depth = ID.iterativeDeepening_AB(game_time, board, whiteTurn)
+                        eval, move, depth = Black_ID.iterativeDeepening_AB(game_time, board, whiteTurn)
+                        black_depths.append(depth)
+                    case "Alpha_Beta_Advanced":
+                        eval, move, depth = Black_ID.iterativeDeepening_AB_A(game_time, board, whiteTurn)
                         black_depths.append(depth)
                     case "Alpha_Beta_Fix":
                         eval, move = AlphaBeta.alpha_beta_simple(black_Depth, board, whiteTurn)
+                    case "Alpha_Beta_Advanced_Fix":
+                        eval, move = AlphaBeta.alpha_beta_advanced_simple(black_Depth, board, whiteTurn)
                     case "Alpha_Beta_TT":
-                        eval, move, depth = ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
+                        eval, move, depth = Black_ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
                         black_depths.append(depth)
                     case "MTD":
-                        eval, move, depth = MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
+                        eval, move, depth = Black_MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
+                        black_depths.append(depth)
+                    case "Alpha_Beta_TT_Advanced":
+                        eval, move, depth = Black_ID.iterativeDeepening_AB_advanced_TT(game_time, board, whiteTurn)
+                        black_depths.append(depth)
+                    case "MTD_Advanced":
+                        eval, move, depth = Black_MTD.iterativeDeepening_MTD_advanced(game_time, board, whiteTurn)
                         black_depths.append(depth)
                     case "MCTS_Solver":
                         ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
@@ -127,10 +160,15 @@ for i in range(0, iterations):
             except TimeoutError:
                 #print("Am i the problem?")
                 pass
+            move.printMove()
             board.makeMove(whiteTurn, move.getFrom(), move.getTo())
         whiteTurn = not whiteTurn
         turns = turns + 1
         if turns > max_turns:
+            if i % 2 == 0:
+                white_draw = white_draw + 1
+            else:
+                black_draw = black_draw + 1
             break
     if board.hasWhiteWon():
         white_wins = white_wins + 1
@@ -166,14 +204,17 @@ if len(black_depths) > 0:
         black_avg_depth = black_avg_depth + depth
     black_avg_depth = black_avg_depth / len(black_depths)
 
-Path(f"/home/bruno.schaffer/CatchTheLionRemade/Resources/{white_player}-vs-{black_player}/{iterations}-{game_time}-{white_player}-{white_Depth}-{white_Threshold}-vs-{black_player}-{black_Depth}-{black_Threshold}").mkdir(parents=True, exist_ok=True)
-with open(f'/home/bruno.schaffer/CatchTheLionRemade/Resources/{white_player}-vs-{black_player}/{iterations}-{game_time}-{white_player}-{white_Depth}-{white_Threshold}-vs-{black_player}-{black_Depth}-{black_Threshold}/{time.time()}.txt', 'a') as the_file:
+#/home/bruno.schaffer/CatchTheLionRemade/Resources/
+Path(f"./Resources/{white_player}-vs-{black_player}/{iterations}-{game_time}-{white_player}-{white_Depth}-{white_Threshold}-vs-{black_player}-{black_Depth}-{black_Threshold}").mkdir(parents=True, exist_ok=True)
+with open(f'./Resources/{white_player}-vs-{black_player}/{iterations}-{game_time}-{white_player}-{white_Depth}-{white_Threshold}-vs-{black_player}-{black_Depth}-{black_Threshold}/{time.time()}.txt', 'a') as the_file:
     the_file.write(f"{white_wins}:{black_wins}\n")
     the_file.write(f"{white_avg}:{black_avg}\n")
     the_file.write(f"{white_avg_depth}:{black_avg_depth}\n")
+    the_file.write(f"{white_draw}:{black_draw}\n")
     the_file.write(f"{white_player}:{black_player}\n")
     the_file.write(f"Average Simulation count: {white_avg}:{black_avg}\n")
     the_file.write(f"Average depth count: {white_avg_depth}:{black_avg_depth}\n")
+    the_file.write(f"Draw count: {white_draw}:{black_draw}\n")
     the_file.write(f"{white_player} Depth: {white_Depth} Threshold: {white_Threshold}\n")
     the_file.write(f"{black_player} Depth: {black_Depth} Threshold: {black_Threshold}\n")
 """Path(f"./Resources/{white_player}_vs_{black_player}/{iterations}_{game_time}_{white_player}_{white_Depth}_{white_Threshold}_vs_{black_player}_{black_Depth}_{black_Threshold}").mkdir(parents=True, exist_ok=True)
