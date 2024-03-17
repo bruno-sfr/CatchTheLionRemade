@@ -1,5 +1,6 @@
 /Resources/
 /Resources_Old/
+/Resources_Recent/
 /Resources_AB/
 /Resources_AB_2/
 /Resources_AB_3/
@@ -10,5 +11,6 @@
 /Resources-Depth-5/
 /Resources-Depth-4/
 /Resources-Depth-4-100/
+/Resources_AB_Advanced/
 /venv/
 /__pycache__/
