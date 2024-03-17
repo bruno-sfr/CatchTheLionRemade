@@ -51,132 +51,259 @@ for i in range(0, iterations):
     White_MTD = IterativeDeepening.iterativeDeepeningMTD()
     Black_ID = IterativeDeepening.iterativeDeepeningAB()
     Black_MTD = IterativeDeepening.iterativeDeepeningMTD()
-    if i % 2 == 0:
+    whiteTurn = True
+    """if i % 2 == 0:
         whiteTurn = True
     else:
-        whiteTurn = False
-    while not board.isGameOver():
-        if whiteTurn:
-            move = Move.Move()
-            try:
-                match white_player:
-                    case "MiniMax":
-                        eval, move, depth = White_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
-                        white_depths.append(depth)
-                    case "MiniMax_Advanced":
-                        eval, move, depth = White_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
-                        white_depths.append(depth)
-                    case "Alpha_Beta":
-                        eval, move, depth = White_ID.iterativeDeepening_AB(game_time, board, whiteTurn)
-                        white_depths.append(depth)
-                    case "Alpha_Beta_Advanced":
-                        eval, move, depth = White_ID.iterativeDeepening_AB_A(game_time, board, whiteTurn)
-                        white_depths.append(depth)
-                    case "Alpha_Beta_Fix":
-                        eval, move = AlphaBeta.alpha_beta_simple(white_Depth, board, whiteTurn)
-                    case "Alpha_Beta_Advanced_Fix":
-                        eval, move = AlphaBeta.alpha_beta_advanced_simple(white_Depth, board, whiteTurn)
-                    case "Alpha_Beta_TT_Advanced":
-                        eval, move, depth = White_ID.iterativeDeepening_AB_advanced_TT(game_time, board, whiteTurn)
-                        white_depths.append(depth)
-                    case "Alpha_Beta_TT":
-                        eval, move, depth = White_ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
-                        white_depths.append(depth)
-                    case "MTD_Advanced":
-                        eval, move, depth = White_MTD.iterativeDeepening_MTD_advanced(game_time, board, whiteTurn)
-                        white_depths.append(depth)
-                    case "MTD":
-                        eval, move, depth = White_MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
-                        white_depths.append(depth)
-                    case "MCTS_Solver":
-                        ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
-                        white_sims.append(ResultNode.visits)
-                        move = ResultNode.move
-                    case "MCTS_MR":
-                        ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, game_time, white_Depth)
-                        white_sims.append(ResultNode.visits)
-                        move = ResultNode.move
-                    case "MCTS_MS":
-                        ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, game_time, white_Threshold, white_Depth)
-                        white_sims.append(ResultNode.visits)
-                        move = ResultNode.move
-                    case "MCTS_MB":
-                        ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, game_time, white_Depth)
-                        white_sims.append(ResultNode.visits)
-                        move = ResultNode.move
-            except TimeoutError:
-                print("Am i the problem?")
-                pass
-            move.printMove()
-            board.makeMove(whiteTurn, move.getFrom(), move.getTo())
-        else:
-            move = Move.Move()
-            try:
-                match black_player:
-                    case "MiniMax":
-                        eval, move, depth = Black_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
-                        black_depths.append(depth)
-                    case "MiniMax_Advanced":
-                        eval, move, depth = Black_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
-                        black_depths.append(depth)
-                    case "Alpha_Beta":
-                        eval, move, depth = Black_ID.iterativeDeepening_AB(game_time, board, whiteTurn)
-                        black_depths.append(depth)
-                    case "Alpha_Beta_Advanced":
-                        eval, move, depth = Black_ID.iterativeDeepening_AB_A(game_time, board, whiteTurn)
-                        black_depths.append(depth)
-                    case "Alpha_Beta_Fix":
-                        eval, move = AlphaBeta.alpha_beta_simple(black_Depth, board, whiteTurn)
-                    case "Alpha_Beta_Advanced_Fix":
-                        eval, move = AlphaBeta.alpha_beta_advanced_simple(black_Depth, board, whiteTurn)
-                    case "Alpha_Beta_TT":
-                        eval, move, depth = Black_ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
-                        black_depths.append(depth)
-                    case "MTD":
-                        eval, move, depth = Black_MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
-                        black_depths.append(depth)
-                    case "Alpha_Beta_TT_Advanced":
-                        eval, move, depth = Black_ID.iterativeDeepening_AB_advanced_TT(game_time, board, whiteTurn)
-                        black_depths.append(depth)
-                    case "MTD_Advanced":
-                        eval, move, depth = Black_MTD.iterativeDeepening_MTD_advanced(game_time, board, whiteTurn)
-                        black_depths.append(depth)
-                    case "MCTS_Solver":
-                        ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
-                        black_sims.append(ResultNode.visits)
-                        move = ResultNode.move
-                    case "MCTS_MR":
-                        ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, game_time, black_Depth)
-                        black_sims.append(ResultNode.visits)
-                        move = ResultNode.move
-                    case "MCTS_MS":
-                        ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, game_time, black_Threshold, black_Depth)
-                        black_sims.append(ResultNode.visits)
-                        move = ResultNode.move
-                    case "MCTS_MB":
-                        ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, game_time, black_Depth)
-                        black_sims.append(ResultNode.visits)
-                        move = ResultNode.move
-            except TimeoutError:
-                #print("Am i the problem?")
-                pass
-            move.printMove()
-            board.makeMove(whiteTurn, move.getFrom(), move.getTo())
-        whiteTurn = not whiteTurn
-        turns = turns + 1
-        if turns > max_turns:
-            if i % 2 == 0:
-                white_draw = white_draw + 1
+        whiteTurn = False"""
+    if i % 2 == 0:
+        while not board.isGameOver():
+            if whiteTurn:
+                move = Move.Move()
+                try:
+                    match white_player:
+                        case "MiniMax":
+                            eval, move, depth = White_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "MiniMax_Advanced":
+                            eval, move, depth = White_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "Alpha_Beta":
+                            eval, move, depth = White_ID.iterativeDeepening_AB(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "Alpha_Beta_Advanced":
+                            eval, move, depth = White_ID.iterativeDeepening_AB_A(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "Alpha_Beta_Fix":
+                            eval, move = AlphaBeta.alpha_beta_simple(white_Depth, board, whiteTurn)
+                        case "Alpha_Beta_Advanced_Fix":
+                            eval, move = AlphaBeta.alpha_beta_advanced_simple(white_Depth, board, whiteTurn)
+                        case "Alpha_Beta_TT_Advanced":
+                            eval, move, depth = White_ID.iterativeDeepening_AB_advanced_TT(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "Alpha_Beta_TT":
+                            eval, move, depth = White_ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "MTD_Advanced":
+                            eval, move, depth = White_MTD.iterativeDeepening_MTD_advanced(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "MTD":
+                            eval, move, depth = White_MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "MCTS_Solver":
+                            ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
+                            white_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MR":
+                            ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, game_time, white_Depth)
+                            white_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MS":
+                            ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, game_time, white_Threshold, white_Depth)
+                            white_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MB":
+                            ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, game_time, white_Depth)
+                            white_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                except TimeoutError:
+                    print("Am i the problem?")
+                    pass
+                move.printMove()
+                board.makeMove(whiteTurn, move.getFrom(), move.getTo())
             else:
-                black_draw = black_draw + 1
-            break
-    if board.hasWhiteWon():
-        white_wins = white_wins + 1
-    elif board.hasBlackWon():
-        black_wins = black_wins + 1
+                move = Move.Move()
+                try:
+                    match black_player:
+                        case "MiniMax":
+                            eval, move, depth = Black_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "MiniMax_Advanced":
+                            eval, move, depth = Black_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "Alpha_Beta":
+                            eval, move, depth = Black_ID.iterativeDeepening_AB(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "Alpha_Beta_Advanced":
+                            eval, move, depth = Black_ID.iterativeDeepening_AB_A(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "Alpha_Beta_Fix":
+                            eval, move = AlphaBeta.alpha_beta_simple(black_Depth, board, whiteTurn)
+                        case "Alpha_Beta_Advanced_Fix":
+                            eval, move = AlphaBeta.alpha_beta_advanced_simple(black_Depth, board, whiteTurn)
+                        case "Alpha_Beta_TT":
+                            eval, move, depth = Black_ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "MTD":
+                            eval, move, depth = Black_MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "Alpha_Beta_TT_Advanced":
+                            eval, move, depth = Black_ID.iterativeDeepening_AB_advanced_TT(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "MTD_Advanced":
+                            eval, move, depth = Black_MTD.iterativeDeepening_MTD_advanced(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "MCTS_Solver":
+                            ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
+                            black_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MR":
+                            ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, game_time, black_Depth)
+                            black_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MS":
+                            ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, game_time, black_Threshold, black_Depth)
+                            black_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MB":
+                            ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, game_time, black_Depth)
+                            black_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                except TimeoutError:
+                    #print("Am i the problem?")
+                    pass
+                move.printMove()
+                board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            whiteTurn = not whiteTurn
+            turns = turns + 1
+            if turns > max_turns:
+                if i % 2 == 0:
+                    white_draw = white_draw + 1
+                else:
+                    black_draw = black_draw + 1
+                break
     else:
-        black_wins = black_wins + 0.5
-        white_wins = white_wins + 0.5
+        while not board.isGameOver():
+            if whiteTurn:
+                move = Move.Move()
+                try:
+                    match black_player:
+                        case "MiniMax":
+                            eval, move, depth = White_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "MiniMax_Advanced":
+                            eval, move, depth = White_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "Alpha_Beta":
+                            eval, move, depth = White_ID.iterativeDeepening_AB(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "Alpha_Beta_Advanced":
+                            eval, move, depth = White_ID.iterativeDeepening_AB_A(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "Alpha_Beta_Fix":
+                            eval, move = AlphaBeta.alpha_beta_simple(black_Depth, board, whiteTurn)
+                        case "Alpha_Beta_Advanced_Fix":
+                            eval, move = AlphaBeta.alpha_beta_advanced_simple(black_Depth, board, whiteTurn)
+                        case "Alpha_Beta_TT_Advanced":
+                            eval, move, depth = White_ID.iterativeDeepening_AB_advanced_TT(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "Alpha_Beta_TT":
+                            eval, move, depth = White_ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "MTD_Advanced":
+                            eval, move, depth = White_MTD.iterativeDeepening_MTD_advanced(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "MTD":
+                            eval, move, depth = White_MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
+                            black_depths.append(depth)
+                        case "MCTS_Solver":
+                            ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
+                            black_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MR":
+                            ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, game_time, black_Depth)
+                            black_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MS":
+                            ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, game_time, black_Threshold, black_Depth)
+                            black_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MB":
+                            ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, game_time, black_Depth)
+                            black_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                except TimeoutError:
+                    print("Am i the problem?")
+                    pass
+                move.printMove()
+                board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            else:
+                move = Move.Move()
+                try:
+                    match white_player:
+                        case "MiniMax":
+                            eval, move, depth = Black_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "MiniMax_Advanced":
+                            eval, move, depth = Black_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "Alpha_Beta":
+                            eval, move, depth = Black_ID.iterativeDeepening_AB(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "Alpha_Beta_Advanced":
+                            eval, move, depth = Black_ID.iterativeDeepening_AB_A(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "Alpha_Beta_Fix":
+                            eval, move = AlphaBeta.alpha_beta_simple(white_Depth, board, whiteTurn)
+                        case "Alpha_Beta_Advanced_Fix":
+                            eval, move = AlphaBeta.alpha_beta_advanced_simple(white_Depth, board, whiteTurn)
+                        case "Alpha_Beta_TT":
+                            eval, move, depth = Black_ID.iterativeDeepening_AB_TT(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "MTD":
+                            eval, move, depth = Black_MTD.iterativeDeepening_MTD(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "Alpha_Beta_TT_Advanced":
+                            eval, move, depth = Black_ID.iterativeDeepening_AB_advanced_TT(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "MTD_Advanced":
+                            eval, move, depth = Black_MTD.iterativeDeepening_MTD_advanced(game_time, board, whiteTurn)
+                            white_depths.append(depth)
+                        case "MCTS_Solver":
+                            ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, game_time)
+                            white_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MR":
+                            ResultNode = MCTS_Solvers.MCTS_MR_Run(board, whiteTurn, game_time, white_Depth)
+                            white_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MS":
+                            ResultNode = MCTS_Solvers.MCTS_MS_Run(board, whiteTurn, game_time, white_Threshold, white_Depth)
+                            white_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                        case "MCTS_MB":
+                            ResultNode = MCTS_Solvers.MCTS_MB_Run(board, whiteTurn, game_time, white_Depth)
+                            white_sims.append(ResultNode.visits)
+                            move = ResultNode.move
+                except TimeoutError:
+                    #print("Am i the problem?")
+                    pass
+                move.printMove()
+                board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            whiteTurn = not whiteTurn
+            turns = turns + 1
+            if turns > max_turns:
+                if i % 2 == 0:
+                    black_draw = black_draw + 1
+                else:
+                    white_draw = white_draw + 1
+                break
+    if i % 2 == 0:
+        if board.hasWhiteWon():
+            white_wins = white_wins + 1
+        elif board.hasBlackWon():
+            black_wins = black_wins + 1
+        else:
+            black_wins = black_wins + 0.5
+            white_wins = white_wins + 0.5
+    else:
+        if board.hasWhiteWon():
+            black_wins = black_wins + 1
+        elif board.hasBlackWon():
+            white_wins = white_wins + 1
+        else:
+            black_wins = black_wins + 0.5
+            white_wins = white_wins + 0.5
     print(f"{white_player} {white_wins} : {black_wins} {black_player}")
 print("Finished")
 

@@ -1,4 +1,5 @@
 import copy
+import random
 import time
 
 from Game import LionBoard, Zobrist, Move
@@ -124,6 +125,10 @@ class Alpha_Beta_TT:
                     if eval > maxEval:
                         maxEval = eval
                         bestmove = move
+                    elif eval == maxEval:
+                        rand = random.randint(0, 1)
+                        if rand == 1:
+                            bestmove = move
                     a = max(a, eval)
                     if not (maxEval < beta):
                         break
@@ -158,6 +163,10 @@ class Alpha_Beta_TT:
                     if eval < minEval:
                         minEval = eval
                         bestmove = move
+                    elif eval == minEval:
+                        rand = random.randint(0, 1)
+                        if rand == 1:
+                            bestmove = move
                     b = min(b, eval)
                     if not (minEval > alpha):
                         break
@@ -456,6 +465,10 @@ def alpha_beta_advanced(alpha: float, beta: float, depth: int, board: LionBoard.
                 if eval > maxEval:
                     maxEval = eval
                     bestmove = move
+                elif eval == maxEval:
+                    rand = random.randint(0, 1)
+                    if rand == 1:
+                        bestmove = move
                 alpha = max(alpha, eval)
                 if beta <= alpha:
                     return maxEval, bestmove
@@ -474,6 +487,10 @@ def alpha_beta_advanced(alpha: float, beta: float, depth: int, board: LionBoard.
                 if eval < minEval:
                     minEval = eval
                     bestmove = move
+                elif eval == minEval:
+                    rand = random.randint(0, 1)
+                    if rand == 1:
+                        bestmove = move
                 beta = min(beta, eval)
                 if beta <= alpha:
                     return minEval, bestmove
@@ -610,6 +627,10 @@ def MiniMax_advanced(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
                 if eval > maxEval:
                     maxEval = eval
                     bestmove = move
+                elif eval == maxEval:
+                    rand = random.randint(0, 1)
+                    if rand == 1:
+                        bestmove = move
         return maxEval, bestmove
     else:
         minEval = float('inf')
@@ -626,6 +647,10 @@ def MiniMax_advanced(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
                 if eval < minEval:
                     minEval = eval
                     bestmove = move
+                elif eval == minEval:
+                    rand = random.randint(0, 1)
+                    if rand == 1:
+                        bestmove = move
         return minEval, bestmove
 
 """def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool, moves: list):
