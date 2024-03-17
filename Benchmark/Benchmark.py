@@ -1,5 +1,6 @@
 import datetime
 import math
+import random
 import time
 
 import matplotlib.pyplot as plt
@@ -169,12 +170,14 @@ def Mate_in_Benchmark():
         evalMTD_uneven = 0.0
         for i in range(1, Depth+1):
             print("Depth:", i)
-            """print("MiniMax")
+            print("MiniMax")
             avg_timetaken = 0
             for i2 in range(iterations):
                 start = time.time()
-                evalMM, moves = AlphaBeta.MiniMax(i, board, True)
+                #evalMM, moves = AlphaBeta.MiniMax(i, board, True)
+                evalMM, moves = AlphaBeta.MiniMax_advanced(i, board, True)
                 print("eval:", evalMM)
+                moves.printMove()
                 end = time.time()
                 timetaken = (end - start)
                 print("timetaken", timetaken)
@@ -182,15 +185,17 @@ def Mate_in_Benchmark():
             avg_timetaken = avg_timetaken / iterations
             print("avg time:", avg_timetaken)
             # moves.printMove()
-            MM_List[i - 1] = MM_List[i - 1] + avg_timetaken"""
+            MM_List[i - 1] = MM_List[i - 1] + avg_timetaken
 
             print("")
             print("Alpha-Beta")
             avg_timetaken = 0
             for i2 in range(iterations):
                 start = time.time()
-                evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, True)
+                #evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, True)
+                evalAB, moves = AlphaBeta.alpha_beta_advanced_simple(i, board, True)
                 end = time.time()
+                moves.printMove()
                 print("eval:", evalAB)
                 timetaken = (end - start)
                 print("timetaken", timetaken)
@@ -205,8 +210,10 @@ def Mate_in_Benchmark():
             for i2 in range(iterations):
                 AB = AlphaBeta.Alpha_Beta_TT()
                 start = time.time()
-                eval, move = AB.alpha_beta_TT_simple(i, board, True)
+                #eval, move = AB.alpha_beta_TT_simple(i, board, True)
+                eval, move = AB.alpha_beta_advanced_TT_simple(i, board, True)
                 print("eval:", eval)
+                move.printMove()
                 end = time.time()
                 timetaken = (end - start)
                 print("timetaken:", timetaken)
@@ -222,11 +229,15 @@ def Mate_in_Benchmark():
                 MTD_second_guess = AlphaBeta.MTDF()
                 start = time.time()
                 if i % 2 == 0:
-                    evalMTD_even, movesMTD = MTD_second_guess.MTDF(evalMTD_even, i, board, True, 0.1)
+                    #evalMTD_even, movesMTD = MTD_second_guess.MTDF(evalMTD_even, i, board, True, 0.1)
+                    evalMTD_even, movesMTD = MTD_second_guess.MTDF_advanced(evalMTD_even, i, board, True, 0.1)
                     print("eval:", evalMTD_even)
+                    movesMTD.printMove()
                 else:
-                    evalMTD_uneven, movesMTD = MTD_second_guess.MTDF(evalMTD_uneven, i, board, True, 0.1)
+                    #evalMTD_uneven, movesMTD = MTD_second_guess.MTDF(evalMTD_uneven, i, board, True, 0.1)
+                    evalMTD_uneven, movesMTD = MTD_second_guess.MTDF_advanced(evalMTD_uneven, i, board, True, 0.1)
                     print("eval:", evalMTD_uneven)
+                    movesMTD.printMove()
                 end = time.time()
                 timetaken = (end - start)
                 print("timetaken:", timetaken)
