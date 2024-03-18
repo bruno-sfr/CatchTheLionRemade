@@ -170,7 +170,7 @@ for i in range(0, iterations):
             whiteTurn = not whiteTurn
             turns = turns + 1
             if turns > max_turns:
-                if i % 2 == 0:
+                if whiteTurn:
                     white_draw = white_draw + 1
                 else:
                     black_draw = black_draw + 1
@@ -286,7 +286,7 @@ for i in range(0, iterations):
             whiteTurn = not whiteTurn
             turns = turns + 1
             if turns > max_turns:
-                if i % 2 == 0:
+                if whiteTurn:
                     black_draw = black_draw + 1
                 else:
                     white_draw = white_draw + 1
