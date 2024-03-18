@@ -36,11 +36,14 @@ black_Threshold = int(sys.argv[8])
 white_wins = 0
 white_sims = []
 white_depths = []
+white_moves = []
 white_draw = 0
 black_wins = 0
 black_sims = []
 black_depths = []
+black_moves = []
 black_draw = 0
+draw_moves = []
 #second = str(sys.argv[2])
 
 for i in range(0, iterations):
@@ -291,19 +294,25 @@ for i in range(0, iterations):
     if i % 2 == 0:
         if board.hasWhiteWon():
             white_wins = white_wins + 1
+            white_moves.append(turns)
         elif board.hasBlackWon():
             black_wins = black_wins + 1
+            black_moves.append(turns)
         else:
             black_wins = black_wins + 0.5
             white_wins = white_wins + 0.5
+            draw_moves.append(turns)
     else:
         if board.hasWhiteWon():
             black_wins = black_wins + 1
+            black_moves.append(turns)
         elif board.hasBlackWon():
             white_wins = white_wins + 1
+            white_moves.append(turns)
         else:
             black_wins = black_wins + 0.5
             white_wins = white_wins + 0.5
+            draw_moves.append(turns)
     print(f"{white_player} {white_wins} : {black_wins} {black_player}")
 print("Finished")
 
@@ -319,6 +328,12 @@ if len(white_depths) > 0:
         white_avg_depth = white_avg_depth + depth
     white_avg_depth = white_avg_depth / len(white_depths)
 
+white_avg_move = 0
+if len(white_moves) > 0:
+    for moves in white_moves:
+        white_avg_move = white_avg_move + moves
+    white_avg_move = white_avg_move / len(white_moves)
+
 black_avg = 0
 if len(black_sims) > 0:
     for sim in black_sims:
@@ -331,6 +346,18 @@ if len(black_depths) > 0:
         black_avg_depth = black_avg_depth + depth
     black_avg_depth = black_avg_depth / len(black_depths)
 
+black_avg_move = 0
+if len(black_moves) > 0:
+    for moves in black_moves:
+        black_avg_move = black_avg_move + moves
+    black_avg_move = black_avg_move / len(black_moves)
+
+draw_avg_move = 0
+if len(draw_moves) > 0:
+    for moves in draw_moves:
+        draw_avg_move = draw_avg_move + moves
+    draw_avg_move = draw_avg_move / len(draw_moves)
+
 #/home/bruno.schaffer/CatchTheLionRemade/Resources/
 Path(f"./Resources/{white_player}-vs-{black_player}/{iterations}-{game_time}-{white_player}-{white_Depth}-{white_Threshold}-vs-{black_player}-{black_Depth}-{black_Threshold}").mkdir(parents=True, exist_ok=True)
 with open(f'./Resources/{white_player}-vs-{black_player}/{iterations}-{game_time}-{white_player}-{white_Depth}-{white_Threshold}-vs-{black_player}-{black_Depth}-{black_Threshold}/{time.time()}.txt', 'a') as the_file:
@@ -338,10 +365,14 @@ with open(f'./Resources/{white_player}-vs-{black_player}/{iterations}-{game_time
     the_file.write(f"{white_avg}:{black_avg}\n")
     the_file.write(f"{white_avg_depth}:{black_avg_depth}\n")
     the_file.write(f"{white_draw}:{black_draw}\n")
+    the_file.write(f"{black_avg_move}:{black_avg_move}\n")
     the_file.write(f"{white_player}:{black_player}\n")
+    the_file.write(f"{draw_avg_move}:0\n")
     the_file.write(f"Average Simulation count: {white_avg}:{black_avg}\n")
     the_file.write(f"Average depth count: {white_avg_depth}:{black_avg_depth}\n")
     the_file.write(f"Draw count: {white_draw}:{black_draw}\n")
+    the_file.write(f"Move count on win: {black_avg_move}:{black_avg_move}\n")
+    the_file.write(f"Move count on draw: {draw_avg_move}\n")
     the_file.write(f"{white_player} Depth: {white_Depth} Threshold: {white_Threshold}\n")
     the_file.write(f"{black_player} Depth: {black_Depth} Threshold: {black_Threshold}\n")
 """Path(f"./Resources/{white_player}_vs_{black_player}/{iterations}_{game_time}_{white_player}_{white_Depth}_{white_Threshold}_vs_{black_player}_{black_Depth}_{black_Threshold}").mkdir(parents=True, exist_ok=True)
