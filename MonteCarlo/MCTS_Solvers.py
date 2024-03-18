@@ -368,7 +368,8 @@ def MiniMax_simulation(node: MCTS_Node, depth: int):
     while i < MAX_ITERATIONS and not state.isGameOver():
         # while not state.isGameOver():
         try:
-            eval, move = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
+            #eval, move = AlphaBeta.alpha_beta_simple(depth, state, whiteTurn)
+            eval, move = AlphaBeta.alpha_beta_advanced_simple(depth, state, whiteTurn)
             if move is not None:
                 state.makeMove(whiteTurn, move.getFrom(), move.getTo())
             else:
