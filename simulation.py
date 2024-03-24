@@ -68,6 +68,8 @@ for i in range(0, iterations):
                         case "MiniMax":
                             eval, move, depth = White_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
                             white_depths.append(depth)
+                        case "MiniMax_Fix":
+                            eval, move = AlphaBeta.MiniMax(white_Depth, board, whiteTurn)
                         case "MiniMax_Advanced":
                             eval, move, depth = White_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
                             white_depths.append(depth)
@@ -79,6 +81,10 @@ for i in range(0, iterations):
                             white_depths.append(depth)
                         case "Alpha_Beta_Fix":
                             eval, move = AlphaBeta.alpha_beta_simple(white_Depth, board, whiteTurn)
+                            print("White Eval:", eval)
+                        case "Alpha_Beta_quiescence_Fix":
+                            eval, move, temp = AlphaBeta.alpha_beta_quiescence_simple(white_Depth, board, whiteTurn)
+                            #print("White Eval:", eval)
                         case "Alpha_Beta_Advanced_Fix":
                             eval, move = AlphaBeta.alpha_beta_advanced_simple(white_Depth, board, whiteTurn)
                         case "Alpha_Beta_TT_Advanced":
@@ -121,6 +127,8 @@ for i in range(0, iterations):
                         case "MiniMax":
                             eval, move, depth = Black_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
                             black_depths.append(depth)
+                        case "MiniMax_Fix":
+                            eval, move = AlphaBeta.MiniMax(black_Depth, board, whiteTurn)
                         case "MiniMax_Advanced":
                             eval, move, depth = Black_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
                             black_depths.append(depth)
@@ -132,6 +140,10 @@ for i in range(0, iterations):
                             black_depths.append(depth)
                         case "Alpha_Beta_Fix":
                             eval, move = AlphaBeta.alpha_beta_simple(black_Depth, board, whiteTurn)
+                            print("Black Eval:", eval)
+                        case "Alpha_Beta_quiescence_Fix":
+                            eval, move, temp = AlphaBeta.alpha_beta_quiescence_simple(black_Depth, board, whiteTurn)
+                            # print("Black Eval:", eval)
                         case "Alpha_Beta_Advanced_Fix":
                             eval, move = AlphaBeta.alpha_beta_advanced_simple(black_Depth, board, whiteTurn)
                         case "Alpha_Beta_TT":
@@ -184,6 +196,8 @@ for i in range(0, iterations):
                         case "MiniMax":
                             eval, move, depth = White_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
                             black_depths.append(depth)
+                        case "MiniMax_Fix":
+                            eval, move = AlphaBeta.MiniMax(black_Depth, board, whiteTurn)
                         case "MiniMax_Advanced":
                             eval, move, depth = White_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
                             black_depths.append(depth)
@@ -195,6 +209,10 @@ for i in range(0, iterations):
                             black_depths.append(depth)
                         case "Alpha_Beta_Fix":
                             eval, move = AlphaBeta.alpha_beta_simple(black_Depth, board, whiteTurn)
+                            print("Black Eval:", eval)
+                        case "Alpha_Beta_quiescence_Fix":
+                            eval, move, temp = AlphaBeta.alpha_beta_quiescence_simple(black_Depth, board, whiteTurn)
+                            # print("Black Eval:", eval)
                         case "Alpha_Beta_Advanced_Fix":
                             eval, move = AlphaBeta.alpha_beta_advanced_simple(black_Depth, board, whiteTurn)
                         case "Alpha_Beta_TT_Advanced":
@@ -237,6 +255,8 @@ for i in range(0, iterations):
                         case "MiniMax":
                             eval, move, depth = Black_ID.iterativeDeepening_MM(game_time, board, whiteTurn)
                             white_depths.append(depth)
+                        case "MiniMax_Fix":
+                            eval, move = AlphaBeta.MiniMax(white_Depth, board, whiteTurn)
                         case "MiniMax_Advanced":
                             eval, move, depth = Black_ID.iterativeDeepening_MM_advanced(game_time, board, whiteTurn)
                             white_depths.append(depth)
@@ -248,6 +268,10 @@ for i in range(0, iterations):
                             white_depths.append(depth)
                         case "Alpha_Beta_Fix":
                             eval, move = AlphaBeta.alpha_beta_simple(white_Depth, board, whiteTurn)
+                            print("White Eval:", eval)
+                        case "Alpha_Beta_quiescence_Fix":
+                            eval, move, temp = AlphaBeta.alpha_beta_quiescence_simple(white_Depth, board, whiteTurn)
+                            # print("Black Eval:", eval)
                         case "Alpha_Beta_Advanced_Fix":
                             eval, move = AlphaBeta.alpha_beta_advanced_simple(white_Depth, board, whiteTurn)
                         case "Alpha_Beta_TT":

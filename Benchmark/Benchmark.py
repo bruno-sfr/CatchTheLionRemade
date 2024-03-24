@@ -10,6 +10,107 @@ from Game import LionBoard
 from MonteCarlo import MCTS_Solvers
 
 
+def AB_VS_AB():
+    board = LionBoard.LionBoard()
+    board.setBoard_start()
+    #board.setBoard_Fen("11l/1ce/11L/1C1/EGG")
+    #board.setBoard_Fen("11l/1L1/3/3/")
+    board.setBoard_Fen("3/11l/1L1/3/")
+    #board.setBoard_Fen("1l1/Gg1/1Ee/2L/cC")
+    board.printBoard()
+    """whiteTurn = True
+    board.makeMove(True, 'g', 11)
+    board.makeMove(False, 6, 10)
+    board.makeMove(True, 'g', 0)
+    board.makeMove(False, 10, 6)
+    board.makeMove(True, 'e', 2)
+    evalAB, moves, evals = AlphaBeta.alpha_beta_quiescence_simple(1, board, False)
+    print("White Player Eval:", evalAB)
+    for eval in evals:
+        print("possible Eval:", eval)
+    #for move in moves:
+    #    move.printMove()"""
+    """for i in range(10):
+        print("-----------------------------------  Depth ",i)
+        evalAB, moves, evals = AlphaBeta.alpha_beta_allMoves_simple(i, board, whiteTurn)
+        print("White Player Eval:", evalAB)
+        for eval in evals:
+            print("possible Eval:", eval)
+        for move in moves:
+            move.printMove()"""
+
+    #print(board.hasCaptures(True))
+    #print(board.isCheck())
+
+    count = 1
+    list = board.allpossibleMoves_baier_capture(True)
+    for ilist in list:
+        print("List ",count)
+        count = count + 1
+        for i in ilist:
+            i.printMove()
+
+    """eval, move = AlphaBeta.alpha_beta_quiescence_simple(6, board, True)
+    print("Eval", eval)
+    move.printMove()"""
+
+    """evalAB, moves, evals = AlphaBeta.alpha_beta_allMoves_simple(7, board, whiteTurn)
+    print("White Player Eval:", evalAB)
+    for eval in evals:
+        print("possible Eval:", eval)
+    for move in moves:
+        move.printMove()"""
+
+    """whiteTurn = True
+
+    while not board.isGameOver():
+        if whiteTurn:
+            evalAB, moves, evals = AlphaBeta.alpha_beta_allMoves_simple(6, board, whiteTurn)
+            print("White Player Eval:", evalAB)
+            for eval in evals:
+                print("possible Eval:",eval)
+            for move in moves:
+                move.printMove()
+            print("----Making-Move----")
+            board.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
+            print("New FEN:",board.getFen())
+        else:
+            evalAB, moves, evals = AlphaBeta.alpha_beta_allMoves_simple(7, board, whiteTurn)
+            print("Black Player Eval:", evalAB)
+            for eval in evals:
+                print("possible Eval:",eval)
+            for move in moves:
+                move.printMove()
+            print("----Making-Move----")
+            board.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
+            print("New FEN:", board.getFen())
+        whiteTurn = not whiteTurn
+    board.printBoard()"""
+
+    """while not board.isGameOver():
+        if whiteTurn:
+            evalAB, move, evals = AlphaBeta.alpha_beta_quiescence_simple(6, board, whiteTurn)
+            print("White Player Eval:", evalAB)
+            for eval in evals:
+                print("possible Eval:", eval)
+            move.printMove()
+            print("----Making-Move----")
+            print("")
+            board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            print("New FEN:", board.getFen())
+        else:
+            evalAB, move, evals = AlphaBeta.alpha_beta_quiescence_simple(7, board, whiteTurn)
+            print("Black Player Eval:", evalAB)
+            for eval in evals:
+                print("possible Eval:", eval)
+            move.printMove()
+            print("----Making-Move----")
+            print("")
+            board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            print("New FEN:", board.getFen())
+        whiteTurn = not whiteTurn
+    board.printBoard()"""
+
 def TestPostion():
     board = LionBoard.LionBoard()
     board.setBoard_start()
@@ -30,8 +131,8 @@ def TestPostion():
     #AB= AlphaBeta.Alpha_Beta_TT()
     MTD_second_guess = AlphaBeta.MTDF()
 
-    Depth = 8
-    iterations = 5
+    Depth = 6
+    iterations = 1
     x = range(1, Depth + 1)
 
     for i in range(1, Depth + 1):
@@ -42,12 +143,13 @@ def TestPostion():
             start = time.time()
             evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, whiteTurn)
             end = time.time()
-            #print("eval:", evalAB)
+            print("eval:", evalAB)
             timetaken = (end - start)
-            print("timetaken", timetaken)
+            moves.printMove()
+            #print("timetaken", timetaken)
             avg_timetaken = avg_timetaken + timetaken
         avg_timetaken = avg_timetaken/iterations
-        print("avg time:", avg_timetaken)
+        #print("avg time:", avg_timetaken)
         AB_List.append(avg_timetaken)
         #AB_Eval_List.append(evalAB)
 
@@ -57,17 +159,18 @@ def TestPostion():
         for i2 in range(iterations):
             start = time.time()
             evalMM, moves = AlphaBeta.MiniMax(i, board, whiteTurn)
-            #print("eval:", evalMM)
+            print("eval:", evalMM)
+            moves.printMove()
             end = time.time()
             timetaken = (end - start)
-            print("timetaken", timetaken)
+            #print("timetaken", timetaken)
             avg_timetaken = avg_timetaken + timetaken
         avg_timetaken = avg_timetaken / iterations
-        print("avg time:", avg_timetaken)
+        #print("avg time:", avg_timetaken)
         MM_List.append(avg_timetaken)
         #MM_Eval_List.append(evalMM)
 
-        print("")
+        """print("")
         print("Alpha-Beta_TT")
         avg_timetaken = 0
         for i2 in range(iterations):
@@ -81,10 +184,10 @@ def TestPostion():
             avg_timetaken = avg_timetaken + timetaken
         avg_timetaken = avg_timetaken / iterations
         print("avg time:", avg_timetaken)
-        AB_TT_store_List.append(avg_timetaken)
+        AB_TT_store_List.append(avg_timetaken)"""
         #AB_TT_store_Eval_List.append(eval)
 
-        print("")
+        """print("")
         print("MTD(f) with f=bestSecondGuess")
         avg_timetaken = 0
         for i2 in range(iterations):
@@ -102,18 +205,18 @@ def TestPostion():
             avg_timetaken = avg_timetaken + timetaken
         avg_timetaken = avg_timetaken / iterations
         print("avg time:", avg_timetaken)
-        MTD_second_guess_List.append(avg_timetaken)
+        MTD_second_guess_List.append(avg_timetaken)"""
         print("----------------------------------")
     print("Benchmark complete")
 
-    x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
+    """x_list = range(math.floor(min(x)), math.ceil(max(x)) + 1)
     plt.xticks(x_list)
 
     plt.plot(x, MM_List, label='MiniMax', color='magenta')
     plt.plot(x, AB_List, label='Alpha-Beta', color='red')
     plt.plot(x, AB_TT_store_List, label='Alpha-Beta TT', color='blue')
     plt.plot(x, MTD_second_guess_List, label='MTD(f)', color='green')
-    plt.legend(loc='upper left')
+    plt.legend(loc='upper left')"""
 
     """fig, axs = plt.subplots(2, sharex=True)
     fig.suptitle("Comparison")
@@ -144,11 +247,11 @@ def TestPostion():
     #axs[1].plot(x, MTD_2_TT_Eval_List, label='MTD(f) with 2 TT', linestyle='dashdot')
     axs[1].set(ylabel='Eval')"""
 
-    plt.xlabel("Depth")
+    """plt.xlabel("Depth")
     plt.ylabel("Time taken in s")
     plt.title("Comparison of MiniMax-Algorithms on Start Position")
     plt.savefig(f"../Resources/Benchmark_Start_Pos_Depth_{Depth}_{iterations}.png")
-    plt.show()
+    plt.show()"""
 
 def Mate_in_Benchmark():
     board = LionBoard.LionBoard()
@@ -158,7 +261,7 @@ def Mate_in_Benchmark():
     MTD_List = [0] * (Depth)
     AB_TT_store_List = [0] * (Depth)
     x = range(1, Depth + 1)
-    iterations = 5
+    iterations = 1
     boards = ["eg1/lc1/1CL/G1E/", "eg1/1l1/GE1/1L1/cC", "1l1/G2/L1g/2E/cCE", "eg1/lc1/1CL/G1E/", "1g1/G1l/3/1LE/cC"]
 
     for fen in boards:
@@ -174,8 +277,8 @@ def Mate_in_Benchmark():
             avg_timetaken = 0
             for i2 in range(iterations):
                 start = time.time()
-                #evalMM, moves = AlphaBeta.MiniMax(i, board, True)
-                evalMM, moves = AlphaBeta.MiniMax_advanced(i, board, True)
+                evalMM, moves = AlphaBeta.MiniMax(i, board, True)
+                #evalMM, moves = AlphaBeta.MiniMax_advanced(i, board, True)
                 print("eval:", evalMM)
                 moves.printMove()
                 end = time.time()
@@ -192,8 +295,8 @@ def Mate_in_Benchmark():
             avg_timetaken = 0
             for i2 in range(iterations):
                 start = time.time()
-                #evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, True)
-                evalAB, moves = AlphaBeta.alpha_beta_advanced_simple(i, board, True)
+                evalAB, moves = AlphaBeta.alpha_beta_simple(i, board, True)
+                #evalAB, moves = AlphaBeta.alpha_beta_advanced_simple(i, board, True)
                 end = time.time()
                 moves.printMove()
                 print("eval:", evalAB)
@@ -210,8 +313,8 @@ def Mate_in_Benchmark():
             for i2 in range(iterations):
                 AB = AlphaBeta.Alpha_Beta_TT()
                 start = time.time()
-                #eval, move = AB.alpha_beta_TT_simple(i, board, True)
-                eval, move = AB.alpha_beta_advanced_TT_simple(i, board, True)
+                eval, move = AB.alpha_beta_TT_simple(i, board, True)
+                #eval, move = AB.alpha_beta_advanced_TT_simple(i, board, True)
                 print("eval:", eval)
                 move.printMove()
                 end = time.time()
@@ -229,13 +332,13 @@ def Mate_in_Benchmark():
                 MTD_second_guess = AlphaBeta.MTDF()
                 start = time.time()
                 if i % 2 == 0:
-                    #evalMTD_even, movesMTD = MTD_second_guess.MTDF(evalMTD_even, i, board, True, 0.1)
-                    evalMTD_even, movesMTD = MTD_second_guess.MTDF_advanced(evalMTD_even, i, board, True, 0.1)
+                    evalMTD_even, movesMTD = MTD_second_guess.MTDF(evalMTD_even, i, board, True, 0.1)
+                    #evalMTD_even, movesMTD = MTD_second_guess.MTDF_advanced(evalMTD_even, i, board, True, 0.1)
                     print("eval:", evalMTD_even)
                     movesMTD.printMove()
                 else:
-                    #evalMTD_uneven, movesMTD = MTD_second_guess.MTDF(evalMTD_uneven, i, board, True, 0.1)
-                    evalMTD_uneven, movesMTD = MTD_second_guess.MTDF_advanced(evalMTD_uneven, i, board, True, 0.1)
+                    evalMTD_uneven, movesMTD = MTD_second_guess.MTDF(evalMTD_uneven, i, board, True, 0.1)
+                    #evalMTD_uneven, movesMTD = MTD_second_guess.MTDF_advanced(evalMTD_uneven, i, board, True, 0.1)
                     print("eval:", evalMTD_uneven)
                     movesMTD.printMove()
                 end = time.time()
@@ -269,6 +372,166 @@ def Mate_in_Benchmark():
     plt.legend()
     plt.savefig(f"../Resources/Benchmark_Mate_in_3.png")
     plt.show()
+
+def Testing_PV():
+    board = LionBoard.LionBoard()
+    """board.setBoard_start()
+    print("start_eval", board.eval_func())
+    board.makeMove(False,7,4)
+    print("next_eval", board.eval_func())"""
+    #board.randomBoard()
+
+    board.setBoard_start()
+
+    #Mate in Puzzle
+    #board.setBoard_Fen("eg1/lc1/1CL/G1E/")
+    #board.setBoard_Fen("eg1/1l1/GE1/1L1/cC")
+    #board.setBoard_Fen("1l1/G2/L1g/2E/cCE")
+    #board.setBoard_Fen("eg1/lc1/1CL/G1E/")
+    #board.setBoard_Fen("1g1/G1l/3/1LE/cC")
+    #board.setBoard_Fen("1l1/Ge1/L1g/2E/cC")
+
+    whiteTurn = True
+
+    #Generell
+    #board.setBoard_Fen("1l1/Gg1/1Ee/2L/cC")
+    #board.setBoard_Fen("el1/1c1/GCg/1LE/")
+    "best move 1 to 3"
+    #board.setBoard_Fen("1l1/1e1/1Gg/1LE/Cc")
+    "best move 3 to 4"
+    board.printBoard()
+    print("WhiteTurn =", whiteTurn)
+    print("")
+
+    Depth = 6
+
+    for i in reversed(range(Depth + 1)):
+        if i == 0:
+            return
+        print("Depth ",i)
+        evalAB, moves, evals = AlphaBeta.alpha_beta_allMoves_simple(i, board, whiteTurn)
+        print("Eval:", evalAB)
+        for move in moves:
+            move.printMove()
+        print("----Making-Move----")
+        board.makeMove(whiteTurn, moves[0].getFrom(), moves[0].getTo())
+        if (board.isGameOver()):
+            board.printBoard()
+            return
+        whiteTurn = not whiteTurn
+
+    """print("Depth 6")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(6, board, False)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(False, moves[0].getFrom(), moves[0].getTo())
+    if (board.isGameOver()):
+        board.printBoard()
+        return
+
+    print("Depth 5")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(5, board, True)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(True, moves[0].getFrom(), moves[0].getTo())
+    if (board.isGameOver()):
+        board.printBoard()
+        return
+
+    print("Depth 4")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(6, board, False)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(False, moves[0].getFrom(), moves[0].getTo())
+    if (board.isGameOver()):
+        board.printBoard()
+        return"""
+
+    """print("-----------------------------------")
+
+    print("Depth 7")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(7, board, True)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(True, moves[0].getFrom(), moves[0].getTo())
+    if (board.isGameOver()):
+        board.printBoard()
+        return
+
+    print("Depth 6")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(6, board, False)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(False, moves[0].getFrom(), moves[0].getTo())
+    if (board.isGameOver()):
+        board.printBoard()
+        return
+
+    print("Depth 5")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(5, board, True)
+    print("Eval:",evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(True, moves[0].getFrom(), moves[0].getTo())
+    if(board.isGameOver()):
+        board.printBoard()
+        return
+
+    print("Depth 4")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(4, board, False)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(False, moves[0].getFrom(), moves[0].getTo())
+    if (board.isGameOver()):
+        board.printBoard()
+        return
+
+    print("Depth 3")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(3, board, True)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(True, moves[0].getFrom(), moves[0].getTo())
+    if (board.isGameOver()):
+        board.printBoard()
+        return
+
+    print("Depth 2")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(2, board, False)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(False, moves[0].getFrom(), moves[0].getTo())
+    if (board.isGameOver()):
+        board.printBoard()
+        return
+
+    print("Depth 1")
+    evalAB, moves = AlphaBeta.alpha_beta_allMoves_simple(1, board, True)
+    print("Eval:", evalAB)
+    for move in moves:
+        move.printMove()
+    print("----Making-Move----")
+    board.makeMove(True, moves[0].getFrom(), moves[0].getTo())
+
+    if (board.isGameOver()):
+        board.printBoard()
+        return"""
 
 def Random_Benchmark():
     board = LionBoard.LionBoard()
@@ -489,7 +752,9 @@ def MateIn3():
 
 if __name__ == '__main__':
     #TestPostion()
+    #Testing_PV()
     #MateIn3()
     #MateIn3_AB()
-    Mate_in_Benchmark()
+    #Mate_in_Benchmark()
     #Random_Benchmark()
+    AB_VS_AB()
