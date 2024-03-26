@@ -1219,7 +1219,7 @@ class LionBoard:
 
 
     def captureMoves(self, whiteTurn: bool):
-        list = self.allpossibleMoves_capture(False)
+        list = self.allpossibleMoves_capture(whiteTurn)
         capture_list = []
         for i in range(5):
             for capture_move in list[i]:
@@ -1227,10 +1227,15 @@ class LionBoard:
         return capture_list
 
     #from gpt
-    def hasCaptures(self, whiteTurn: bool):
-        list = self.captureMoves(whiteTurn)
+    def hasCaptures(self):
+        list = self.captureMoves(True)
         if len(list) > 0:
-                return True
+            return True
+
+        list = self.captureMoves(False)
+        if len(list) > 0:
+            return True
+
         return False
 
         #list = self.allpossibleMoves_capture(whiteTurn)
@@ -1268,8 +1273,8 @@ class LionBoard:
 
         return False
 
-    def isQuiet(self, whiteTurn: bool):
-        return not self.hasCaptures(whiteTurn) and not self.isCheck()
+    def isQuiet(self):
+        return not self.hasCaptures() and not self.isCheck()
 
     def makeRandomMove(self,  whiteTurn: bool):
         """MAX_ITERATIONS = 10

@@ -316,7 +316,7 @@ def alpha_beta_allMoves(alpha: float, beta: float, depth: int, board: LionBoard.
     :return: eval, list of moves
     """
     evals = []
-    eval = board.eval_func()
+    eval = board.eval_baier_func()
 
     if depth == 0:
         return eval, moves, [eval]
@@ -329,7 +329,8 @@ def alpha_beta_allMoves(alpha: float, beta: float, depth: int, board: LionBoard.
 
     if whiteTurn:
         maxEval = float('-inf')
-        list = board.allpossibleMoves(whiteTurn)
+        #list = board.allpossibleMoves(whiteTurn)
+        list = board.allpossibleMoves_baier_capture(whiteTurn)
         for i in list:
             # print(len(i))
             for move in i:
@@ -350,7 +351,8 @@ def alpha_beta_allMoves(alpha: float, beta: float, depth: int, board: LionBoard.
         return maxEval, best_moves, evals
     else:
         minEval = float('inf')
-        list = board.allpossibleMoves(whiteTurn)
+        #list = board.allpossibleMoves(whiteTurn)
+        list = board.allpossibleMoves_baier_capture(whiteTurn)
         for i in list:
             for move in i:
                 new_board = LionBoard.LionBoard()
@@ -530,8 +532,22 @@ def alpha_beta_advanced_simple(depth: int, board: LionBoard.LionBoard, whiteTurn
 #from gpt and ChessProgramming Wiki
 def quiescence_search(alpha, beta, board, whiteTurn):
     #CPW
-    #stand_pat = board.eval_func()
-    stand_pat = board.eval_baier_func()
+    """stand_pat = board.eval_func()
+    if board.isGameOver():
+        return stand_pat
+
+    #stand_pat = board.eval_baier_func()
+    if not whiteTurn:
+        stand_pat = -stand_pat"""
+    stand_pat = 0
+    if whiteTurn:
+        stand_pat = board.eval_baier_func()
+    else:
+        stand_pat = -board.eval_baier_func()
+
+    if board.isGameOver():
+        return stand_pat
+
     if stand_pat >= beta:
         return beta
     if alpha < stand_pat:
@@ -542,12 +558,48 @@ def quiescence_search(alpha, beta, board, whiteTurn):
         new_board.setBoard(board)
         new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
         score = -quiescence_search(-beta, -alpha, new_board, not whiteTurn)
-
-        if score >= beta:
-            return beta
         if score > alpha:
             alpha = score
+            bestmove = move
+            if alpha >= beta:
+                break
     return alpha
+
+    """stand_pat = board.eval_baier_func()
+    if stand_pat >= beta:
+        return beta
+    if alpha < stand_pat:
+        alpha = stand_pat
+
+    if whiteTurn:
+        maxEval = stand_pat
+        list = board.captureMoves(whiteTurn)
+        for move in list:
+            new_board = LionBoard.LionBoard()
+            new_board.setBoard(board)
+            new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            eval = quiescence_search(alpha, beta, new_board, not whiteTurn)
+            if eval > maxEval:
+                maxEval = eval
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                return maxEval
+        return alpha
+    else:
+        minEval = stand_pat
+        list = board.captureMoves(whiteTurn)
+        for move in list:
+            new_board = LionBoard.LionBoard()
+            new_board.setBoard(board)
+            new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+            eval = quiescence_search(alpha, beta, new_board, not whiteTurn)
+            if eval < minEval:
+                minEval = eval
+            beta = min(beta, eval)
+            if beta <= alpha:
+                return minEval
+        return alpha
+"""
 
     #GPT
     """eval = board.eval_func()
@@ -595,66 +647,155 @@ def alpha_beta_quiescence(alpha: float, beta: float, depth: int, board: LionBoar
         return eval, None, [eval]
 
     if depth == 0:
-        if board.isQuiet(whiteTurn):
+        """if board.isQuiet():
             return eval, None, [eval]
-        else:
-            quiescence_eval = quiescence_search(alpha, beta, board, whiteTurn)
-            #print("quiescence_eval:", quiescence_eval)
-            #print("Eval:", eval)
-            return quiescence_eval, None, [eval]
+        else:"""
+        quiescence_eval = quiescence_search(alpha, beta, board, whiteTurn)
+        #print("quiescence_eval:", quiescence_eval)
+        #print("Eval:", eval)
+        return quiescence_eval, None, [eval]
 
 
     if whiteTurn:
         maxEval = float('-inf')
         bestmove = Move.Move()
         #list = board.allpossibleMoves_Orderd(whiteTurn)
-        list = board.allpossibleMoves_baier_biglist(whiteTurn)
-        for move in list:
-            new_board = LionBoard.LionBoard()
-            new_board.setBoard(board)
-            new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
-            new_white_turn = not whiteTurn
-            eval, Temp_Move, Temp = alpha_beta_quiescence(alpha, beta, depth - 1, new_board, new_white_turn)
-            evals.append(eval)
-            if eval > maxEval:
-                maxEval = eval
-                bestmove = move
-            #elif eval == maxEval:
-            #    rand = random.randint(0, 1)
-            #    if rand == 1:
-            #        bestmove = move
-            alpha = max(alpha, eval)
-            if beta <= alpha:
-                return maxEval, bestmove, evals
+        #list = board.allpossibleMoves_baier_biglist(whiteTurn)
+        #for move in list:
+        list = board.allpossibleMoves_baier_capture(whiteTurn)
+        for i in list:
+            for move in i:
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_white_turn = not whiteTurn
+                eval, Temp_Move, Temp = alpha_beta_quiescence(alpha, beta, depth - 1, new_board, new_white_turn)
+                evals.append(eval)
+                if eval > maxEval:
+                    maxEval = eval
+                    bestmove = move
+                #elif eval == maxEval:
+                #    rand = random.randint(0, 1)
+                #    if rand == 1:
+                #        bestmove = move
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    return maxEval, bestmove, evals
         return maxEval, bestmove, evals
     else:
         minEval = float('inf')
         bestmove = Move.Move()
         #list = board.allpossibleMoves_Orderd(whiteTurn)
-        list = board.allpossibleMoves_baier_biglist(whiteTurn)
-        for move in list:
-            new_board = LionBoard.LionBoard()
-            new_board.setBoard(board)
-            new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
-            new_white_turn = not whiteTurn
-            eval, Temp_Move, Temp = alpha_beta_quiescence(alpha, beta, depth - 1, new_board, new_white_turn)
-            evals.append(eval)
-            if eval < minEval:
-                minEval = eval
-                bestmove = move
-            #elif eval == minEval:
-            #    rand = random.randint(0, 1)
-            #    if rand == 1:
-            #        bestmove = move
-            beta = min(beta, eval)
-            if beta <= alpha:
-                return minEval, bestmove, evals
+        #list = board.allpossibleMoves_baier_biglist(whiteTurn)
+        #for move in list:
+        list = board.allpossibleMoves_baier_capture(whiteTurn)
+        for i in list:
+            for move in i:
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_white_turn = not whiteTurn
+                eval, Temp_Move, Temp = alpha_beta_quiescence(alpha, beta, depth - 1, new_board, new_white_turn)
+                evals.append(eval)
+                if eval < minEval:
+                    minEval = eval
+                    bestmove = move
+                #elif eval == minEval:
+                #    rand = random.randint(0, 1)
+                #    if rand == 1:
+                #        bestmove = move
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    return minEval, bestmove, evals
         return minEval, bestmove, evals
 
 
 def alpha_beta_quiescence_simple(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     eval, move, evals = alpha_beta_quiescence(float('-inf'), float('inf'), depth, board, whiteTurn)
     return eval, move, evals
+
+def alpha_beta_quiescence_allMoves(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool, moves: list):
+    """
+    :param alpha: best of max player
+    :param beta:  best of min player
+    :param depth: depth left
+    :param board: game state
+    :param whiteTurn: white is max player, black min player
+    :param moves: list of move that lead to this game state
+    :return: eval, list of moves
+    """
+    evals = []
+    eval = board.eval_baier_func()
+
+    if board.isGameOver():
+        return eval, moves, [eval]
+
+    if depth == 0:
+        if board.isQuiet():
+            return eval, moves, [eval]
+        else:
+            if whiteTurn:
+                quiescence_eval = quiescence_search(alpha, beta, board, whiteTurn)
+                # print("quiescence_eval:", quiescence_eval)
+                # print("Eval:", eval)
+                return quiescence_eval, moves, [eval]
+            else:
+                quiescence_eval = - quiescence_search(alpha, beta, board, whiteTurn)
+                # print("quiescence_eval:", quiescence_eval)
+                # print("Eval:", eval)
+                return quiescence_eval, moves, [eval]
+
+    best_moves = copy.deepcopy(moves)
+    board_fen = board.getFen()
+
+    if whiteTurn:
+        maxEval = float('-inf')
+        #list = board.allpossibleMoves(whiteTurn)
+        list = board.allpossibleMoves_baier_capture(whiteTurn)
+        for i in list:
+            # print(len(i))
+            for move in i:
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_moves = copy.deepcopy(moves)
+                new_moves.append(move)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_white_turn = not whiteTurn
+                eval, move_list, temp = alpha_beta_quiescence_allMoves(alpha, beta, depth - 1, new_board, new_white_turn, new_moves)
+                evals.append(eval)
+                if eval > maxEval:
+                    maxEval = eval
+                    best_moves = move_list
+                alpha = max(alpha, eval)
+                if beta <= alpha:
+                    return maxEval, best_moves, evals
+        return maxEval, best_moves, evals
+    else:
+        minEval = float('inf')
+        #list = board.allpossibleMoves(whiteTurn)
+        list = board.allpossibleMoves_baier_capture(whiteTurn)
+        for i in list:
+            for move in i:
+                new_board = LionBoard.LionBoard()
+                new_board.setBoard(board)
+                new_moves = copy.deepcopy(moves)
+                new_moves.append(move)
+                new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+                new_white_turn = not whiteTurn
+                eval, move_list, temp = alpha_beta_quiescence_allMoves(alpha, beta, depth - 1, new_board, new_white_turn, new_moves)
+                evals.append(eval)
+                if eval < minEval:
+                    minEval = eval
+                    best_moves = move_list
+                beta = min(beta, eval)
+                if beta <= alpha:
+                    return minEval, best_moves, evals
+        return minEval, best_moves, evals
+
+
+def alpha_beta_quiescence_allMoves_simple(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+    eval, moves, evals = alpha_beta_quiescence_allMoves(float('-inf'), float('inf'), depth, board, whiteTurn, [])
+    return eval, moves, evals
 
 def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     """
@@ -715,6 +856,45 @@ def alpha_beta_win_loss(alpha: float, beta: float, depth: int, board: LionBoard.
 def alpha_beta_win_loss_simple(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     eval, move = alpha_beta_win_loss(float('-inf'), float('inf'), depth, board, whiteTurn)
     return eval, move
+
+def NegaMax(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
+    """if (game.isFinal()) {
+    return player * game.score();
+    for (int move: Game.moves) {
+        game.doMove(move);
+    int score = - scorePlayer(-player, -beta, -alpha); game.undoMove(move);
+    if (score > alpha) {
+    alpha = score;
+    if (alpha >= beta)
+    break;}
+    }
+    return alpha;}"""
+    if whiteTurn:
+        eval = board.eval_baier_func()
+    else:
+        eval = -board.eval_baier_func()
+
+    if board.isGameOver():
+        return eval, None
+
+    if depth == 0:
+        return eval, None
+
+    bestmove = Move.Move()
+    list = board.allpossibleMoves_baier_biglist(whiteTurn)
+    for move in list:
+        new_board = LionBoard.LionBoard()
+        new_board.setBoard(board)
+        new_board.makeMove(whiteTurn, move.getFrom(), move.getTo())
+        eval, Temp_Move = NegaMax(-beta, -alpha, depth - 1, new_board, not whiteTurn)
+        eval = -eval
+        if eval > alpha:
+            alpha = eval
+            bestmove = move
+            if alpha >= beta:
+                break
+    return alpha, bestmove
+
 
 def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     if depth == 0:
