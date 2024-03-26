@@ -562,7 +562,8 @@ def quiescence_search(alpha, beta, board, whiteTurn):
             alpha = score
             bestmove = move
             if alpha >= beta:
-                break
+                return beta
+                #break
     return alpha
 
     """stand_pat = board.eval_baier_func()
@@ -647,13 +648,24 @@ def alpha_beta_quiescence(alpha: float, beta: float, depth: int, board: LionBoar
         return eval, None, [eval]
 
     if depth == 0:
-        """if board.isQuiet():
+        if board.isQuiet():
             return eval, None, [eval]
-        else:"""
-        quiescence_eval = quiescence_search(alpha, beta, board, whiteTurn)
+        else:
+            if whiteTurn:
+                quiescence_eval = quiescence_search(alpha, beta, board, whiteTurn)
+                # print("quiescence_eval:", quiescence_eval)
+                # print("Eval:", eval)
+                return quiescence_eval, None, [eval]
+            else:
+                quiescence_eval = - quiescence_search(alpha, beta, board, whiteTurn)
+                # print("quiescence_eval:", quiescence_eval)
+                # print("Eval:", eval)
+                return quiescence_eval, None, [eval]
+        """else:
+            quiescence_eval = quiescence_search(alpha, beta, board, whiteTurn)
         #print("quiescence_eval:", quiescence_eval)
         #print("Eval:", eval)
-        return quiescence_eval, None, [eval]
+        return quiescence_eval, None, [eval]"""
 
 
     if whiteTurn:

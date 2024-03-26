@@ -134,10 +134,11 @@ def Mate_in_Test():
     for fen in boards:
         print(fen)
         board.setBoard_Fen(fen)
-        #evalAB, move = AlphaBeta.alpha_beta_simple(depth, board, True)
+        #evalAB, move = AlphaBeta.alpha_beta_simple(depth, board, True)#
+        evalAB, moves, evals = AlphaBeta.alpha_beta_allMoves_simple(depth, board, True)
         #evalAB, move = AlphaBeta.NegaMax(float('-inf'), float('inf'), depth, board, True)
         #evalAB, move, temp = AlphaBeta.alpha_beta_quiescence_simple(depth, board, True)
-        evalAB, moves, evals = AlphaBeta.alpha_beta_quiescence_allMoves_simple(depth, board, True)
+        #evalAB, moves, evals = AlphaBeta.alpha_beta_quiescence_allMoves_simple(depth, board, True)
         print("Eval =", evalAB)
         moves[0].printMove()
         #move.printMove()
@@ -213,10 +214,10 @@ def Quiet_Search_Test():
     print("Eval:",eval)
 
 if __name__ == '__main__':
-    Possible_Pos()
+    #Possible_Pos()
     #AB_VS_AB()
     #Mate_in_Test()
     #PV_Test()
-    #Quiet_Test()
+    Quiet_Test()
     #eval_varianz_test()
     #Quiet_Search_Test()

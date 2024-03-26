@@ -48,16 +48,16 @@ for _i_depth in range(MaxDepth):
                             case "AlphaBeta":
                                 evalAB, move = AlphaBeta.alpha_beta_simple(Depth, board, whiteTurn)
                                 board.makeMove(whiteTurn, move.getFrom(), move.getTo())
-                            case "AlphaBeta-Quiescence":
-                                evalAB, move = AlphaBeta.alpha_beta_simple(Depth, board, whiteTurn)
+                            case "AlphaBeta_Quiescence":
+                                evalAB, move, temp = AlphaBeta.alpha_beta_quiescence_simple(Depth, board, whiteTurn)
                                 board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     else:
                         match B_player:
                             case "AlphaBeta":
                                 evalAB, move = AlphaBeta.alpha_beta_simple(i_depth, board, whiteTurn)
                                 board.makeMove(whiteTurn, move.getFrom(), move.getTo())
-                            case "AlphaBeta-Quiescence":
-                                evalAB, move = AlphaBeta.alpha_beta_simple(i_depth, board, whiteTurn)
+                            case "AlphaBeta_Quiescence":
+                                evalAB, move, temp = AlphaBeta.alpha_beta_quiescence_simple(i_depth, board, whiteTurn)
                                 board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     whiteTurn = not whiteTurn
 
@@ -81,7 +81,7 @@ for _i_depth in range(MaxDepth):
                                 evalAB, move = AlphaBeta.alpha_beta_simple(i_depth, board, whiteTurn)
                                 board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                             case "AlphaBeta_Quiescence":
-                                evalAB, move = AlphaBeta.alpha_beta_simple(i_depth, board, whiteTurn)
+                                evalAB, move, temp = AlphaBeta.alpha_beta_quiescence_simple(i_depth, board, whiteTurn)
                                 board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     else:
                         match A_player:
@@ -89,7 +89,7 @@ for _i_depth in range(MaxDepth):
                                 evalAB, move = AlphaBeta.alpha_beta_simple(Depth, board, whiteTurn)
                                 board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                             case "AlphaBeta_Quiescence":
-                                evalAB, move = AlphaBeta.alpha_beta_simple(Depth, board, whiteTurn)
+                                evalAB, move, temp = AlphaBeta.alpha_beta_quiescence_simple(Depth, board, whiteTurn)
                                 board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     whiteTurn = not whiteTurn
 
