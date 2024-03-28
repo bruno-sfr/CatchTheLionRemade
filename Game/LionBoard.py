@@ -804,7 +804,8 @@ class LionBoard:
         # lion
         for i in lion:
             temp_last_line = BitBoard.BitBoard()
-            temp_last_line.setBoard(self.lion_moves[i] & last_line)
+            #temp_last_line.setBoard(self.lion_moves[i] & last_line)
+            temp_last_line.setBoard(self.lion_moves[i] & last_line & ~Attacker)
             temp_last_line_list = temp_last_line.allSetSquares()
             for i2 in temp_last_line_list:
                 move = Move.Move()
@@ -874,25 +875,29 @@ class LionBoard:
                 giraffe_capture_list.append(move)"""
 
             temp_capture = BitBoard.BitBoard()
-            temp_capture.setBoard(self.giraffe_moves[i] & Defender_hen.getBoard() & ~last_line)
+            #temp_capture.setBoard(self.giraffe_moves[i] & Defender_hen.getBoard() & ~last_line)
+            temp_capture.setBoard(self.giraffe_moves[i] & Defender_hen.getBoard())
             temp_capture_list = temp_capture.allSetSquares()
             for i2 in temp_capture_list:
                 move = Move.Move()
                 move.setMove(i, i2)
                 giraffe_capture_list.append(move)
-            temp_capture.setBoard(self.giraffe_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+            #temp_capture.setBoard(self.giraffe_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+            temp_capture.setBoard(self.giraffe_moves[i] & Defender_giraffe.getBoard())
             temp_capture_list = temp_capture.allSetSquares()
             for i2 in temp_capture_list:
                 move = Move.Move()
                 move.setMove(i, i2)
                 giraffe_capture_list.append(move)
-            temp_capture.setBoard(self.giraffe_moves[i] & Defender_elephant.getBoard() & ~last_line)
+            #temp_capture.setBoard(self.giraffe_moves[i] & Defender_elephant.getBoard() & ~last_line)
+            temp_capture.setBoard(self.giraffe_moves[i] & Defender_elephant.getBoard())
             temp_capture_list = temp_capture.allSetSquares()
             for i2 in temp_capture_list:
                 move = Move.Move()
                 move.setMove(i, i2)
                 giraffe_capture_list.append(move)
-            temp_capture.setBoard(self.giraffe_moves[i] & Defender_chicken.getBoard() & ~last_line)
+            #temp_capture.setBoard(self.giraffe_moves[i] & Defender_chicken.getBoard() & ~last_line)
+            temp_capture.setBoard(self.giraffe_moves[i] & Defender_chicken.getBoard())
             temp_capture_list = temp_capture.allSetSquares()
             for i2 in temp_capture_list:
                 move = Move.Move()
@@ -900,7 +905,8 @@ class LionBoard:
                 giraffe_capture_list.append(move)
 
             temp = BitBoard.BitBoard()
-            temp.setBoard(self.giraffe_moves[i] & ~Attacker & ~Defender_Lion.getBoard())
+            #temp.setBoard(self.giraffe_moves[i] & ~Attacker & ~Defender_Lion.getBoard())
+            temp.setBoard(self.giraffe_moves[i] & ~Attacker & ~Defender)
             temp_list = temp.allSetSquares()
             for i2 in temp_list:
                 move = Move.Move()
@@ -923,25 +929,29 @@ class LionBoard:
                 elephant_capture_list.append(move)
             """
             temp_capture = BitBoard.BitBoard()
-            temp_capture.setBoard(self.elephant_moves[i] & Defender_hen.getBoard() & ~last_line)
+            #temp_capture.setBoard(self.elephant_moves[i] & Defender_hen.getBoard() & ~last_line)
+            temp_capture.setBoard(self.elephant_moves[i] & Defender_hen.getBoard())
             temp_capture_list = temp_capture.allSetSquares()
             for i2 in temp_capture_list:
                 move = Move.Move()
                 move.setMove(i, i2)
                 elephant_capture_list.append(move)
-            temp_capture.setBoard(self.elephant_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+            #temp_capture.setBoard(self.elephant_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+            temp_capture.setBoard(self.elephant_moves[i] & Defender_giraffe.getBoard())
             temp_capture_list = temp_capture.allSetSquares()
             for i2 in temp_capture_list:
                 move = Move.Move()
                 move.setMove(i, i2)
                 elephant_capture_list.append(move)
-            temp_capture.setBoard(self.elephant_moves[i] & Defender_elephant.getBoard() & ~last_line)
+            #temp_capture.setBoard(self.elephant_moves[i] & Defender_elephant.getBoard() & ~last_line)
+            temp_capture.setBoard(self.elephant_moves[i] & Defender_elephant.getBoard())
             temp_capture_list = temp_capture.allSetSquares()
             for i2 in temp_capture_list:
                 move = Move.Move()
                 move.setMove(i, i2)
                 elephant_capture_list.append(move)
-            temp_capture.setBoard(self.elephant_moves[i] & Defender_chicken.getBoard() & ~last_line)
+            #temp_capture.setBoard(self.elephant_moves[i] & Defender_chicken.getBoard() & ~last_line)
+            temp_capture.setBoard(self.elephant_moves[i] & Defender_chicken.getBoard())
             temp_capture_list = temp_capture.allSetSquares()
             for i2 in temp_capture_list:
                 move = Move.Move()
@@ -949,7 +959,8 @@ class LionBoard:
                 elephant_capture_list.append(move)
 
             temp = BitBoard.BitBoard()
-            temp.setBoard(self.elephant_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+            #temp.setBoard(self.elephant_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+            temp.setBoard(self.elephant_moves[i] & ~Attacker & ~Defender)
             temp_list = temp.allSetSquares()
             for i2 in temp_list:
                 move = Move.Move()
@@ -973,25 +984,29 @@ class LionBoard:
                     chicken_capture_list.append(move)"""
 
                 temp_capture = BitBoard.BitBoard()
-                temp_capture.setBoard(self.chicken_white_moves[i] & Defender_hen.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.chicken_white_moves[i] & Defender_hen.getBoard() & ~last_line)
+                temp_capture.setBoard(self.chicken_white_moves[i] & Defender_hen.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     chicken_capture_list.append(move)
-                temp_capture.setBoard(self.chicken_white_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.chicken_white_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+                temp_capture.setBoard(self.chicken_white_moves[i] & Defender_giraffe.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     chicken_capture_list.append(move)
-                temp_capture.setBoard(self.chicken_white_moves[i] & Defender_elephant.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.chicken_white_moves[i] & Defender_elephant.getBoard() & ~last_line)
+                temp_capture.setBoard(self.chicken_white_moves[i] & Defender_elephant.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     chicken_capture_list.append(move)
-                temp_capture.setBoard(self.chicken_white_moves[i] & Defender_chicken.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.chicken_white_moves[i] & Defender_chicken.getBoard() & ~last_line)
+                temp_capture.setBoard(self.chicken_white_moves[i] & Defender_chicken.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
@@ -999,7 +1014,8 @@ class LionBoard:
                     chicken_capture_list.append(move)
 
                 temp = BitBoard.BitBoard()
-                temp.setBoard(self.chicken_white_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+                #temp.setBoard(self.chicken_white_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+                temp.setBoard(self.chicken_white_moves[i] & ~Attacker & ~Defender)
                 temp_list = temp.allSetSquares()
                 for i2 in temp_list:
                     move = Move.Move()
@@ -1021,25 +1037,29 @@ class LionBoard:
                     chicken_capture_list.append(move)"""
 
                 temp_capture = BitBoard.BitBoard()
-                temp_capture.setBoard(self.chicken_black_moves[i] & Defender_hen.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.chicken_black_moves[i] & Defender_hen.getBoard() & ~last_line)
+                temp_capture.setBoard(self.chicken_black_moves[i] & Defender_hen.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     chicken_capture_list.append(move)
-                temp_capture.setBoard(self.chicken_black_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.chicken_black_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+                temp_capture.setBoard(self.chicken_black_moves[i] & Defender_giraffe.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     chicken_capture_list.append(move)
-                temp_capture.setBoard(self.chicken_black_moves[i] & Defender_elephant.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.chicken_black_moves[i] & Defender_elephant.getBoard() & ~last_line)
+                temp_capture.setBoard(self.chicken_black_moves[i] & Defender_elephant.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     chicken_capture_list.append(move)
-                temp_capture.setBoard(self.chicken_black_moves[i] & Defender_chicken.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.chicken_black_moves[i] & Defender_chicken.getBoard() & ~last_line)
+                temp_capture.setBoard(self.chicken_black_moves[i] & Defender_chicken.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
@@ -1047,7 +1067,8 @@ class LionBoard:
                     chicken_capture_list.append(move)
 
                 temp = BitBoard.BitBoard()
-                temp.setBoard(self.chicken_black_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+                #temp.setBoard(self.chicken_black_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+                temp.setBoard(self.chicken_black_moves[i] & ~Attacker & ~Defender)
                 temp_list = temp.allSetSquares()
                 for i2 in temp_list:
                     move = Move.Move()
@@ -1071,25 +1092,29 @@ class LionBoard:
                     hen_capture_list.append(move)"""
 
                 temp_capture = BitBoard.BitBoard()
-                temp_capture.setBoard(self.hen_white_moves[i] & Defender_hen.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.hen_white_moves[i] & Defender_hen.getBoard() & ~last_line)
+                temp_capture.setBoard(self.hen_white_moves[i] & Defender_hen.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     hen_capture_list.append(move)
-                temp_capture.setBoard(self.hen_white_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.hen_white_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+                temp_capture.setBoard(self.hen_white_moves[i] & Defender_giraffe.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     hen_capture_list.append(move)
-                temp_capture.setBoard(self.hen_white_moves[i] & Defender_elephant.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.hen_white_moves[i] & Defender_elephant.getBoard() & ~last_line)
+                temp_capture.setBoard(self.hen_white_moves[i] & Defender_elephant.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     hen_capture_list.append(move)
-                temp_capture.setBoard(self.hen_white_moves[i] & Defender_chicken.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.hen_white_moves[i] & Defender_chicken.getBoard() & ~last_line)
+                temp_capture.setBoard(self.hen_white_moves[i] & Defender_chicken.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
@@ -1097,7 +1122,8 @@ class LionBoard:
                     hen_capture_list.append(move)
 
                 temp = BitBoard.BitBoard()
-                temp.setBoard(self.hen_white_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+                #temp.setBoard(self.hen_white_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+                temp.setBoard(self.hen_white_moves[i] & ~Attacker & ~Defender)
                 temp_list = temp.allSetSquares()
                 for i2 in temp_list:
                     move = Move.Move()
@@ -1119,25 +1145,29 @@ class LionBoard:
                     hen_capture_list.append(move)"""
 
                 temp_capture = BitBoard.BitBoard()
-                temp_capture.setBoard(self.hen_black_moves[i] & Defender_hen.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.hen_black_moves[i] & Defender_hen.getBoard() & ~last_line)
+                temp_capture.setBoard(self.hen_black_moves[i] & Defender_hen.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     hen_capture_list.append(move)
-                temp_capture.setBoard(self.hen_black_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.hen_black_moves[i] & Defender_giraffe.getBoard() & ~last_line)
+                temp_capture.setBoard(self.hen_black_moves[i] & Defender_giraffe.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     hen_capture_list.append(move)
-                temp_capture.setBoard(self.hen_black_moves[i] & Defender_elephant.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.hen_black_moves[i] & Defender_elephant.getBoard() & ~last_line)
+                temp_capture.setBoard(self.hen_black_moves[i] & Defender_elephant.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
                     move.setMove(i, i2)
                     hen_capture_list.append(move)
-                temp_capture.setBoard(self.hen_black_moves[i] & Defender_chicken.getBoard() & ~last_line)
+                #temp_capture.setBoard(self.hen_black_moves[i] & Defender_chicken.getBoard() & ~last_line)
+                temp_capture.setBoard(self.hen_black_moves[i] & Defender_chicken.getBoard())
                 temp_capture_list = temp_capture.allSetSquares()
                 for i2 in temp_capture_list:
                     move = Move.Move()
@@ -1145,7 +1175,8 @@ class LionBoard:
                     hen_capture_list.append(move)
 
                 temp = BitBoard.BitBoard()
-                temp.setBoard(self.hen_black_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+                #temp.setBoard(self.hen_black_moves[i] & ~Attacker & ~Defender & ~Defender_Lion.getBoard())
+                temp.setBoard(self.hen_black_moves[i] & ~Attacker & ~Defender)
                 temp_list = temp.allSetSquares()
                 for i2 in temp_list:
                     move = Move.Move()

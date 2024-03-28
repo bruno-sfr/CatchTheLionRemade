@@ -163,6 +163,80 @@ def eval_varianz_test():
             move.printMove()
         print("")
 
+def test_allMoves():
+    boards = ["eg1/lc1/1CL/G1E/", "eg1/1l1/GE1/1L1/cC", "1l1/G2/L1g/2E/cCE", "eg1/lc1/1CL/G1E/", "1g1/G1l/3/1LE/cC",
+              "1l1/Ge1/L1g/2E/cC", "1l1/Gg1/1Ee/2L/cC", "el1/1c1/GCg/1LE/", "1l1/1e1/1Gg/1LE/Cc", "lc1/E2/3/L"]
+    #boards = ["11g/11l/Lce/1CG/e"]
+    whiteTurn = True
+
+    for board in boards:
+        lionboard = LionBoard.LionBoard()
+        lionboard.setBoard_Fen(board)
+        lionboard.printBoard()
+        print("")
+        list_a = lionboard.allpossibleMoves_BigList(whiteTurn)
+        list_b = lionboard.allpossibleMoves_baier_biglist(whiteTurn)
+        print("List A")
+        for move in list_a:
+            move.printMove()
+        print("List B")
+        for move in list_b:
+            move.printMove()
+        print("")
+        for move in list_a:
+            move_exists = False
+            for move_b in list_b:
+                if move.equals(move_b):
+                    move_exists = True
+                    break
+            if move_exists:
+                continue
+            else:
+                print("Faulty Move detected")
+                move.printMove()
+                return
+    print("Test passed")
+
+
+def test_allMoves_random():
+    #boards = ["eg1/lc1/1CL/G1E/", "eg1/1l1/GE1/1L1/cC", "1l1/G2/L1g/2E/cCE", "eg1/lc1/1CL/G1E/", "1g1/G1l/3/1LE/cC",
+    #          "1l1/Ge1/L1g/2E/cC", "1l1/Gg1/1Ee/2L/cC", "el1/1c1/GCg/1LE/", "1l1/1e1/1Gg/1LE/Cc", "lc1/E2/3/L"]
+    #boards = ["1l1/1e1/1Gg/1LE/Cc"]
+    whiteTurn = True
+
+    for i in range(1000):
+        lionboard = LionBoard.LionBoard()
+        lionboard.randomBoard()
+        print(lionboard.getFen())
+        print("")
+        list_a = lionboard.allpossibleMoves_BigList(whiteTurn)
+        list_b = lionboard.allpossibleMoves_baier_biglist(whiteTurn)
+
+        if len(list_a) != len(list_b):
+            print("Length mismatch!")
+            return
+
+        """print("List A")
+        for move in list_a:
+            move.printMove()
+        print("List B")
+        for move in list_b:
+            move.printMove()
+        print("")"""
+        for move in list_a:
+            move_exists = False
+            for move_b in list_b:
+                if move.equals(move_b):
+                    move_exists = True
+                    break
+            if move_exists:
+                continue
+            else:
+                print("Faulty Move detected")
+                move.printMove()
+                return
+    print("Test passed")
+
 def PV_Test():
     board = LionBoard.LionBoard()
     boards = ["eg1/lc1/1CL/G1E/", "eg1/1l1/GE1/1L1/cC", "1l1/G2/L1g/2E/cCE", "eg1/lc1/1CL/G1E/", "1g1/G1l/3/1LE/cC",
@@ -218,6 +292,8 @@ if __name__ == '__main__':
     #AB_VS_AB()
     #Mate_in_Test()
     #PV_Test()
-    Quiet_Test()
+    #Quiet_Test()
     #eval_varianz_test()
     #Quiet_Search_Test()
+    test_allMoves()
+    #test_allMoves_random()
