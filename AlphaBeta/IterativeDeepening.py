@@ -42,7 +42,8 @@ class iterativeDeepeningMTD:
                 #eval, moves = self.MTD.MTDF(eval, depth, board, WhiteTurn, 0.1)
                 self.depth = self.depth + 1
         except TimeoutError as e:
-            print(e)
+            pass
+            #print(e)
         if self.depth % 2 == 0:
             return evalMTD_even, moves, self.depth
         else:
@@ -74,7 +75,8 @@ class iterativeDeepeningMTD:
                 #eval, moves = self.MTD.MTDF(eval, depth, board, WhiteTurn, 0.1)
                 self.depth = self.depth + 1
         except TimeoutError as e:
-            print(e)
+            pass
+            #print(e)
         if self.depth % 2 == 0:
             return evalMTD_even, moves, self.depth
         else:
@@ -108,7 +110,8 @@ class iterativeDeepeningAB:
             # Disable the alarm since the function executed successfully
             # signal.alarm(0)
         except TimeoutError as e:
-            print(e)
+            pass
+            #print(e)
             # Handle the timeout event here (e.g., show an error message, take some action, etc.)
         return eval, move, self.depth
 
@@ -134,7 +137,8 @@ class iterativeDeepeningAB:
             # Disable the alarm since the function executed successfully
             # signal.alarm(0)
         except TimeoutError as e:
-            print(e)
+            pass
+            #print(e)
             # Handle the timeout event here (e.g., show an error message, take some action, etc.)
         return eval, move, self.depth
 
@@ -160,7 +164,35 @@ class iterativeDeepeningAB:
             # Disable the alarm since the function executed successfully
             # signal.alarm(0)
         except TimeoutError as e:
-            print(f"Depth {self.depth} reached")
+            pass
+            # print(f"Depth {self.depth} reached")
+            # Handle the timeout event here (e.g., show an error message, take some action, etc.)
+        return eval, move, self.depth
+
+    def iterativeDeepening_AB_Q(self, time: int, board: LionBoard.LionBoard, WhiteTurn: bool):
+        # Set the timeout in seconds
+        timeout_seconds = time
+        self.depth = 1
+        result = 0.0
+
+        # Set the timeout handler for the SIGALRM signal
+        signal.signal(signal.SIGALRM, timeout_handler)
+
+        try:
+            # Set the alarm to trigger after the specified timeout
+            signal.alarm(timeout_seconds)
+
+            # Call your function
+            while True:
+                eval, move, temp = AlphaBeta.alpha_beta_quiescence_simple(self.depth, board, WhiteTurn)
+                # print("Depth:", depth)
+                self.depth = self.depth + 1
+
+            # Disable the alarm since the function executed successfully
+            # signal.alarm(0)
+        except TimeoutError as e:
+            pass
+            # print(f"Depth {self.depth} reached")
             # Handle the timeout event here (e.g., show an error message, take some action, etc.)
         return eval, move, self.depth
 

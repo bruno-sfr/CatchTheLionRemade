@@ -222,21 +222,24 @@ class Alpha_Beta_TT:
                         beta = min(beta, entry.Eval)
 
         if depth == 0:
-            eval = board.eval_func()
+            #eval = board.eval_func()
+            eval = board.eval_baier_func()
             #newEntry = HashEntry_Final.HashEntry(boardhash, depth, eval, AB_Flag.Flag.EXACT, Move.Move())
             #self.table.storeEntry(newEntry)
             return eval, None
 
         # if eval > 900 or eval < -900:
         if board.isGameOver():
-            eval = board.eval_func()
+            # eval = board.eval_func()
+            eval = board.eval_baier_func()
             return eval, None
 
         if whiteTurn:
             maxEval = float('-inf')
             a = alpha
             bestmove = Move.Move()
-            list = board.allpossibleMoves(whiteTurn)
+            #list = board.allpossibleMoves(whiteTurn)
+            list = board.allpossibleMoves_baier_capture(whiteTurn)
             for i in list:
                 for move in i:
                     new_board = LionBoard.LionBoard()
@@ -270,7 +273,8 @@ class Alpha_Beta_TT:
             minEval = float('inf')
             b = beta
             bestmove = Move.Move()
-            list = board.allpossibleMoves(whiteTurn)
+            # list = board.allpossibleMoves(whiteTurn)
+            list = board.allpossibleMoves_baier_capture(whiteTurn)
             for i in list:
                 for move in i:
                     new_board = LionBoard.LionBoard()
@@ -910,17 +914,20 @@ def NegaMax(alpha: float, beta: float, depth: int, board: LionBoard.LionBoard, w
 
 def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     if depth == 0:
-        eval = board.eval_func()
+        #eval = board.eval_func()
+        eval = board.eval_baier_func()
         return eval, None
 
     if board.isGameOver():
-        eval = board.eval_func()
+        #eval = board.eval_func()
+        eval = board.eval_baier_func()
         return eval, None
 
     if whiteTurn:
         maxEval = float('-inf')
         bestmove = Move.Move()
-        list = board.allpossibleMoves(whiteTurn)
+        #list = board.allpossibleMoves(whiteTurn)
+        list = board.allpossibleMoves_baier_capture(whiteTurn)
         for i in list:
             for move in i:
                 new_board = copy.deepcopy(board)
@@ -936,7 +943,8 @@ def MiniMax(depth: int, board: LionBoard.LionBoard, whiteTurn: bool):
     else:
         minEval = float('inf')
         bestmove = Move.Move()
-        list = board.allpossibleMoves(whiteTurn)
+        #list = board.allpossibleMoves(whiteTurn)
+        list = board.allpossibleMoves_baier_capture(whiteTurn)
         for i in list:
             for move in i:
                 new_board = copy.deepcopy(board)

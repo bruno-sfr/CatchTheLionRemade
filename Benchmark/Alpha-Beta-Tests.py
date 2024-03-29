@@ -44,10 +44,10 @@ def AB_VS_AB():
                  "el1/1cg/GC1/1LE/", "elg/111/Gc1/1LE/c", "e1g/1Cl/111/GLE/C", "e1g/1l1/111/GLE/cC", "e1g/lC1/111/GLE/C",
                  "el1/1Cg/111/GLE/C", "1lg/1e1/111/GLE/cC"]"""
     Positions_0 = ["elg/1c1/1C1/GLE/"]
-    Positions_1 = ["elg/1c1/1CL/G1E/", "elg/1c1/LC1/G1E/", "elg/1c1/GC1/1LE/", "elg/1C1/111/GLE/C"]
-    Positions = ["e1g/lc1/1CL/G1E/", "el1/1cg/1CL/G1E/", "elg/111/1cL/G1E/c", "e1g/1cl/LC1/G1E/","el1/1cg/LC1/G1E/",
-                 "elg/111/Lc1/G1E/c", "e1g/1cl/GC1/1LE/", "el1/1cg/GC1/1LE/", "elg/111/Gc1/1LE/c", "e1g/1Cl/111/GLE/C",
-                 "e1g/1l1/111/GLE/cC", "e1g/lC1/111/GLE/C", "1lg/1e1/111/GLE/cC"]
+    Positions = ["elg/1c1/1CL/G1E/", "elg/1c1/LC1/G1E/", "elg/1c1/GC1/1LE/", "elg/1C1/111/GLE/C"]
+    #Positions = ["e1g/lc1/1CL/G1E/", "el1/1cg/1CL/G1E/", "elg/111/1cL/G1E/c", "e1g/1cl/LC1/G1E/","el1/1cg/LC1/G1E/",
+    #             "elg/111/Lc1/G1E/c", "e1g/1cl/GC1/1LE/", "el1/1cg/GC1/1LE/", "elg/111/Gc1/1LE/c", "e1g/1Cl/111/GLE/C",
+    #             "e1g/1l1/111/GLE/cC", "e1g/lC1/111/GLE/C", "1lg/1e1/111/GLE/cC"]
 
     """Positions = []
     with open('./Board_Positions.txt', 'r') as file:
@@ -59,8 +59,8 @@ def AB_VS_AB():
         board.setBoard_Fen(pos)
         board.printBoard()"""
 
-    A_Depth = 5
-    B_Depth = 5
+    A_Depth = 9
+    B_Depth = 10
     A_Wins = 0
     B_Wins = 0
     max_turns = 100
@@ -70,16 +70,16 @@ def AB_VS_AB():
         for i in range(2):
             board = LionBoard.LionBoard()
             board.setBoard_Fen(pos)
-            whiteTurn = True
+            whiteTurn = False
             turns = 0
             if i == 0:
                 print("Even Play")
                 while not board.isGameOver():
                     if whiteTurn:
-                        #evalAB, move = AlphaBeta.alpha_beta_simple(A_Depth, board, whiteTurn)
+                        evalAB, move = AlphaBeta.alpha_beta_simple(A_Depth, board, whiteTurn)
                         #evalAB, move, temp = AlphaBeta.alpha_beta_quiescence_simple(A_Depth, board, whiteTurn)
-                        evalAB, moves, evals = AlphaBeta.alpha_beta_quiescence_allMoves_simple(A_Depth, board, whiteTurn)
-                        move = moves[0]
+                        #evalAB, moves, evals = AlphaBeta.alpha_beta_quiescence_allMoves_simple(A_Depth, board, whiteTurn)
+                        #move = moves[0]
                         board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     else:
                         evalAB, move = AlphaBeta.alpha_beta_simple(B_Depth, board, whiteTurn)
@@ -106,10 +106,10 @@ def AB_VS_AB():
                         #evalAB, move, temp = AlphaBeta.alpha_beta_quiescence_simple(B_Depth, board, whiteTurn)
                         board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     else:
-                        #evalAB, move = AlphaBeta.alpha_beta_simple(A_Depth, board, whiteTurn)
+                        evalAB, move = AlphaBeta.alpha_beta_simple(A_Depth, board, whiteTurn)
                         #evalAB, move, temp = AlphaBeta.alpha_beta_quiescence_simple(A_Depth, board, whiteTurn)
-                        evalAB, moves, evals = AlphaBeta.alpha_beta_quiescence_allMoves_simple(A_Depth, board, whiteTurn)
-                        move = moves[0]
+                        #evalAB, moves, evals = AlphaBeta.alpha_beta_quiescence_allMoves_simple(A_Depth, board, whiteTurn)
+                        #move = moves[0]
                         board.makeMove(whiteTurn, move.getFrom(), move.getTo())
                     whiteTurn = not whiteTurn
 
@@ -289,11 +289,11 @@ def Quiet_Search_Test():
 
 if __name__ == '__main__':
     #Possible_Pos()
-    #AB_VS_AB()
+    AB_VS_AB()
     #Mate_in_Test()
     #PV_Test()
     #Quiet_Test()
     #eval_varianz_test()
     #Quiet_Search_Test()
-    test_allMoves()
+    #test_allMoves()
     #test_allMoves_random()
