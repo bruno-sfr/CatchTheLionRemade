@@ -131,13 +131,13 @@ def TestPostion():
     #AB= AlphaBeta.Alpha_Beta_TT()
     MTD_second_guess = AlphaBeta.MTDF()
 
-    Depth = 6
+    Depth = 10
     iterations = 1
     x = range(1, Depth + 1)
 
     for i in range(1, Depth + 1):
         print("Depth:", i)
-        print("Alpha-Beta")
+        """print("Alpha-Beta")
         avg_timetaken = 0
         for i2 in range(iterations):
             start = time.time()
@@ -149,11 +149,11 @@ def TestPostion():
             #print("timetaken", timetaken)
             avg_timetaken = avg_timetaken + timetaken
         avg_timetaken = avg_timetaken/iterations
-        #print("avg time:", avg_timetaken)
+        print("avg time:", avg_timetaken)
         AB_List.append(avg_timetaken)
-        #AB_Eval_List.append(evalAB)
+        #AB_Eval_List.append(evalAB)"""
 
-        print("")
+        """print("")
         print("MiniMax")
         avg_timetaken = 0
         for i2 in range(iterations):
@@ -166,11 +166,11 @@ def TestPostion():
             #print("timetaken", timetaken)
             avg_timetaken = avg_timetaken + timetaken
         avg_timetaken = avg_timetaken / iterations
-        #print("avg time:", avg_timetaken)
+        print("avg time:", avg_timetaken)
         MM_List.append(avg_timetaken)
-        #MM_Eval_List.append(evalMM)
+        #MM_Eval_List.append(evalMM)"""
 
-        """print("")
+        print("")
         print("Alpha-Beta_TT")
         avg_timetaken = 0
         for i2 in range(iterations):
@@ -184,10 +184,10 @@ def TestPostion():
             avg_timetaken = avg_timetaken + timetaken
         avg_timetaken = avg_timetaken / iterations
         print("avg time:", avg_timetaken)
-        AB_TT_store_List.append(avg_timetaken)"""
+        AB_TT_store_List.append(avg_timetaken)
         #AB_TT_store_Eval_List.append(eval)
 
-        """print("")
+        print("")
         print("MTD(f) with f=bestSecondGuess")
         avg_timetaken = 0
         for i2 in range(iterations):
@@ -205,7 +205,7 @@ def TestPostion():
             avg_timetaken = avg_timetaken + timetaken
         avg_timetaken = avg_timetaken / iterations
         print("avg time:", avg_timetaken)
-        MTD_second_guess_List.append(avg_timetaken)"""
+        MTD_second_guess_List.append(avg_timetaken)
         print("----------------------------------")
     print("Benchmark complete")
 
@@ -751,10 +751,10 @@ def MateIn3():
     print("MCTS-MS passed at:", MCTS_MS_passed_time)
 
 if __name__ == '__main__':
-    #TestPostion()
+    TestPostion()
     #Testing_PV()
     #MateIn3()
     #MateIn3_AB()
     #Mate_in_Benchmark()
     #Random_Benchmark()
-    AB_VS_AB()
+    #AB_VS_AB()

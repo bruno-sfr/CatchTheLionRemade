@@ -48,3 +48,6 @@ class GUI:
 if __name__ == "__main__":
     GUI = GUI()
     GUI.Start_GUI()
+
+GUI = GUI()
+GUI.Start_GUI()
