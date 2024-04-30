@@ -1,7 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
-
 from PIL import Image, ImageTk
+from pathlib import Path
+
+# import requi9red module
+#import sys
+
+# append the path of the
+# parent directory
+#sys.path.append("..")
+
 from Game import LionBoard, Move
 from AlphaBeta import IterativeDeepening, AlphaBeta
 from MonteCarlo import MCTS_Solvers
@@ -33,6 +41,7 @@ class LionGUI:
         self.MTD = IterativeDeepening.iterativeDeepeningMTD()
 
         # Draw Background
+        #Path(f"../GUI_Resources").mkdir(parents=True, exist_ok=True)
         img = Image.open("../GUI_Resources/Catch_The_Lion_Board.png")
         resized_image = img.resize((1000, 700))
         self.images.append(ImageTk.PhotoImage(resized_image))
@@ -398,13 +407,13 @@ class LionGUI:
         print("AI whiteturn:", self.whiteTurn)
         match self.AI_player:
             case "Alpha-Beta":
-                eval, move = self.AB.iterativeDeepening_AB(self.AI_time, self.board, self.whiteTurn)
+                eval, move, depth = self.AB.iterativeDeepening_AB(self.AI_time, self.board, self.whiteTurn)
                 self.makeMove(move.getFrom(), move.getTo())
             case "Alpha-Beta with TT":
-                eval, move = self.AB.iterativeDeepening_AB_TT(self.AI_time, self.board, self.whiteTurn)
+                eval, move, depth = self.AB.iterativeDeepening_AB_TT(self.AI_time, self.board, self.whiteTurn)
                 self.makeMove(move.getFrom(), move.getTo())
             case "MTD(f)":
-                 eval, move = self.MTD.iterativeDeepening_MTD(self.AI_time, self.board, self.whiteTurn)
+                 eval, move, depth = self.MTD.iterativeDeepening_MTD(self.AI_time, self.board, self.whiteTurn)
                  self.makeMove(move.getFrom(), move.getTo())
             case "MCTS-Solver":
                 result_node = MCTS_Solvers.MCTS_Solver_Run(self.board, self.whiteTurn, self.AI_time)

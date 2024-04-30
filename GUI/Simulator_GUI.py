@@ -206,15 +206,15 @@ class SimGUI:
                     try:
                         match self.white_player:
                             case "MiniMax":
-                                eval, move = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
+                                eval, move, depth = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
                             case "Alpha-Beta":
-                                eval, move = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
+                                eval, move, depth = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
                                 #move = move
                             case "Alpha-Beta with TT":
-                                eval, move = ID.iterativeDeepening_AB_TT(self.time, board, whiteTurn)
+                                eval, move, depth = ID.iterativeDeepening_AB_TT(self.time, board, whiteTurn)
                                 #move = moves[0]
                             case "MTD(f)":
-                                eval, move = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
+                                eval, move, depth = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
                                 #move = moves[0]
                             case "MCTS-Solver":
                                 ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, self.time)
@@ -238,16 +238,16 @@ class SimGUI:
                     try:
                         match self.black_player:
                             case "MiniMax":
-                                eval, moves = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
+                                eval, moves, depth = ID.iterativeDeepening_MM(self.time, board, whiteTurn)
                                 move = moves[0]
                             case "Alpha-Beta":
-                                eval, move = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
+                                eval, move, depth = ID.iterativeDeepening_AB(self.time, board, whiteTurn)
                                 #move = moves
                             case "Alpha-Beta with TT":
-                                eval, move = ID.iterativeDeepening_AB_TT(self.time, board, whiteTurn)
+                                eval, move, depth = ID.iterativeDeepening_AB_TT(self.time, board, whiteTurn)
                                 #move = moves[0]
                             case "MTD(f)":
-                                eval, move = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
+                                eval, move, depth = MTD.iterativeDeepening_MTD(self.time, board, whiteTurn)
                                 #move = moves[0]
                             case "MCTS-Solver":
                                 ResultNode = MCTS_Solvers.MCTS_Solver_Run(board, whiteTurn, self.time)

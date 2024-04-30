@@ -1,7 +1,7 @@
 import LionBoard_GUI, Simulator_GUI
 import tkinter as tk
 from PIL import Image, ImageTk
-
+from pathlib import Path
 
 class GUI:
     def __init__(self):
