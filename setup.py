@@ -9,5 +9,9 @@ setup(
     license='',
     author='brunoschaffer',
     author_email='brunoschaffer24@gmail.com',
-    description=''
+    description='',
+    install_requires=[
+        'Pillow>=9.0.0',    # Requires Pillow (PIL) version 9.0.0 or newer
+        'matplotlib>=3.0',  # Requires Matplotlib version 3.0 or newer
+    ]
 )
