@@ -22,3 +22,6 @@ Um die GUI zu nutzen:
 cd GUI
 python3 The_GUI.py
 ```
+
+Da das Projekt das Python ```signal``` package verwendet, läuft es nur unter UNIX.
+https://docs.python.org/3/library/signal.html
